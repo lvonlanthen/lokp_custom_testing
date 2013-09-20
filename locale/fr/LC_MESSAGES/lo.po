@@ -1,0 +1,1087 @@
+# French translations for LMKP_Customization.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the LMKP_Customization
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: LMKP_Customization 0.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-09-18 15:12+0200\n"
+"PO-Revision-Date: 2013-09-18 15:14+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: lmkp/customization/lo/templates/about_view.mak:3
+#: lmkp/customization/lo/templates/base.mak:398
+#: lmkp/customization/lo/templates/landing_page.mak:346
+#: lmkp/customization/spm/templates/about_view.mak:3
+#: lmkp/customization/spm/templates/base.mak:371
+#: lmkp/customization/spm/templates/landing_page.mak:313
+msgid "About"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:47
+#: lmkp/customization/spm/templates/about_view.mak:47
+msgid ""
+"The Land Observatory is a pilot project of some of the partners of the "
+"Land Matrix initiative, to support observatories designed to crowdsource "
+"data about land deals, allowing for greater transparency and improved "
+"decision-making."
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:50
+#: lmkp/customization/spm/templates/about_view.mak:50
+msgid ""
+"We are co-creating software with partner organizations in pilot countries"
+" that will allow for them to"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:53
+#: lmkp/customization/spm/templates/about_view.mak:53
+msgid "generate greater spatial context for land deals"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:55
+#: lmkp/customization/spm/templates/about_view.mak:55
+msgid "make possible deeper investigation of the actors involved"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:58
+#: lmkp/customization/spm/templates/about_view.mak:58
+msgid "increase citizen participation, crowdsource and ground-truth data"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:61
+#: lmkp/customization/spm/templates/about_view.mak:61
+msgid "locally manage data on land deals"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:65
+#: lmkp/customization/spm/templates/about_view.mak:65
+msgid ""
+"We are piloting this project in five countries - Cambodia, Laos, "
+"Madagascar, Peru and Tanzania, with civil society partners and "
+"governments who will work to open government data, crowdsource and help "
+"customize local observatories using our software."
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:68
+#: lmkp/customization/spm/templates/about_view.mak:68
+msgid ""
+"The project is not merely technical, we are accompanying partners as they"
+" test different crowdsourcing strategies. Partners and their extended "
+"networks play a crucial role in bringing the online information to the "
+"real world, and back again."
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:71
+#: lmkp/customization/spm/templates/about_view.mak:71
+msgid ""
+"Updated information on land will benefit citizens, but also governments "
+"and companies interested in sustainability."
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:74
+#: lmkp/customization/spm/templates/about_view.mak:74
+msgid ""
+"If you are experiencing any technical difficulties, have questions or "
+"would like to send us feedback about how to improve user experience, "
+"please email us:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:80
+#: lmkp/customization/spm/templates/about_view.mak:80
+msgid "View our brief video introduction"
+msgstr ""
+
+#: lmkp/customization/lo/templates/about_view.mak:80
+#: lmkp/customization/spm/templates/about_view.mak:80
+msgid "Click here if the embedded video is not working"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:39
+#: lmkp/customization/lo/templates/base.mak:41
+#: lmkp/customization/lo/templates/base.mak:224
+#: lmkp/customization/lo/templates/base.mak:226
+#: lmkp/customization/lo/templates/landing_page.mak:31
+#: lmkp/customization/lo/templates/landing_page.mak:115
+#: lmkp/customization/lo/templates/landing_page.mak:117
+#: lmkp/customization/lo/templates/landing_page.mak:196
+#: lmkp/customization/lo/templates/login_form.mak:62
+#: lmkp/customization/lo/templates/users/account_form.mak:46
+#: lmkp/customization/lo/templates/users/approval_successful.mak:33
+#: lmkp/customization/lo/templates/users/reset_password_form.mak:5
+#: lmkp/customization/spm/templates/base.mak:34
+#: lmkp/customization/spm/templates/base.mak:36
+#: lmkp/customization/spm/templates/base.mak:219
+#: lmkp/customization/spm/templates/base.mak:221
+#: lmkp/customization/spm/templates/landing_page.mak:31
+#: lmkp/customization/spm/templates/landing_page.mak:115
+#: lmkp/customization/spm/templates/landing_page.mak:117
+#: lmkp/customization/spm/templates/login_form.mak:62
+#: lmkp/customization/spm/templates/users/account_form.mak:46
+#: lmkp/customization/spm/templates/users/approval_successful.mak:33
+#: lmkp/customization/spm/templates/users/reset_password_form.mak:5
+msgid "Land Observatory"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:242
+#: lmkp/customization/lo/templates/activities/grid.mak:127
+#: lmkp/customization/spm/templates/base.mak:237
+#: lmkp/customization/spm/templates/activities/grid.mak:127
+msgid "Map"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:250
+#: lmkp/customization/spm/templates/base.mak:245
+msgid "Grid"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:257
+#: lmkp/customization/spm/templates/base.mak:252
+msgid "Charts"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:284
+#: lmkp/customization/spm/templates/base.mak:279
+msgid "New Deal"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:296
+#: lmkp/customization/lo/templates/login_form.mak:3
+#: lmkp/customization/lo/templates/login_form.mak:25
+#: lmkp/customization/lo/templates/login_form.mak:39
+#: lmkp/customization/lo/templates/users/reset_password_form.mak:5
+#: lmkp/customization/spm/templates/base.mak:291
+#: lmkp/customization/spm/templates/login_form.mak:3
+#: lmkp/customization/spm/templates/login_form.mak:25
+#: lmkp/customization/spm/templates/login_form.mak:39
+#: lmkp/customization/spm/templates/users/reset_password_form.mak:5
+msgid "Login"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:305
+#: lmkp/customization/lo/templates/users/registration_form.mak:19
+#: lmkp/customization/spm/templates/base.mak:300
+#: lmkp/customization/spm/templates/users/registration_form.mak:19
+msgid "Register"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:313
+#: lmkp/customization/spm/templates/base.mak:308
+msgid "Logout"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:340
+msgid "Select Profile"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:397
+#: lmkp/customization/lo/templates/faq_view.mak:3
+#: lmkp/customization/lo/templates/faq_view.mak:32
+#: lmkp/customization/lo/templates/landing_page.mak:345
+#: lmkp/customization/spm/templates/base.mak:370
+#: lmkp/customization/spm/templates/faq_view.mak:3
+#: lmkp/customization/spm/templates/faq_view.mak:32
+#: lmkp/customization/spm/templates/landing_page.mak:312
+msgid "FAQ"
+msgstr ""
+
+#: lmkp/customization/lo/templates/base.mak:399
+#: lmkp/customization/lo/templates/landing_page.mak:347
+#: lmkp/customization/lo/templates/partners_view.mak:3
+#: lmkp/customization/lo/templates/partners_view.mak:8
+#: lmkp/customization/spm/templates/base.mak:372
+#: lmkp/customization/spm/templates/landing_page.mak:314
+#: lmkp/customization/spm/templates/partners_view.mak:3
+#: lmkp/customization/spm/templates/partners_view.mak:8
+msgid "Partners & Donors"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:35
+#: lmkp/customization/lo/templates/faq_view.mak:46
+#: lmkp/customization/spm/templates/faq_view.mak:35
+#: lmkp/customization/spm/templates/faq_view.mak:45
+msgid "Why are there observatories in only five countries?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:36
+#: lmkp/customization/lo/templates/faq_view.mak:50
+#: lmkp/customization/spm/templates/faq_view.mak:36
+#: lmkp/customization/spm/templates/faq_view.mak:49
+msgid "Who \"owns\" each observatory in the five pilot countries?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:37
+#: lmkp/customization/lo/templates/faq_view.mak:54
+#: lmkp/customization/spm/templates/faq_view.mak:37
+#: lmkp/customization/spm/templates/faq_view.mak:53
+msgid "Can I comment on a land deal?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:38
+#: lmkp/customization/lo/templates/faq_view.mak:58
+msgid "Who can submit information on a land deal?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:39
+#: lmkp/customization/lo/templates/faq_view.mak:63
+#: lmkp/customization/spm/templates/faq_view.mak:38
+#: lmkp/customization/spm/templates/faq_view.mak:57
+msgid "How do I submit information on a land deal?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:40
+#: lmkp/customization/lo/templates/faq_view.mak:75
+#: lmkp/customization/spm/templates/faq_view.mak:39
+#: lmkp/customization/spm/templates/faq_view.mak:69
+msgid ""
+"Can I submit information on a land deal even if I am in a different "
+"country?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:41
+#: lmkp/customization/lo/templates/faq_view.mak:79
+#: lmkp/customization/spm/templates/faq_view.mak:40
+#: lmkp/customization/spm/templates/faq_view.mak:73
+msgid "Will this application display polygons and land areas?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:42
+#: lmkp/customization/lo/templates/faq_view.mak:83
+#: lmkp/customization/spm/templates/faq_view.mak:41
+#: lmkp/customization/spm/templates/faq_view.mak:77
+msgid "Do you protect my privacy?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:47
+#: lmkp/customization/spm/templates/faq_view.mak:46
+msgid ""
+"We are piloting this project in five countries. More than just testing "
+"software, this requires partners to design crowdsourcing campaigns and "
+"organise multi-stakeholder platforms to manage the observatories. These "
+"are all very intensive processes and need time. We plan to scale, and "
+"seed observatories in other countries in the near future."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:51
+#: lmkp/customization/spm/templates/faq_view.mak:50
+msgid ""
+"We have co-developed this software with partners in country, and we are "
+"still firming up formal arrangements with partner organisations, and "
+"where possible with governments. Generally speaking, each observatory "
+"will have its own governance structure and moderation team and "
+"procedures. More information will be made available soon about each "
+"country."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:55
+#: lmkp/customization/spm/templates/faq_view.mak:54
+msgid ""
+"Anybody, even anonymous, non-logged in users can comment on a land deal. "
+"These comments will be subject to the rules of moderation, unique to each"
+" observatory."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:59
+#: lmkp/customization/spm/templates/faq_view.mak:58
+msgid ""
+"If you have information about a land deal in one of the five pilot "
+"countries, you can submit information about one or more attributes of "
+"this deal. You can also submit a new land deal if the one you are "
+"concerned with does not appear on the map."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:60
+#: lmkp/customization/spm/templates/faq_view.mak:59
+msgid "You will need to"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:60
+#: lmkp/customization/spm/templates/faq_view.mak:59
+msgid "register"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:60
+#: lmkp/customization/spm/templates/faq_view.mak:59
+msgid "(giving us your email) and"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:60
+#: lmkp/customization/spm/templates/faq_view.mak:59
+msgid "log-in"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:64
+msgid ""
+"Once you are logged in, you can fill out the form to add a new deal or "
+"edit an existing one. Do you need help filling out the form? We created "
+"some manuals to help you get started."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:65
+msgid "How to add a new deal"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:65
+msgid "How to edit an existing deal"
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:66
+#: lmkp/customization/spm/templates/faq_view.mak:60
+msgid ""
+"After you submit, moderators will review and approve your report. New "
+"deals will not be approved until all of the mandatory attributes are "
+"completed."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:72
+#: lmkp/customization/spm/templates/faq_view.mak:66
+msgid ""
+"Once your report is reviewed and approved, it is public for the whole "
+"world to see."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:76
+#: lmkp/customization/spm/templates/faq_view.mak:70
+msgid ""
+"Yes, but it will be reviewed and approved by moderators. At the moment, "
+"we ask that your account is connected to a particular country."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:80
+#: lmkp/customization/spm/templates/faq_view.mak:74
+msgid ""
+"Yes, these functions are in development and should be ready soon, as well"
+" as data downloads."
+msgstr ""
+
+#: lmkp/customization/lo/templates/faq_view.mak:84
+#: lmkp/customization/spm/templates/faq_view.mak:78
+msgid ""
+"All defaults are set to safeguard user privacy. To comment, you need not "
+"give any personal information, although providing it may enhance your "
+"credibility. To log-in and submit data, all you need to provide is an "
+"email address. Currently, metadata about your submissions is stored on "
+"the servers of the Centre for Development and Environment - University of"
+" Bern and are only kept for reference: your personal information will not"
+" be shared with others or re-used for any purposes except for possible "
+"verification of submitted information."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:123
+#: lmkp/customization/lo/templates/landing_page.mak:154
+#: lmkp/customization/lo/templates/emails/account_activation.mak:10
+#: lmkp/customization/lo/templates/emails/account_approval_confirmation.mak:7
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:12
+#: lmkp/customization/spm/templates/landing_page.mak:123
+#: lmkp/customization/spm/templates/landing_page.mak:154
+#: lmkp/customization/spm/templates/emails/account_activation.mak:10
+#: lmkp/customization/spm/templates/emails/account_approval_confirmation.mak:7
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:12
+msgid "The Land Observatory"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:123
+#: lmkp/customization/lo/templates/landing_page.mak:154
+#: lmkp/customization/spm/templates/landing_page.mak:123
+#: lmkp/customization/spm/templates/landing_page.mak:154
+msgid "is a pilot project by some partners of the"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:123
+#: lmkp/customization/lo/templates/landing_page.mak:154
+#: lmkp/customization/spm/templates/landing_page.mak:123
+#: lmkp/customization/spm/templates/landing_page.mak:154
+msgid "Land Matrix"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:123
+#: lmkp/customization/lo/templates/landing_page.mak:154
+#: lmkp/customization/spm/templates/landing_page.mak:123
+#: lmkp/customization/spm/templates/landing_page.mak:154
+msgid ""
+"designed to provide greater context and deeper insight on land deals, "
+"from a more local perspective."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:196
+msgid "Welcome to the"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:196
+msgid "Demonstration Version"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:196
+msgid "of the"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:196
+#: lmkp/customization/lo/templates/login_form.mak:78
+#: lmkp/customization/spm/templates/login_form.mak:78
+msgid ""
+"This demo version is for learning and experimentation purposes, so first-"
+"time users can get a feel for the Observatory and its functions."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:199
+#: lmkp/customization/spm/templates/landing_page.mak:198
+msgid "Enter"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:210
+msgid "Select a country"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:226
+#: lmkp/customization/lo/templates/landing_page.mak:231
+msgid "Global"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:242
+#: lmkp/customization/spm/templates/landing_page.mak:209
+msgid "Or take a short tour:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:271
+#: lmkp/customization/spm/templates/landing_page.mak:238
+msgid ""
+"Users in select pilot countries gather, explore and analyze spatial data "
+"on large-scale land acquisitions. Data is managed and reviewed locally by"
+" partners."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:278
+#: lmkp/customization/spm/templates/landing_page.mak:245
+msgid ""
+"Users can see deals in full geographical context, learn more about "
+"investors and the kinds of investments in question."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:285
+#: lmkp/customization/spm/templates/landing_page.mak:252
+msgid ""
+"You can also select a specific land deal to see more: \"who\" (investors "
+"and other stakeholders) and \"what\" the land will be used for."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:292
+#: lmkp/customization/spm/templates/landing_page.mak:259
+msgid ""
+"You can go further and learn more about an investor, seeing the same "
+"investors other land deals."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:299
+#: lmkp/customization/spm/templates/landing_page.mak:266
+msgid ""
+"Logged in users can also help contribute and update data, and anybody can"
+" freely comment on it."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:306
+#: lmkp/customization/spm/templates/landing_page.mak:273
+msgid ""
+"You can filter the land deals by various attributes - like size, or crop."
+" Or make a spatial selection of land deals."
+msgstr ""
+
+#: lmkp/customization/lo/templates/landing_page.mak:313
+#: lmkp/customization/spm/templates/landing_page.mak:280
+msgid ""
+"Want to know if anybody lives on a concession? Use the context layers to "
+"view population density and more."
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:34
+#: lmkp/customization/lo/templates/login_form.mak:67
+#: lmkp/customization/lo/templates/login_form.mak:73
+#: lmkp/customization/spm/templates/login_form.mak:34
+#: lmkp/customization/spm/templates/login_form.mak:67
+#: lmkp/customization/spm/templates/login_form.mak:73
+msgid "Username"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:36
+#: lmkp/customization/lo/templates/login_form.mak:68
+#: lmkp/customization/lo/templates/login_form.mak:74
+#: lmkp/customization/spm/templates/login_form.mak:36
+#: lmkp/customization/spm/templates/login_form.mak:68
+#: lmkp/customization/spm/templates/login_form.mak:74
+msgid "Password"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:45
+#: lmkp/customization/spm/templates/login_form.mak:45
+msgid "Forgot Password?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:49
+#: lmkp/customization/spm/templates/login_form.mak:49
+msgid "You do not have a password yet?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:49
+#: lmkp/customization/spm/templates/login_form.mak:49
+msgid "Register now!"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:60
+#: lmkp/customization/spm/templates/login_form.mak:60
+msgid "Demo Version"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:62
+#: lmkp/customization/spm/templates/login_form.mak:62
+msgid "This is the demonstration version of the"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:63
+#: lmkp/customization/spm/templates/login_form.mak:63
+msgid "Any member of the public can log-in as an Editor or a Moderator."
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:65
+#: lmkp/customization/spm/templates/login_form.mak:65
+msgid "Editor"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:65
+#: lmkp/customization/spm/templates/login_form.mak:65
+msgid "has the permission to create or edit new Deals or Investors."
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:71
+#: lmkp/customization/spm/templates/login_form.mak:71
+msgid "Moderator"
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:71
+#: lmkp/customization/spm/templates/login_form.mak:71
+msgid "has the additional permission to review pending changes."
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:81
+#: lmkp/customization/spm/templates/login_form.mak:81
+msgid ""
+"New data added by users to the demo has not been verified in any way. It "
+"will be visible to the public, but the database will be reset regularly."
+msgstr ""
+
+#: lmkp/customization/lo/templates/login_form.mak:84
+#: lmkp/customization/spm/templates/login_form.mak:84
+msgid "Please send your questions and feedback on the Observatory to: "
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:3
+#: lmkp/customization/spm/templates/map_view.mak:3
+msgid "Map View"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:76
+#: lmkp/customization/lo/templates/map_view.mak:102
+#: lmkp/customization/spm/templates/map_view.mak:76
+#: lmkp/customization/spm/templates/map_view.mak:102
+msgid "Deal"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:77
+#: lmkp/customization/spm/templates/map_view.mak:77
+msgid "Investor"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:78
+#: lmkp/customization/lo/templates/activities/grid.mak:103
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:3
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:103
+#: lmkp/customization/spm/templates/map_view.mak:78
+#: lmkp/customization/spm/templates/activities/grid.mak:103
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:3
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:103
+msgid "Investors"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:79
+#: lmkp/customization/spm/templates/map_view.mak:79
+msgid "Legend"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:80
+#: lmkp/customization/spm/templates/map_view.mak:80
+msgid "Legend for context layer"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:81
+#: lmkp/customization/lo/templates/activities/details.mak:42
+#: lmkp/customization/lo/templates/stakeholders/details.mak:39
+#: lmkp/customization/spm/templates/map_view.mak:81
+#: lmkp/customization/spm/templates/activities/details.mak:42
+#: lmkp/customization/spm/templates/stakeholders/details.mak:39
+msgid "Loading ..."
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:82
+#: lmkp/customization/spm/templates/map_view.mak:82
+msgid "Loading the details ..."
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:83
+#: lmkp/customization/spm/templates/map_view.mak:83
+msgid " more deals ..."
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:84
+#: lmkp/customization/lo/templates/map_view.mak:107
+#: lmkp/customization/spm/templates/map_view.mak:84
+#: lmkp/customization/spm/templates/map_view.mak:107
+msgid "No deal selected."
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:85
+#: lmkp/customization/spm/templates/map_view.mak:85
+msgid "Selected Deals"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:86
+#: lmkp/customization/spm/templates/map_view.mak:86
+msgid "The deals are grouped by"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:115
+#: lmkp/customization/spm/templates/map_view.mak:115
+msgid "search location"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:121
+#: lmkp/customization/spm/templates/map_view.mak:121
+msgid "Base layers"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:125
+#: lmkp/customization/spm/templates/map_view.mak:125
+msgid "Street Map"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:128
+#: lmkp/customization/spm/templates/map_view.mak:128
+msgid "Satellite Imagery"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:131
+#: lmkp/customization/spm/templates/map_view.mak:131
+msgid "Terrain Map"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:139
+#: lmkp/customization/spm/templates/map_view.mak:139
+msgid "Context layers"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:149
+#: lmkp/customization/spm/templates/map_view.mak:149
+msgid "Map Legend"
+msgstr ""
+
+#: lmkp/customization/lo/templates/map_view.mak:169
+#: lmkp/customization/spm/templates/map_view.mak:169
+msgid "Close"
+msgstr ""
+
+#: lmkp/customization/lo/templates/partners_view.mak:11
+#: lmkp/customization/spm/templates/partners_view.mak:11
+msgid ""
+"The pilot project is coordinated by the International Land Coalition and "
+"the Centre for Development and Environment at the University of Bern, "
+"Switzerland. It is funded by the Swiss Agency for Development "
+"Cooperation, with co-funding from other ILC and CDE programs."
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/details.mak:3
+#: lmkp/customization/spm/templates/activities/details.mak:3
+msgid "Deal Details"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:3
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:3
+#: lmkp/customization/spm/templates/activities/grid.mak:3
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:3
+msgid "Grid View"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:3
+#: lmkp/customization/lo/templates/activities/grid.mak:99
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:98
+#: lmkp/customization/spm/templates/activities/grid.mak:3
+#: lmkp/customization/spm/templates/activities/grid.mak:99
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:98
+msgid "Deals"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:42
+#: lmkp/customization/spm/templates/activities/grid.mak:42
+msgid "Show investors by click on a specific row."
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:49
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:49
+#: lmkp/customization/spm/templates/activities/grid.mak:49
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:49
+msgid "Profile"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:50
+#: lmkp/customization/spm/templates/activities/grid.mak:50
+msgid "You are seeing all the Deals within the current profile."
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:54
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:54
+#: lmkp/customization/spm/templates/activities/grid.mak:54
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:54
+msgid "Map Extent"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:55
+#: lmkp/customization/spm/templates/activities/grid.mak:55
+msgid "You are currently only seeing Deals which are visible on the map."
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:56
+#: lmkp/customization/spm/templates/activities/grid.mak:56
+msgid "Show all Deals of the profile."
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:62
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:62
+#: lmkp/customization/spm/templates/activities/grid.mak:62
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:62
+msgid "Spatial Filter"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:62
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:62
+#: lmkp/customization/spm/templates/activities/grid.mak:62
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:62
+msgid "based on"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:79
+#: lmkp/customization/spm/templates/activities/grid.mak:79
+msgid "Investor Filter"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:79
+#: lmkp/customization/spm/templates/activities/grid.mak:79
+msgid "You are currently only seeing Deals where Investor"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:84
+#: lmkp/customization/spm/templates/activities/grid.mak:84
+msgid "is involved."
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:84
+#: lmkp/customization/spm/templates/activities/grid.mak:84
+msgid "Remove this filter and show all Deals"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:125
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:125
+#: lmkp/customization/spm/templates/activities/grid.mak:125
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:125
+msgid "Nothing found"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:126
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:126
+#: lmkp/customization/spm/templates/activities/grid.mak:126
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:126
+msgid "No results were found."
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:127
+#: lmkp/customization/spm/templates/activities/grid.mak:127
+msgid "Make sure there are some deals on the"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:135
+#: lmkp/customization/spm/templates/activities/grid.mak:135
+msgid "Show investors for this deal"
+msgstr ""
+
+#: lmkp/customization/lo/templates/activities/grid.mak:145
+#: lmkp/customization/spm/templates/activities/grid.mak:145
+msgid "Deal ID"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_activation.mak:1
+#: lmkp/customization/lo/templates/emails/account_approval_confirmation.mak:1
+#: lmkp/customization/spm/templates/emails/account_activation.mak:1
+#: lmkp/customization/spm/templates/emails/account_approval_confirmation.mak:1
+msgid "Dear"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_activation.mak:3
+#: lmkp/customization/spm/templates/emails/account_activation.mak:3
+msgid "Thank you for registering on the landobservatory.org platform!"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_activation.mak:5
+#: lmkp/customization/spm/templates/emails/account_activation.mak:5
+msgid ""
+"In order to activate your account please visit the following link or copy"
+" it to your web browser. The activation link expires in 48 hours."
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_activation.mak:8
+#: lmkp/customization/spm/templates/emails/account_activation.mak:8
+msgid "Your account will be approved after activation."
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_confirmation.mak:3
+#: lmkp/customization/spm/templates/emails/account_approval_confirmation.mak:3
+msgid "Your account has been approved and you are ready to contribute!"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_confirmation.mak:5
+#: lmkp/customization/spm/templates/emails/account_approval_confirmation.mak:5
+msgid "Please proceed to:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:1
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:1
+msgid "The following user requests approval for the landobservatory.org platform:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:3
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:3
+msgid "Username:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:4
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:4
+msgid "First name:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:5
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:5
+msgid "Last name:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:6
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:6
+msgid "Email address:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:7
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:7
+msgid "Profiles:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/emails/account_approval_request.mak:9
+#: lmkp/customization/spm/templates/emails/account_approval_request.mak:9
+msgid ""
+"In order to approve this account, please visit the following link or copy"
+" it to your web browser."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/details.mak:3
+#: lmkp/customization/spm/templates/stakeholders/details.mak:3
+msgid "Stakeholder Details"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:40
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:40
+msgid "Success"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:41
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:41
+msgid "The Stakeholder was successfully created. It will be reviewed shortly."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:54
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:54
+msgid "Select a Stakeholder"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:56
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:56
+msgid "Select an existing Stakeholder."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:59
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:59
+msgid "Start typing (at least 4 characters) to search a Stakeholder by name."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:61
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:61
+msgid "Search ..."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:66
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:66
+msgid "Stakeholder not found?"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:74
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:74
+msgid "Create a new Stakeholder"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:84
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:84
+msgid "Sending ..."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:93
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:93
+msgid "Unknown"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:94
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:94
+msgid "No results found."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/form_embedded.mak:95
+#: lmkp/customization/spm/templates/stakeholders/form_embedded.mak:95
+msgid "Too many results to display. Try to enter more characters"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:42
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:42
+msgid "Show deals by clicking on a specific row."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:50
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:50
+msgid ""
+"You are seeing all the Investors involved in Deals within the current "
+"profile."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:55
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:55
+msgid ""
+"You are currently only seeing Investors involved in Deals which are "
+"visible on the map."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:56
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:56
+msgid "Show all the Investors involved in Deals of the profile."
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:79
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:79
+msgid "Deal Filter"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:79
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:79
+msgid "You are currently only seeing Investors which are involved in Deal"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:84
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:84
+msgid "Remove this filter and show all Investors"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:134
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:134
+msgid "Show deals of this investor"
+msgstr ""
+
+#: lmkp/customization/lo/templates/stakeholders/grid.mak:144
+#: lmkp/customization/spm/templates/stakeholders/grid.mak:144
+msgid "Investor ID"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/account_form.mak:6
+#: lmkp/customization/spm/templates/users/account_form.mak:6
+msgid "User Account"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/account_form.mak:48
+#: lmkp/customization/spm/templates/users/account_form.mak:48
+msgid "Update user settings"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/activation_successful.mak:3
+#: lmkp/customization/spm/templates/users/activation_successful.mak:3
+msgid "User Activation Success"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/activation_successful.mak:8
+#: lmkp/customization/spm/templates/users/activation_successful.mak:8
+msgid "User activation was successful:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/activation_successful.mak:10
+#: lmkp/customization/spm/templates/users/activation_successful.mak:10
+msgid "Your account has been activated. It will be approved during the next days."
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/approval_successful.mak:6
+#: lmkp/customization/spm/templates/users/approval_successful.mak:6
+msgid "User Approval Success"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/approval_successful.mak:35
+#: lmkp/customization/spm/templates/users/approval_successful.mak:35
+msgid "User approval"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/approval_successful.mak:38
+#: lmkp/customization/spm/templates/users/approval_successful.mak:38
+msgid "The following user has been successfully approved:"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/registration_form.mak:3
+#: lmkp/customization/lo/templates/users/registration_success.mak:3
+#: lmkp/customization/spm/templates/users/registration_form.mak:3
+#: lmkp/customization/spm/templates/users/registration_success.mak:3
+msgid "User Registration"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/registration_form.mak:20
+#: lmkp/customization/spm/templates/users/registration_form.mak:20
+msgid "Please register for the Land Observatory."
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/registration_success.mak:7
+#: lmkp/customization/spm/templates/users/registration_success.mak:7
+msgid "Thank you for registering"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/registration_success.mak:8
+#: lmkp/customization/spm/templates/users/registration_success.mak:8
+msgid ""
+"A message with an activation link has been sent to your email address. "
+"Your account will be approved after activation."
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/reset_password_form.mak:50
+#: lmkp/customization/spm/templates/users/reset_password_form.mak:50
+msgid "Reset password"
+msgstr ""
+
+#: lmkp/customization/lo/templates/users/reset_password_form.mak:55
+#: lmkp/customization/spm/templates/users/reset_password_form.mak:55
+msgid "Email Address"
+msgstr ""
+
+#: lmkp/customization/spm/templates/landing_page.mak:195
+msgid "Welcome to the Stakeholder Platform for North-East Madagascar!"
+msgstr ""
+

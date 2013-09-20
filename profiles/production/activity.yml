@@ -1,0 +1,636 @@
+# Global configuration file for the installation.
+# Within this file mandatory and optional fields are defined.
+
+# Site key for comment-system
+site_key: fsgvbfurtvjjzge46g1k3tpwv0do13a
+fields:
+  mandatory:
+    Spatial Accuracy:
+      type: String
+      predefined:
+      - better than 100m
+      - 100m to 1km
+      - 1km to 10km
+      - 10km to 100km
+      - worse than 100km
+    Negotiation Status:
+      type: String
+      predefined:
+      - Under negotiation
+      - Oral agreement
+      - Contract signed
+      - Negotiations failed
+      - Contract cancelled 
+    Country:
+      type: String
+      predefined:
+      - Afghanistan
+      - Åland
+      - Albania
+      - Algeria
+      - American Samoa
+      - Andorra
+      - Angola
+      - Anguilla
+      - Antarctica
+      - Antigua and Barbuda
+      - Argentina
+      - Armenia
+      - Aruba
+      - Australia
+      - Austria
+      - Azerbaijan
+      - Bahamas
+      - Bahrain
+      - Bangladesh
+      - Barbados
+      - Belarus
+      - Belgium
+      - Belize
+      - Benin
+      - Bermuda
+      - Bhutan
+      - Bolivia
+      - Bonaire, Saint Eustatius and Saba
+      - Bosnia and Herzegovina
+      - Botswana
+      - Bouvet Island
+      - Brazil
+      - British Indian Ocean Territory
+      - British Virgin Islands
+      - Brunei
+      - Bulgaria
+      - Burkina Faso
+      - Burundi
+      - Cambodia
+      - Cameroon
+      - Canada
+      - Cape Verde
+      - Caspian Sea
+      - Cayman Islands
+      - Central African Republic
+      - Chad
+      - Chile
+      - China
+      - Christmas Island
+      - Clipperton Island
+      - Cocos Islands
+      - Colombia
+      - Comoros
+      - Cook Islands
+      - Costa Rica
+      - Côte d'Ivoire
+      - Croatia
+      - Cuba
+      - Curaçao
+      - Cyprus
+      - Czech Republic
+      - Democratic Republic of the Congo
+      - Denmark
+      - Djibouti
+      - Dominica
+      - Dominican Republic
+      - East Timor
+      - Ecuador
+      - Egypt
+      - El Salvador
+      - Equatorial Guinea
+      - Eritrea
+      - Estonia
+      - Ethiopia
+      - Falkland Islands
+      - Faroe Islands
+      - Fiji
+      - Finland
+      - France
+      - French Guiana
+      - French Polynesia
+      - French Southern Territories
+      - Gabon
+      - Gambia
+      - Georgia
+      - Germany
+      - Ghana
+      - Gibraltar
+      - Greece
+      - Greenland
+      - Grenada
+      - Guadeloupe
+      - Guam
+      - Guatemala
+      - Guernsey
+      - Guinea
+      - Guinea-Bissau
+      - Guyana
+      - Haiti
+      - Heard Island and McDonald Islands
+      - Honduras
+      - Hong Kong
+      - Hungary
+      - Iceland
+      - India
+      - Indonesia
+      - Iran
+      - Iraq
+      - Ireland
+      - Isle of Man
+      - Israel
+      - Italy
+      - Jamaica
+      - Japan
+      - Jersey
+      - Jordan
+      - Kazakhstan
+      - Kenya
+      - Kiribati
+      - Kosovo
+      - Kuwait
+      - Kyrgyzstan
+      - Laos
+      - Latvia
+      - Lebanon
+      - Lesotho
+      - Liberia
+      - Libya
+      - Liechtenstein
+      - Lithuania
+      - Luxembourg
+      - Macao
+      - Macedonia
+      - Madagascar
+      - Malawi
+      - Malaysia
+      - Maldives
+      - Mali
+      - Malta
+      - Marshall Islands
+      - Martinique
+      - Mauritania
+      - Mauritius
+      - Mayotte
+      - Mexico
+      - Micronesia
+      - Moldova
+      - Monaco
+      - Mongolia
+      - Montenegro
+      - Montserrat
+      - Morocco
+      - Mozambique
+      - Myanmar
+      - Namibia
+      - Nauru
+      - Nepal
+      - Netherlands
+      - New Caledonia
+      - New Zealand
+      - Nicaragua
+      - Niger
+      - Nigeria
+      - Niue
+      - Norfolk Island
+      - North Korea
+      - Northern Mariana Islands
+      - Norway
+      - Oman
+      - Pakistan
+      - Palau
+      - Palestina
+      - Panama
+      - Papua New Guinea
+      - Paraguay
+      - Peru
+      - Philippines
+      - Pitcairn Islands
+      - Poland
+      - Portugal
+      - Puerto Rico
+      - Qatar
+      - Republic of Congo
+      - Reunion
+      - Romania
+      - Russia
+      - Rwanda
+      - Saint Helena
+      - Saint Kitts and Nevis
+      - Saint Lucia
+      - Saint Pierre and Miquelon
+      - Saint Vincent and the Grenadines
+      - Saint-Barthélemy
+      - Saint-Martin
+      - Samoa
+      - San Marino
+      - Sao Tome and Principe
+      - Saudi Arabia
+      - Senegal
+      - Serbia
+      - Seychelles
+      - Sierra Leone
+      - Singapore
+      - Sint Maarten
+      - Slovakia
+      - Slovenia
+      - Solomon Islands
+      - Somalia
+      - South Africa
+      - South Georgia and the South Sandwich Islands
+      - South Korea
+      - South Sudan
+      - Spain
+      - Spratly islands
+      - Sri Lanka
+      - Sudan
+      - Suriname
+      - Svalbard and Jan Mayen
+      - Swaziland
+      - Sweden
+      - Switzerland
+      - Syria
+      - Taiwan
+      - Tajikistan
+      - Tanzania
+      - Thailand
+      - Togo
+      - Tokelau
+      - Tonga
+      - Trinidad and Tobago
+      - Tunisia
+      - Turkey
+      - Turkmenistan
+      - Turks and Caicos Islands
+      - Tuvalu
+      - Uganda
+      - Ukraine
+      - United Arab Emirates
+      - United Kingdom
+      - United States
+      - United States Minor Outlying Islands
+      - Uruguay
+      - Uzbekistan
+      - Vanuatu
+      - Vatican City
+      - Venezuela
+      - Vietnam
+      - Virgin Islands, U.S.
+      - Wallis and Futuna
+      - Western Sahara
+      - Yemen
+      - Zambia
+      - Zimbabwe
+      
+    Intended area (ha):
+      type: Number
+      validator: if(value >= 0){return true;} else {return Lmkp.ts.msg("input-validation_number-greater-than-0");}
+
+    Intention of Investment:
+      type: String
+      predefined:
+      - Agriculture
+      - Forestry
+      - Mining
+      - Tourism
+      - Industry
+      - Conservation
+      - Renewable energy
+      - Other
+  
+  
+    Data source:
+      type: String
+      predefined:
+      - Media report
+      - Research paper
+      - Government sources
+      - Company sources
+      - Contract
+      - Personal information
+      - Other 
+      
+     
+  optional:
+    Name:
+      type: String
+    Nature of the deal:
+      type: String
+      predefined:
+      - Outright Purchase
+      - Lease/Concession
+      - Exploitation License 
+    Crop:
+      type: String
+      predefined:
+      - Accacia
+      - Alfalfa
+      - Algae
+      - Almond
+      - Aloe Vera
+      - Apple
+      - Aquaculture
+      - Bamboo
+      - Banana
+      - Barley
+      - Bean
+      - Bottle Gourd
+      - Buckwheat
+      - Cacao
+      - Canola
+      - Cashew
+      - Cassava (Maniok)
+      - Castor Oil Plant
+      - Cereals (no specification)
+      - Chat
+      - Cherries
+      - Chert
+      - Citrus Fruits
+      - Coconut
+      - Coffee Plant
+      - Corn (Maize)
+      - Cotton
+      - Croton
+      - Dill
+      - Eucalyptus
+      - Fig-Nut
+      - Flowers
+      - Fodder Plants
+      - Fruit
+      - Glucose Syrup
+      - Grains
+      - Grapes
+      - Herbs (no specification)
+      - Jatropha
+      - Lentils
+      - Mango
+      - Mariculture
+      - Mustard
+      - Oil Palm
+      - Oil Seeds
+      - Oleagionous plant
+      - Olives
+      - Onion
+      - Palms
+      - Papaya
+      - Passion fruit
+      - Peanut
+      - Peas
+      - Pepper
+      - Pine
+      - Pineapple
+      - Pomegranate
+      - Pongamia Pinnata
+      - Potatoes
+      - Pulses
+      - Rapeseed
+      - Rice
+      - Roses
+      - Rubber
+      - Rye
+      - Sea Cucumber
+      - Seed Production
+      - Sesame
+      - Sisal
+      - Sorghum
+      - Soya Beans
+      - Starch
+      - Sugar beet
+      - Sugar Cane
+      - Sun Flower
+      - Sweet Potatoes
+      - Tea
+      - Teak
+      - Teff
+      - Tomatoes
+      - Trees
+      - Vegetables
+      - Vineyard
+      - Wheat
+      - Yam
+      - Other
+    
+    Animals:
+      type: String
+      predefined:
+      - Aquaculture
+      - Bees
+      - Cattle
+      - Goats
+      - Mariculture
+      - Pork
+      - Poultry
+      - Sheep
+      - Other
+      
+    Mineral:
+      type: String
+      predefined:
+      - Anthracite
+      - Asphaltite
+      - Barite
+      - Basalt
+      - Bauxite
+      - Building materials
+      - Carbon
+      - Clay
+      - Coal
+      - Cobalt
+      - Copper
+      - Diamond mining
+      - Emerald
+      - Feldspar
+      - Fluoride
+      - Gas
+      - Gold
+      - Granite
+      - Gravel
+      - Ilmenite
+      - Iron
+      - Jade
+      - Lead
+      - Limestone
+      - Manganese
+      - Marble
+      - Molybdenum
+      - Nickel
+      - Petroleum
+      - Phosphorous
+      - Platinum
+      - Pynions
+      - Pyrolisis Plant
+      - Salt
+      - Sand
+      - Silica
+      - Silver
+      - Stone
+      - Titanium
+      - Uranium
+      - Zinc
+      - Other
+ 
+    Use of produce:
+      type: String
+      predefined:
+      - Domestic use
+      - Export 
+      
+    Water extraction:
+      type: String
+      predefined:
+      - Ground water
+      - River
+      - Lake 
+    How much do investors pay for water:
+      type: String
+      
+    How much water is extracted (m3/year):
+      type: Number
+     
+    Original reference number: 
+      type: Number
+    
+    Scope of agriculture: 
+      type: String
+      predefined: 
+      - Agrofuels
+      - Food crops
+      - Livestock
+      - Non-food agricultural commodities 
+      
+    Scope of forestry:
+      type: String
+      predefined:
+      - wood and fibre
+      - carbon sequestration    
+    
+    Contract area (ha):
+      type: Number
+      
+    Current area in operation (ha):
+      type: Number
+ 
+    Duration of Agreement (years):
+      type: Number
+      
+    Implementation status:
+      type: String
+      predefined:
+      - Project not started
+      - Startup phase
+      - In operation
+      - Project abandoned 
+    
+    Purchase price:
+      type: Number
+      
+    Purchase price area (ha):
+      type: Number
+      
+       
+    Leasing fee (per year):
+      type: String
+    
+    Annual leasing fee area (ha):
+      type: Number
+    
+    Contract farming:
+      type: String
+      predefined:
+      - On the lease
+      - Off the lease
+      
+    Announced amount of investement:
+      type: number
+           
+    Area (ha):
+      type: Number
+    
+    Number of farmers:
+      type: Number
+      
+    Planned number of employees:
+      type: Number    
+    
+    Current number of employees:
+      type: Number 
+      
+    Planned total number of jobs:
+      type: Number   
+      
+    Current total number of jobs:
+      type: Number
+      
+    Planned Number of daily/seasonal workers:
+      type: Number
+    
+    Current Number of daily/seasonal workers:
+      type: Number 
+   
+    How did community react:
+      type: String
+      
+   
+    Consultation of local community:
+      type: String
+    
+    Promised or received compensation:
+      type: String
+     
+    Benefits for local communities:
+      type: String
+      predefined:
+      - Health
+      - Education
+      - Productive infrastructure
+      - Roads
+      - Capacity building
+      - Financial support
+      - Water supply
+      - Other      
+      
+    Number of people actually displaced:
+      type: Number
+      
+    Former predominant land owner:
+      type: String
+      predefined:
+      - State
+      - Private (smallholders)
+      - Private (large-scale)
+      - Community  
+      - Other
+
+    Former predominant land use:
+      type: String
+      predefined: 
+      - Commercial (large-scale) agriculture
+      - Smallholder agriculture
+      - Pastoralists
+      - Forestry
+      - Conservation 
+      - Other
+      
+    Former predominant land cover:
+      type: String
+      predefined: 
+      - Cropland
+      - Forest land
+      - Grassland
+      - Marginal land 
+    
+    URL / Web:
+      type: String
+    
+    Date:
+      type: Date  
+    
+    Year:
+      type: Number
+      validator: if(value == 0 || (value > 1900 && value < 2300)){return true;} else {return Lmkp.ts.msg("input-validation_year");}
+    
+    Percentage:
+        type: Number
+        validator:  if(value >= 0 && value <= 100){return true;} else {return Lmkp.ts.msg("input-validation_percentage");} 
+    
+    Remark:
+      type: String
+    
+    Files:
+      type: File

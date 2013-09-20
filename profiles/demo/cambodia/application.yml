@@ -1,0 +1,115 @@
+application:
+  geometry:
+    type: Polygon
+    coordinates: [[[102.902328491210909,9.91362190246609],[102.89646911621108,9.914589881897001],[102.881729125976534,9.926096916199228],[102.879486083984574,9.931838989257855],
+                   [102.35099792480483,13.2758407592776],[102.346862792968778,13.345660209655961],[102.336412429809769,13.536988735199145],[102.337059020996236,13.543130874633889],[102.338432312011804,13.548000335693516],
+                   [102.34280395507821,13.55768394470239],[102.941253662109631,14.193005561828869],[102.95618544323284,14.206037883516103],[103.05951690673848,14.28320121765158],[103.143177032470788,14.324440479278849],
+                   [103.168281555175923,14.332105636596779],[103.559478759765767,14.422071456909222],[103.580726623535185,14.425250053405819],[103.661056518554659,14.436561584472656],[107.537785339355509,14.688966560363923],[107.554718017578097,14.686680793762235],
+                   [107.55752563476571,14.683565616607879],[107.629989624023523,13.36073017120377],[107.589965820312528,12.558220863342456],[107.578239440918168,12.488930702209501],[107.554786682129048,12.379520416259794],
+                   [107.546392752411606,12.355816230944299],[107.543052673339872,12.349300384521527],[106.190038045247519,10.788921038309923],[102.934188842773693,9.915061950683651],[102.902328491210909,9.91362190246609]]]
+  name: Cambodia
+  layers:
+  - name: "Blue Marble"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "blue_marble_sea"
+    - transparent: false
+    ol_options:
+    - visibility: true
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 1
+  - name: "Community Forest"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "community_forest"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [11131949.08,1006021.06,12133824.50,1804722.77]
+    - opacity: 0.5
+  - name: "Protected Area"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "protected_area"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [11131949.08,1006021.06,12133824.50,1804722.77]
+    - opacity: 0.5
+  - name: "Accessability"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "accessability"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.7
+  - name: "Population Density 2008"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "lspop_2008"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6
+  - name: "Global Land Cover 2009"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "globcover_2009"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6
+  - name: "Global Cropland"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "gl_cropland"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6
+  - name: "Global Pasture Land"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "gl_pasture"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6    

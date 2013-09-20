@@ -1,0 +1,32 @@
+fields:
+  # Category: The ID of the form category.
+  1:
+    # (optional) Provide an order number to fix the sequence of the categories.
+    order: 1
+    # Subcategory: The ID of another form category (as a subcategory or thematic group). The Category and the Subcategory
+    # can have the same ID (eg. if no Subcategory is defined).
+    11:
+      # (optional) Provide an order number to fix the sequence of the subcategories.
+      order: 1
+      # (optional) This thematic group contains a map. The keyword "map" is valid.
+      map: "map"
+      # (optional) This thematic group contains an involvement. The keywords "primaryinvestor" (single) and 
+      # "secondaryinvestor" (multiple) are valid.
+      involvement: "primaryinvestor"
+      # Taggroup: Taggroups are numbered continuously (1 to n).
+      1:
+        # (optional) This taggroup can be entered multiple times.
+        repeat: true
+        # (optional) This taggroup can contain a polygon geometry.
+        geometry: true
+        # Key: The ID of a key.
+        3:
+          # (optional) This key is the maintag. A maintag can be defined only once within a taggroup. A key defined as 
+          # maintag needs to be unique throughout the configuration.
+          maintag: true
+          # (optional) A validator for this key. Important: This will overwrite the default validator for this key set in 
+          # the database! So far, only numeric ranges can be specified. Example 1: Value between 0 and 10: [0,10]. Example 
+          # 2: Minimal value of 100: [100].
+          validator: [0,10]
+        # Key: The ID of a key. If no additional parameter is set for this key, use 'null' as a value.
+        25: null
