@@ -1,90 +1,210 @@
 ﻿fields:
-  # [C] 40: Stakeholder Information
-  40:
+  # [C] Category 1
+  14:
     order: 1
-    # [C-THG] 40: Stakeholder Information
-    40:
+    # [C-THG] Subcategory 1
+    17:
       order: 1
       # [TG]
       1:
-        # [K] 2: Name
-        2:
-          maintag: true
-          mandatory: true
-          involvementoverview: 1
-          filterable: true
-      # [TG]
-      2:
-        # [K] 1: Country of origin
+        order: 1
+        # [K] Textfield 1
         1:
           maintag: true
           mandatory: true
-          involvementoverview: 2
           filterable: true
+          involvementoverview: 1
+        # [K] Textarea 1
+        4: null
+      # [TG]
+      2:
+        order: 2
+        # [K] Checkbox 1
+        10:
+          maintag: true
       # [TG]
       3:
-        # [K] 3: Website
-        3:
+        order: 3
+        # [K] Dropdown 1
+        7:
           maintag: true
+    # [C-THG] Subcategory 2
+    18:
+      order: 2
+      # [TG]
+      1:
+        order: 1
+        repeat: true
+        # [K] Numberfield 2
+        17:
+          maintag: true
+        # [K] Integerfield 1
+        13: null
+    # [C-THG] Subcategory 3
+    19:
+      order: 3
+  # [C] Category 2
+  15:
+    order: 2
+    # [C-THG] Subcategory 4
+    20:
+      order: 1
+      # [TG]
+      1:
+        order: 1
+        # [K] Numberfield 1
+        16:
+          maintag: true
+          desired: true
+    # [C-THG] Subcategory 5
+    21:
+      order: 2
+      # [TG]
+      1:
+        order: 1
+        repeat: true
+        # [K] Dropdown 2
+        8:
+          maintag: true
+        # [K] Filefield 1
+        22: null
+        # [K] Datefield 1
+        19: null
+    # [C-THG] Subcategory 6
+    22:
+      order: 3
+      # [TG]
+      involvement:
+        name: 'primaryinvestor'
+        roles: [1]
+        # IMPORTANT: Even if the involvement is not repeatable in Activities, it should be repeatable here!
+        repeat: true
+    # [C-THG] Subcategory 7
+    23:
+      order: 4
+      # [TG]
+      involvement:
+        name: 'secondaryinvestor'
+        roles: [2,3,4,5]
+        repeat: true
+  # [C] Category 3
+  16:
+    order: 3
+#    # [C-THG] Subcategory 6
+#    22:
+#      order: 1
 #      # [TG]
-#      4:
+#      involvement:
+#        name: 'primaryinvestor'
+#        roles: [1]
+#        # IMPORTANT: Even if the involvement is not repeatable in Activities, it should be repeatable here!
+#        repeat: true
+#    # [C-THG] Subcategory 7
+#    23:
+#      order: 2
+#      # [TG]
+#      involvement:
+#        name: 'secondaryinvestor'
+#        roles: [2,3,4,5]
+#        repeat: true
+    # [C-THG] Subcategory 8
+    24:
+      order: 3
+    # [C-THG] Subcategory 9
+    25:
+      order: 4
+    # [C-THG] Subcategory 10
+    26:
+      order: 5
+
+
+#fields:
+#  # [C] 40: Stakeholder Information
+#  40:
+#    order: 1
+#    # [C-THG] 40: Stakeholder Information
+#    40:
+#      order: 1
+#      # [TG]
+#      1:
+#        # [K] 2: Name
+#        2:
+#          maintag: true
+#          mandatory: true
+#          involvementoverview: 1
+#          filterable: true
+#      # [TG]
+#      2:
+#        # [K] 1: Country of origin
+#        1:
+#          maintag: true
+#          mandatory: true
+#          involvementoverview: 2
+#          filterable: true
+#      # [TG]
+#      3:
+#        # [K] 3: Website
+#        3:
+#          maintag: true
+##      # [TG]
+##      4:
+##        # [K] 7: Address
+##        7:
+##          maintag: true
+##      # [TG]
+##      5:
+##        # [K] 5: Phone
+##        5:
+##          maintag: true
+##      # [TG]
+##      6:
+##        # [K] 6: Domestic Partner
+##        6:
+##          maintag: true
+##          filterable: true
+##      # [TG]
+##      7:
+##        # [K] 4: Economic Sector
+##        4:
+##          maintag: true
+##          filterable: true
+##      # [TG]
+##      8:
+##        # [K] 8: Type of Institution
+##        8:
+##          maintag: true
+##          filterable: true
+#  # [C]
+#  80:
+#    order: 2
+#    # [C-THG]
+#    80:
+#      order: 1
+#      # [TG]
+#      1:
 #        # [K] 7: Address
 #        7:
 #          maintag: true
 #      # [TG]
-#      5:
+#      2:
 #        # [K] 5: Phone
 #        5:
 #          maintag: true
 #      # [TG]
-#      6:
+#      3:
 #        # [K] 6: Domestic Partner
 #        6:
 #          maintag: true
 #          filterable: true
 #      # [TG]
-#      7:
+#      4:
 #        # [K] 4: Economic Sector
 #        4:
 #          maintag: true
 #          filterable: true
 #      # [TG]
-#      8:
+#      5:
 #        # [K] 8: Type of Institution
 #        8:
 #          maintag: true
 #          filterable: true
-  # [C]
-  80:
-    order: 2
-    # [C-THG]
-    80:
-      order: 1
-      # [TG]
-      1:
-        # [K] 7: Address
-        7:
-          maintag: true
-      # [TG]
-      2:
-        # [K] 5: Phone
-        5:
-          maintag: true
-      # [TG]
-      3:
-        # [K] 6: Domestic Partner
-        6:
-          maintag: true
-          filterable: true
-      # [TG]
-      4:
-        # [K] 4: Economic Sector
-        4:
-          maintag: true
-          filterable: true
-      # [TG]
-      5:
-        # [K] 8: Type of Institution
-        8:
-          maintag: true
-          filterable: true

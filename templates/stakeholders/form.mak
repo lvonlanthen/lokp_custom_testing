@@ -8,11 +8,6 @@
 
     <script type="text/javascript" src="${request.static_url('lmkp:static/v2/form.js')}"></script>
 
-    <%
-        if 'scripts/jquery-ui-1.8.11.custom.min.js' not in js_links:
-            js_links.append('scripts/jquery-ui-1.8.11.custom.min.js')
-    %>
-
     % for reqt in js_links:
         <script type="text/javascript" src="/formstatic/${reqt}"></script>
     % endfor
@@ -26,6 +21,8 @@
 
 <%def name="bottom_tags()">
     <script type="text/javascript">
-       deform.load();
+        if (window.deform) {
+            deform.load();
+        }
     </script>
 </%def>

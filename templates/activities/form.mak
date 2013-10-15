@@ -29,6 +29,8 @@
 
 <%def name="bottom_tags()">
     <script type="text/javascript">
-       deform.load();
+        if (deform) {
+            deform.load();
+        }
     </script>
 </%def>

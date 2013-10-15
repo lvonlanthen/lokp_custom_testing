@@ -23,7 +23,7 @@
 <%
     from lmkp.views.form_config import getCategoryList
     cList = getCategoryList(request, 'activities')
-    desiredKeys = cList.getDesiredKeyNames()
+    desiredKeys = cList.getDesiredKeyNames(translated=True)
 %>
 
 <div class="container">
