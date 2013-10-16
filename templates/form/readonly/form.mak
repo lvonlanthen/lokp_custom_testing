@@ -43,8 +43,7 @@
             % if isStakeholder:
                 % if isModerator and statusId == '1':
                     <a href="${request.route_url('stakeholders_moderate_item', uid=cstruct['id'])}" target="_blank">
-                        <i class="icon-check">&nbsp;&nbsp;${_('Review this version')}</i>
-                    </a><br/>
+                        <i class="icon-check"></i>&nbsp;&nbsp;${_('Review this version')}</a><br/>
                 % endif
                 <a href="${request.route_url('stakeholders_read_one', output='form', uid=cstruct['id'])}">
                     <i class="icon-pencil"></i>&nbsp;&nbsp;${_('Edit this')} ${_('Investor')}
@@ -52,8 +51,7 @@
             % else:
                 % if isModerator and statusId == '1':
                     <a href="${request.route_url('activities_moderate_item', uid=cstruct['id'])}" target="_blank">
-                        <i class="icon-check">&nbsp;&nbsp;${_('Review this version')}</i>
-                    </a><br/>
+                        <i class="icon-check"></i>&nbsp;&nbsp;${_('Review this version')}</a><br/>
                 % endif
                 <a href="${request.route_url('activities_read_one', output='form', uid=cstruct['id'])}">
                     <i class="icon-pencil"></i>&nbsp;&nbsp;${_('Edit this')} ${_('Deal')}
@@ -92,7 +90,7 @@
             </a>
             % if isModerator and statusId == '1':
                 &nbsp;|&nbsp;<a href="${request.route_url('stakeholders_moderate_item', uid=cstruct['id'])}" target="_blank">
-                    <i class="icon-check">&nbsp;&nbsp;${_('Review this version')}</i>
+                    <i class="icon-check"></i>&nbsp;&nbsp;${_('Review this version')}
                 </a>
             % endif
         % else:
@@ -101,7 +99,7 @@
             </a>
             % if isModerator and statusId == '1':
                 &nbsp;|&nbsp;<a href="${request.route_url('activities_moderate_item', uid=cstruct['id'])}" target="_blank">
-                    <i class="icon-check">&nbsp;&nbsp;${_('Review this version')}</i>
+                    <i class="icon-check"></i>&nbsp;&nbsp;${_('Review this version')}
                 </a>
             % endif
         % endif

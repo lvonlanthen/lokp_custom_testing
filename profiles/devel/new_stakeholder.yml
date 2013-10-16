@@ -87,6 +87,13 @@
         name: 'secondaryinvestor'
         roles: [2,3,4,5]
         repeat: true
+#    # It is also possible to add all the involvements in one "taggroup":
+#      # [...] Other thematic group stuff. It is also possible to add the involvements at the end of an existing C-THG
+#      involvement:
+#        name: 'allinvolvements'
+#        # Sum up all the involvement roles possible
+#        roles: [1,2,3,4,5]
+#        repeat: true
   # [C] Category 3
   16:
     order: 3
