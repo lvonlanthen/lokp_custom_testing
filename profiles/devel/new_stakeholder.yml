@@ -14,6 +14,7 @@
           mandatory: true
           filterable: true
           involvementoverview: 1
+          gridcolumn: 1
         # [K] Textarea 1
         4: null
       # [TG]
@@ -56,6 +57,7 @@
         16:
           maintag: true
           desired: true
+          gridcolumn: 2
     # [C-THG] Subcategory 5
     21:
       order: 2

@@ -25,8 +25,8 @@
     from lmkp.views.views import getQueryString
 
     # Get the keys and their translation
-    from lmkp.views.translation import get_stakeholder_keys
-    keys = get_stakeholder_keys(request)
+    from lmkp.views.config import getGridColumnKeys
+    keys = getGridColumnKeys(request, 'stakeholders')
 
     a_uids = ','.join(invfilter) if invfilter is not None else ''
 %>
@@ -143,25 +143,22 @@
                         <tr>
                             <th>${_('Investor ID')}</th>
                             % for k in keys:
-                                ## Only use the headers which are to be shown
-                                % if k[2] is True:
-                                    <th>${k[1]}
-                                        <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
-                                            <div class="desc
-                                                 % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs:
-                                                    active
-                                                 % endif
-                                                 ">&nbsp;</div>
-                                        </a>
-                                        <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
-                                        <div class="asc
-                                             % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
+                                <th>${k[1]}
+                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
+                                        <div class="desc
+                                             % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs:
                                                 active
                                              % endif
                                              ">&nbsp;</div>
-                                        </a>
-                                    </th>
-                                % endif
+                                    </a>
+                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
+                                    <div class="asc
+                                         % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
+                                            active
+                                         % endif
+                                         ">&nbsp;</div>
+                                    </a>
+                                </th>
                             % endfor
                         </tr>
                     <tbody>
@@ -180,9 +177,8 @@
                                 values = []
                                 translatedkeys = []
                                 for k in keys:
-                                    if k[2] is True:
-                                        translatedkeys.append(k[1])
-                                        values.append('Unknown')
+                                    translatedkeys.append(k[1])
+                                    values.append('Unknown')
                                 for tg in d['taggroups']:
                                     for t in tg['tags']:
                                         for i, tk in enumerate(translatedkeys):

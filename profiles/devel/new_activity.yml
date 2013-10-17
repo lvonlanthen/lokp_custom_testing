@@ -17,6 +17,7 @@
           filterable: true
           involvementoverview: 1
           mapsymbol: 1
+          gridcolumn: 1
         # [K] Textarea 1
         4: null
       # [TG]
@@ -59,6 +60,7 @@
         16:
           maintag: true
           desired: true
+          gridcolumn: 2
     # [C-THG] Subcategory 5
     8:
       order: 2
