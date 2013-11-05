@@ -1,0 +1,87 @@
+application:
+  # Geometry is a GeoJSON object
+  geometry:
+    type: Polygon
+    coordinates: [[[-81.326389, -18.3475],[-68.6575, -18.3475],[-68.6575, -0.03],[-81.326389, -0.03],[-81.326389, -18.3475]]]
+  name: "Peru: Observatorio de Adquisiciones de Tierras"
+  layers:
+  - name: "Accessability"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "accessability"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.7
+  - name: "Population Density 2008"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "lspop_2008"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6
+  - name: "Global Land Cover 2009"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "globcover_2009"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6
+  - name: "Global Cropland"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "gl_cropland"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6
+  - name: "Global Pasture Land"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/jpeg"
+    - layers: "gl_pasture"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayer: false
+    - sphericalMercator: true
+    - maxExtent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+    - opacity: 0.6
+  - name: "Comunidades nativas (IBC)"
+    url: "http://cdetux2.unibe.ch/geoserver/lo/wms"
+    wms_options:
+    - epsg: 900913
+    - format: "image/png"
+    - layers: "comunidades_nativas"
+    - transparent: true
+    ol_options:
+    - visibility: false
+    - isBaseLayers: false
+    - sphericalMercator: true
+    - maxExtent: [-8784440.213204, -1479619.170626, -7644636.798722, -26651.505177]
+    - opacity: 0.6
+
+

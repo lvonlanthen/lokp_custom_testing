@@ -1,0 +1,434 @@
+﻿fields:
+  # [C] 1: Spatial Data
+  1:
+    order: 1
+    # [C-THG] 11: Location
+    11:
+      order: 1
+      # [TG]
+      map: "map"
+      # [TG]
+      1:
+        # [K] 3: Spatial Accuracy
+        3:
+          maintag: true
+          desired: true
+          mapsymbol: 2
+        # [K] 25: Remark
+        25: null
+      # [TG]
+      2:
+        # [K] 4: Country
+        4:
+          maintag: true
+          desired: true
+          involvementoverview: 3
+          filterable: true
+  # [C] 2: General Information
+  2:
+    order: 2
+    # [C-THG] 12: Land Area
+    12:
+      order: 1
+      # [TG]
+      1:
+        geometry: true
+        # [K] 5: Intended area
+        5:
+          maintag: true
+          desired: true
+          involvementoverview: 2
+          filterable: true
+        # [K] 25: Remark
+        25: null
+      # [TG, repeatable]
+      2:
+        repeat: true
+        geometry: true
+        # [K] 34: Contract area (ha)
+        34:
+          maintag: true
+        # [K] 48: Year
+        48: null
+      # [TG]
+      3:
+        repeat: true
+        geometry: true
+        # [K] 15: Current area in operation
+        15:
+          maintag: true
+        # [K] 48: Year
+        48:
+          validator: [2000,2100]
+    # [C-THG] 13: Intention of Investment
+    13:
+      order: 2
+      # [TG]
+      1:
+        # [K] 6: Intention of Investment
+        6:
+          maintag: true
+          desired: true
+          involvementoverview: 1
+          mapsymbol: 1
+          filterable: true
+      # [TG]
+      2:
+        # [K] 46: Scope of agriculture
+        46:
+          maintag: true
+          filterable: true
+      # [TG]
+      3:
+        # [K] 9: Scope of forestry
+        9:
+          maintag: true
+          filterable: true
+      # [TG]
+      4:
+        # [K] 53: Remark (Intention of Investment)
+        53:
+          maintag: true
+    # [C-THG] 14: Nature of the deal
+    14:
+      order: 3
+      # [TG]
+      1:
+        # [K] 39: Nature of the deal
+        39:
+          maintag: true
+          filterable: true
+      # [TG]
+      2:
+        # [K] 25: Remark (Nature of the deal)
+        57:
+          maintag: true
+    # [C-THG] 15: Negotiation Status
+    15:
+      order: 4
+      # [TG]
+      1:
+        repeat: true
+        # [K] 2: Negotiation Status
+        2:
+          maintag: true
+          desired: true
+          mapsymbol: 3
+          filterable: true
+        # [K] 48: Year
+        48: null
+      # [TG]
+      2:
+        # [K] 51: Contract date
+        51:
+          maintag: true
+        # [K] 56: Contract number
+        56: null
+      # [TG]
+      3:
+        # [K] 54: Remark (Negotiation Status)
+        54:
+          maintag: true
+    # [C-THG] 16: Duration of the Agreement
+    16:
+      order: 5
+      # [TG]
+      1:
+        repeat: true
+        # [K] 7: Duration of Agreement
+        7:
+          maintag: true
+        # [K] 48: Year
+        48: null
+    # [C-THG] 17: Implementation status
+    17:
+      order: 6
+      # [TG]
+      1:
+        repeat: true
+        # [K] 43: Implementation Status
+        43:
+          maintag: true
+          desired: true
+          filterable: true
+        # [K] 48: Year
+        48: null
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 18: Purchase Price
+    18:
+      order: 7
+      # [TG]
+      1:
+        # [K] 30: Purchase Price
+        30:
+          maintag: true
+        # [K] 38: Purchase Price area
+        38: null
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 19: Leasing Fees
+    19:
+      order: 8
+      # [TG]
+      1:
+        # [K] 22: Leasing Fee (per year)
+        22:
+          maintag: true
+        # [K] 31: Annual leasing fee area
+        31: null
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 41: Amount of Investment
+    41:
+      order: 9
+      # [TG]
+      1:
+        # [K] 52: Announced amount of investment
+        52:
+          maintag: true
+    # [C-THG] 20: Contract Farming
+    20:
+      order: 10
+      # [TG]
+      1:
+        # [K] 8: Contract Farming
+        8:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+  # [C] 3: Employment
+  3:
+    order: 3
+    # [C-THG] 21: Number of Jobs Created
+    21:
+      order: 1
+      # [TG]
+      1:
+        # [K] 47: Planned total number of jobs
+        47:
+          maintag: true
+        # [K] 40: Planned number of employees
+        40: null
+        # [K] 45: Planned Number of daily/seasonal workers
+        45: null
+      # [TG]
+      2:
+        repeat: true
+        # [K] 23: Current total number of jobs
+        23:
+          maintag: true
+        # [K] 48: Year
+        48: null
+      # [TG]
+      3:
+        repeat: true
+        # [K] 19: Current number of employees
+        19:
+          maintag: true
+        # [K] 48: Year
+        48: null
+      # [TG]
+      4:
+        repeat: true
+        # [K] 37: Current Number of daily/seasonal workers
+        37:
+          maintag: true
+        # [K] 48: Year
+        48: null
+      # [TG]
+      5:
+        # [K] 18: Number of farmers
+        18:
+          maintag: true
+      # [TG]
+      6:
+        # [K] 55: Remark (Number of Jobs Created)
+        55:
+          maintag: true
+  # [C] 4: Investor Info
+  4:
+    order: 4
+    # [C-THG] 22: Primary Investor
+    22:
+      order: 1
+      # [TG]
+      involvement: "primaryinvestor"
+    # [C-THG] 23: Secondary Investor
+    23:
+      order: 2
+      # [TG]
+      involvement: "secondaryinvestor"
+  # [C] 5: Data Sources
+  5:
+    order: 5
+    # [C-THG] 24: Data Sources
+    24:
+      order: 1
+      # [TG]
+      1:
+        repeat: true
+        # [K] 1: Data Source
+        1:
+          maintag: true
+          desired: true
+        # [K] 10: URL / Web
+        10: null
+        # [K] 50: Files
+        50: null
+        # [K] 17: Original reference number
+        17: null
+        # [K] 20: Date
+        20: null
+        # [K] 25: Remark
+        25: null
+  # [C] 6: Local Communities
+  6:
+    order: 6
+    # [C-THG] 25: How did Community React?
+    25:
+      order: 1
+      # [TG]
+      1:
+        # [K] 29: How did community react?
+        29:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 26: Consultation of Local Community
+    26:
+      order: 2
+      # [TG]
+      1:
+        # [K] 41: Consultation of local community
+        41:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 27: Promised or Received Compensation
+    27:
+      order: 3
+      # [TG]
+      1:
+        # [K] 42: Promised or received compensation
+        42:
+          maintag: true
+    # [C-THG] 28: Benefits for Local Communities
+    28:
+      order: 4
+      # [TG]
+      1:
+        # [K] 36: Benefits for local communities
+        36:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 29: Number of People Actually Displaced
+    29:
+      order: 5
+      # [TG]
+      1:
+        # [K] 21: Number of people actually displaced
+        21:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+  # [C] 7: Former Use
+  7:
+    order: 7
+    # [C-THG] 30: Former Land Owner
+    30:
+      order: 1
+      # [TG]
+      1:
+        # [K] 49: Former predominant land owner
+        49:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 31: Former Land Use
+    31:
+      order: 2
+      # [TG]
+      1:
+        # [K] 33: Former predominant land use
+        33:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 32: Former Land Cover
+    32:
+      order: 1
+      # [TG]
+      1:
+        # [K] 35: Former predominant land cover
+        35:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+  # [C] 8: Produce Info
+  8:
+    order: 8
+    # [C-THG] 33: Detailed Crop, Animal and Mineral Information
+    33:
+      order: 1
+      # [TG]
+      1:
+        # [K] 44: Crop
+        44:
+          maintag: true
+          filterable: true
+      # [TG]
+      2:
+        # [K] 26: Animals
+        26:
+          maintag: true
+          filterable: true
+      # [TG]
+      3:
+        # [K] 13: Minerals
+        13:
+          maintag: true
+          filterable: true
+    # [C-THG] 34: Use of Produce
+    34:
+      order: 2
+      # [TG]
+      1:
+        # [K] 28: Use of produce
+        28:
+          maintag: true
+          filterable: true
+        # [K] 25: Remark
+        25: null
+  # [C] 9: Water
+  9:
+    order: 9
+    # [C-THG] 36: Source of Water Extraction
+    36:
+      order: 1
+      # [TG]
+      1:
+        # [K] 11: Water extraction
+        11:
+          maintag: true
+        # [K] 25: Remark
+        25: null
+    # [C-THG] 37: How Much do Investors Pay for Water and the Use of Water Infrastructure?
+    37:
+      order: 2
+      # [TG]
+      1:
+        # [K] 16: How much do investors pay for water
+        16:
+          maintag: true
+    # [C-THG] 38: How  Much Water is Extracted?
+    38:
+      order: 2
+      # [TG]
+      1:
+        # [K] 24: How much water is extracted
+        24:
+          maintag: true
+        # [K] 25: Remark
+        25: null

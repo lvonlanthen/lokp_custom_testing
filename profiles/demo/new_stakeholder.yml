@@ -1,0 +1,56 @@
+﻿fields:
+  # [C] 40: Stakeholder Information
+  40:
+    order: 1
+    # [C-THG] 40: Stakeholder Information
+    40:
+      order: 1
+      # [TG]
+      1:
+        # [K] 2: Name
+        2:
+          maintag: true
+          mandatory: true
+          involvementoverview: 1
+          filterable: true
+      # [TG]
+      2:
+        # [K] 1: Country of origin
+        1:
+          maintag: true
+          mandatory: true
+          involvementoverview: 2
+          filterable: true
+      # [TG]
+      3:
+        # [K] 3: Website
+        3:
+          maintag: true
+      # [TG]
+      4:
+        # [K] 7: Address
+        7:
+          maintag: true
+      # [TG]
+      5:
+        # [K] 5: Phone
+        5:
+          maintag: true
+      # [TG]
+      6:
+        # [K] 6: Domestic Partner
+        6:
+          maintag: true
+          filterable: true
+      # [TG]
+      7:
+        # [K] 4: Economic Sector
+        4:
+          maintag: true
+          filterable: true
+      # [TG]
+      8:
+        # [K] 8: Type of Institution
+        8:
+          maintag: true
+          filterable: true
