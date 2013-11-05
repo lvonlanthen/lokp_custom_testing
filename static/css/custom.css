@@ -947,8 +947,8 @@ p.deal-detail {
 }
 
 #googleMapNotFull {
-	width: 99%; 
-	height: 440px;
+	width: 100%;
+	height: 400px;
 }
 
 #googleMapFull {
@@ -1735,3 +1735,143 @@ ul.country-selector {
 
 }
 
+.disableClick {
+    pointer-events: none;
+}
+
+.helpTooltip {
+    cursor: pointer;
+}
+
+/* Map / Map Form */
+
+.map-menu b.caret,
+.form-map-menu b.caret {
+    margin: 8px 5px 0 0;
+}
+
+.olTileImage {
+    max-width: none !important;
+}
+.olControlAttribution {
+    bottom: 0px !important;
+    left: 10px;
+}
+
+/* Map Form */
+.map-form-controls {
+    float: right;
+    position: relative;
+    width: 100%;
+}
+
+.form-map-menu,
+.form-map-edit {
+    padding: 5px 5px 5px 10px;
+    z-index: 1000;
+    position: absolute;
+    font-size: 0.8em;
+    right: 0;
+}
+
+.form-map-edit {
+    right: 3em;
+}
+
+.navbar-search li {
+    margin-bottom: -6px;
+}
+.navbar-search li>a,
+.navbar-search li.active>a {
+    padding-left: 5px;
+}
+
+.navbar-search li.active>a,
+.navbar-search li.active>a:hover,
+.navbar-search li.active>a:focus {
+    background-color: #A3A708;
+    background-image: none;
+}
+
+.form-map-menu li {
+    margin-bottom: -6px;
+}
+.form-map-menu li:last-child {
+    margin-bottom: 0;
+}
+
+.form-map-menu .accordion {
+    margin-bottom: 0;
+}
+
+.form-map-menu .accordion-group {
+    border: 0;
+}
+
+.form-map-menu a {
+    color: #333333;
+}
+.form-map-menu a:hover,
+.form-map-menu a:focus {
+    text-decoration: none;
+}
+
+.form-map-menu.active {
+    background-color: #F0F0F0;
+    border-bottom-left-radius: 4px;
+    width: 60%;
+}
+
+.form-map-menu .context-layers {
+    margin-bottom: 0;
+    margin-top: 5px;
+}
+
+.form-map-menu-active a {
+    margin-bottom: 5px;
+}
+
+#form-map-menu-content {
+    display: none;
+}
+
+#form-map-menu-content .radio.inline {
+    padding-top: 0;
+    font-size: 1em;
+}
+
+/* Map */
+.legendEntry {
+    font-size: 0.8em;
+    margin-bottom: 2px !important;
+    margin-top: 2px;
+}
+.legendExplanation {
+    font-size: 0.8em;
+    margin-bottom: 5px;
+}
+.vectorLegendSymbol {
+    float: left;
+    height: 20px;
+    margin-right: 5px;
+    width: 20px;
+}
+.context-layers {
+    margin-bottom: 0;
+}
+.base-layers-content {
+    margin-bottom: 15px;
+}
+.map-legend {
+    cursor: pointer;
+}
+.map-legend-content {
+    margin-bottom: 15px;
+}
+#deal-shortid-span a {
+    color: inherit;
+    font-weight: normal;
+}
+#mapModal h3 {
+    padding-top: 0;
+}

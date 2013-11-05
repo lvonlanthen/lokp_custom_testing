@@ -6,7 +6,9 @@
     4:
       order: 1
       # [TG]
-      map: 'map'
+      map:
+        name: 'map'
+        mode: 'multipoints'
       # [TG]
       1:
         order: 1
