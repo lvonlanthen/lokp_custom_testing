@@ -1,4 +1,4 @@
-<%inherit file="lmkp:customization/lo/templates/base.mak" />
+<%inherit file="lmkp:customization/testing/templates/base.mak" />
 
 <%def name="title()">Deal Editor</%def>
 

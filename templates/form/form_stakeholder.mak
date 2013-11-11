@@ -1,13 +1,18 @@
-## Form to EDIT a stakeholder. New stakeholders can only be created with the
-## embedded form.
+## Form to CREATE or EDIT a stakeholder.
 
 <%
+    import colander
+    new_form = 'id' not in cstruct or cstruct['id'] == colander.null
     _ = request.translate
 %>
 
 <h3>${_('Stakeholder Editor')}</h3>
 
-<p class="id">${cstruct['id']}</p>
+% if new_form is True:
+    <p class="id">${_('New Stakeholder')}</p>
+% else:
+    <p class="id">${cstruct['id']}</p>
+% endif
 
 <form
     id="${field.formid}"
@@ -54,6 +59,9 @@
                         class="btnText ${button.css_class}">
                         ${button.title}
                     </button>
+                    % if button.css_class == 'formstepvisited':
+                        <span class="form-button-visited"><i class="icon-ok-sign"></i></span>
+                    % endif
                 </li>
 
                 % if button.css_class == 'formstepactive':

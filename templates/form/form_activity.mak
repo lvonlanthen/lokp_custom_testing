@@ -1,3 +1,5 @@
+## Form to CREATE or EDIT an activity.
+
 <%
     import colander
     new_form = 'id' not in cstruct or cstruct['id'] == colander.null

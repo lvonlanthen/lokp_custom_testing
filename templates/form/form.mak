@@ -1,7 +1,7 @@
 <%
     """
     This is the main form view which is rendered for both Activities and
-    Stakeholders, embedded or not.
+    Stakeholders.
     A switch decides which form to render.
     """
 
@@ -11,16 +11,12 @@
 
     if cstruct['itemType'] == 'stakeholders':
         # Stakeholders
-        if 'embedded' in cstruct:
-            # Embedded
-            templateName = 'form_stakeholder_embedded.mak'
-        else:
-            templateName = 'form_stakeholder.mak'
+        templateName = 'form_stakeholder.mak'
     else:
         # Activities
         templateName = 'form_activity.mak'
 
-    resolver = lmkpAssetResolver.resolve('customization/lo/templates/form/%s' % templateName)
+    resolver = lmkpAssetResolver.resolve('customization/testing/templates/form/%s' % templateName)
     template = Template(filename=resolver.abspath())
 %>
 
