@@ -767,13 +767,16 @@ table.table-self {
 
 .select-list li {
 	float: left;
-	width: 200px;
+	margin-bottom: 20px;
 }
 
 .select-list li:last-child {
 	width: 20px;
 }
 
+.select-only {
+	margin-left: 10px;
+}
 
 input, 
 textarea {
@@ -783,7 +786,7 @@ textarea {
 
 input[type="text"].input-style {
 	height: 16px;
-	max-width: auto;
+	max-width: 55px;
 	margin-right: 10px;
 	float: left;
 }
@@ -1288,8 +1291,137 @@ ul.country-selector {
     background: none;
 }
 
+/* Deal Moderator */
 
+.deal-moderate-content .table_tabs {
+	margin-left: 0px;
+}
 
+.deal-moderate-content .select_btn_bordered, 
+.deal-moderate-content .select_btn_bordered:hover, 
+.deal-moderate-content .select_btn_bordered:active, 
+.deal-moderate-content .select_btn_bordered:focus {
+	width: 320%;
+}
+
+.deal-moderate-content .grid-area.deal-data {
+	padding: 15px 0px 5px 10px;
+	margin-bottom: 10px;
+}
+
+.deal-moderate-content .select-list li {
+	margin-bottom: 0px;
+	width: 75%;
+}
+
+.deal-moderate-content .select-list li:last-child {
+	width: 20px;
+}
+
+.accordion {
+	margin-bottom: 0px;
+}
+
+.accordion-group {
+	border: none;
+}
+
+.accordion-heading.category a, 
+span.emptyCategory {
+	background-color: #A3A708;
+	margin-bottom: 5px;
+	margin-top: 10px;
+	padding: 2px 8px 2px 8px;
+	border-radius: 4px;
+	color: white;
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 0.9em;
+	text-align: left;
+}
+
+span.emptyCategory {
+    display: block;
+}
+
+.accordion-toggle .icon-chevron-down, 
+.accordion-toggle .icon-chevron-up {
+	float: right;
+	margin-top: 4px;
+}
+
+.accordion-heading .accordion-toggle {
+	padding: 0px 8px;
+	text-decoration: none;
+}
+
+.accordion-heading .accordion-toggle h5 {
+	padding: 0px;
+}
+
+.deal-moderate-content .grid-area {
+	padding-top: 5px;
+}
+
+.deal-moderate-content .grid-area .accordion.inner {
+	padding-left: 20px;
+	padding-top: 5px;
+}
+
+.accordion-body.collapse.in {
+	margin-top: 5px;
+} 
+
+.accordion-heading.category.change a {
+	background-color: #cb820e;
+
+}
+
+.change {
+	background-color: rgba(203, 130, 14, 0.3);
+}
+
+.change .accordion-heading .accordion-toggle h5 {
+	color: #cb820e;
+}
+
+.change .icon-exclamation-sign {
+	color: #cb820e;
+	position: absolute;
+	margin-left: -25px;
+	font-size: 180%;
+}
+
+.change .icon-exclamation-sign.value {
+	margin-left: -42px;
+	font-size: 150%;
+}
+
+.deal-moderate-content #googleMapNotFull {
+	margin-top: 30px;
+	width: 100%;
+}
+
+.deal-moderate-content .btn.disabled {
+	cursor: auto;
+	opacity: 1;
+}
+
+.deal-moderate-content .btn-warning {
+background-color: #CB820E;
+}
+
+.deal-moderate-content .btn-success {
+	background-color: #A3A708;
+}
+
+.deal-moderate-content .comments { 
+	margin-top: 20px;
+}
+
+.deal-moderate-content .comments .input-style {
+	width: 97%;
+}
 
 /*	footer   */
 
@@ -1503,7 +1635,6 @@ ul.country-selector {
 		top: 73px;
 		font-size: 0.9em;
 		left: 0;
-		width: 320px;
 		margin-left: 0;
 	}
 
@@ -1511,8 +1642,10 @@ ul.country-selector {
 		padding-bottom: 2px;
 	}
 
-	.top-menu li:first-child {
-		margin-left: 10px;
+	.top-menu li {
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 0 5px 0 5px;
 	}
 
 	.user {
@@ -1746,7 +1879,8 @@ ul.country-selector {
 /* Map / Map Form */
 
 .map-menu b.caret,
-.form-map-menu b.caret {
+.form-map-menu b.caret,
+.form-map-compare-menu b.caret {
     margin: 8px 5px 0 0;
 }
 
@@ -1766,12 +1900,46 @@ ul.country-selector {
 }
 
 .form-map-menu,
-.form-map-edit {
+.form-map-edit,
+.form-map-compare-legend {
     padding: 5px 5px 5px 10px;
     z-index: 1000;
     position: absolute;
     font-size: 0.8em;
     right: 0;
+}
+
+.form-map-compare-menu {
+    padding: 5px 5px 5px 10px;
+    z-index: 1000;
+    position: relative;
+    font-size: 0.8em;
+    right: 0;
+}
+.form-map-compare-menu.active {
+    background-color: #F0F0F0;
+    border-bottom-left-radius: 4px;
+}
+
+.form-map-compare-controls {
+    float: right;
+    position: absolute;
+    right: 0;
+    width: 60%;
+}
+
+.form-map-compare-legend {
+    background-color: #CDCDCD;
+    position: relative;
+}
+
+.form-map-compare-legend div.span6 {
+    min-height: 0;
+}
+
+.compare-legend {
+    padding-left: 1em;
+    margin-right: 2px;
 }
 
 .form-map-edit {
@@ -1793,26 +1961,28 @@ ul.country-selector {
     background-image: none;
 }
 
-.form-map-menu li {
+.form-map-menu li, .form-map-compare-menu li {
     margin-bottom: -6px;
 }
-.form-map-menu li:last-child {
+.form-map-menu li:last-child, .form-map-compare-menu li:last-child {
     margin-bottom: 0;
 }
 
-.form-map-menu .accordion {
+.form-map-menu .accordion, .form-map-compare-menu .accordion {
     margin-bottom: 0;
 }
 
-.form-map-menu .accordion-group {
+.form-map-menu .accordion-group, .form-map-compare-menu .accordion-group {
     border: 0;
 }
 
-.form-map-menu a {
+.form-map-menu a, .form-map-compare-menu a {
     color: #333333;
 }
 .form-map-menu a:hover,
-.form-map-menu a:focus {
+.form-map-menu a:focus,
+.form-map-compare-menu a:hover,
+.form-map-compare-menu a:focus {
     text-decoration: none;
 }
 
@@ -1822,12 +1992,12 @@ ul.country-selector {
     width: 60%;
 }
 
-.form-map-menu .context-layers {
+.form-map-menu .context-layers, .form-map-compare-menu .context-layers {
     margin-bottom: 0;
     margin-top: 5px;
 }
 
-.form-map-menu-active a {
+.form-map-menu-active a, .form-map-compare-menu a {
     margin-bottom: 5px;
 }
 
@@ -1838,6 +2008,10 @@ ul.country-selector {
 #form-map-menu-content .radio.inline {
     padding-top: 0;
     font-size: 1em;
+}
+
+h3.form-below-toolbar {
+    padding-top: 10px;
 }
 
 /* Map */
@@ -1874,4 +2048,9 @@ ul.country-selector {
 }
 #mapModal h3 {
     padding-top: 0;
+}
+
+/* Grid */
+tr.pending {
+    background-color: #fcf8e3;
 }

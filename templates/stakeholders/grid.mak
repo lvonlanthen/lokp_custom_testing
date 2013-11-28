@@ -8,9 +8,6 @@
         .desc.active {
             background: url("/custom/img/to-top-black.png") no-repeat scroll right top transparent;
         }
-        tr.pending {
-            background-color: #fcf8e3;
-        }
         .show-investors a {
             text-decoration: none;
             color: white;

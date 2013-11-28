@@ -4,13 +4,6 @@
 
 <%def name="head_tags()">
 <style type="text/css" >
-    ul.bullets {
-        list-style-type: disc;
-        margin: 0 25px 15px;
-    }
-    ul.bullets li {
-        margin: 5px 0;
-    }
     ul.links {
         margin: 20px 0;
     }
