@@ -8,7 +8,7 @@
       # [TG]
       map:
         name: 'map'
-        mode: 'multipoints'
+        mode: 'singlepoint'
       # [TG]
       1:
         order: 1
@@ -49,6 +49,12 @@
     # [C-THG] Subcategory 3
     6:
       order: 3
+      # [TG]
+      1:
+        order: 2
+        # [K] Textfield 2
+        2:
+          maintag: true
   # [C] Category 2
   2:
     order: 2
@@ -95,15 +101,15 @@
         name: 'secondaryinvestor'
         roles: [2,3,4,5]
         repeat: true
-    # [C-THG] Subcategory 8
-    11:
-      order: 3
-    # [C-THG] Subcategory 9
-    12:
-      order: 4
-    # [C-THG] Subcategory 10
-    13:
-      order: 5
+#    # [C-THG] Subcategory 8
+#    11:
+#      order: 3
+#    # [C-THG] Subcategory 9
+#    12:
+#      order: 4
+#    # [C-THG] Subcategory 10
+#    13:
+#      order: 5
       
       
   
