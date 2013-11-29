@@ -2,19 +2,6 @@
 
 <%def name="title()">${_('Grid View')} - ${_('Deals')}</%def>
 
-<%def name="head_tags()">
-    ## TODO: This should be fixed in bootstrap
-    <style type="text/css" >
-        .desc.active {
-            background: url("/custom/img/to-top-black.png") no-repeat scroll right top transparent;
-        }
-        .show-investors a {
-            text-decoration: none;
-            color: white;
-        }
-    </style>
-</%def>
-
 ## Start of content
 
 <%

@@ -2,17 +2,6 @@
 
 <%def name="title()">${_('Version History')}</%def>
 
-<%def name="head_tags()">
-<style type="text/css">
-    .deal-history-links {
-        text-align: right !important;
-    }
-    tr.active {
-        font-weight: bold;
-    }
-</style>
-</%def>
-
 <div class="container">
     <div class="content no-border">
         
@@ -34,7 +23,7 @@
             <tbody>
                 % for v in versions:
                     % if v['version'] == activeVersion:
-                    <tr class="active">
+                    <tr class="deal-history-active">
                     % elif v['statusId'] == 1:
                     <tr class="pending">
                     % else:

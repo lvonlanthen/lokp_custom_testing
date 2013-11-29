@@ -6,42 +6,6 @@
 
 <%def name="title()">${_('Version Compare')}</%def>
 
-<%def name="head_tags()">
-<style type="text/css" >
-    .change .icon-exclamation-sign {
-        margin-top: 0.3em;
-    }
-    .change .accordion-toggle h5 {
-        color: #CB820E;
-    }
-    .taggroup-content {
-        padding-left: 20px;
-        padding-top: 10px;
-    }
-    .deal-moderate-content .accordion-group {
-        margin-bottom: 0;
-    }
-    /* http://stackoverflow.com/a/14004830/841644 */
-    .deal-moderate-col {
-        margin-bottom: -99999px;
-        padding-bottom: 99999px;
-    }
-    .deal-moderate-col-wrap {  
-        overflow: hidden;   
-    }
-    .deal-moderate-button {
-        cursor: pointer !important;
-    }
-    .alert-missing-mandatory-keys {
-        margin-top: 10px;
-        margin-bottom: 0;
-    }
-    .moderate-form {
-        margin-top: 20px;
-    }
-</style>
-</%def>
-
 <div class="container deal-moderate-content">
     <div class="content no-border">
         

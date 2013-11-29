@@ -2,17 +2,6 @@
 
 <%def name="title()">${_('FAQ')}</%def>
 
-<%def name="head_tags()">
-<style type="text/css" >
-    ul.links {
-        margin: 20px 0;
-    }
-    ul.links li {
-        line-height: 1.8em;
-    }
-</style>
-</%def>
-
 <%
     from lmkp.views.form_config import getCategoryList
     cList = getCategoryList(request, 'activities')

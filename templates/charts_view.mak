@@ -2,14 +2,6 @@
 
 <%def name="title()">Charts View</%def>
 
-<%def name="head_tags()">
-<style type="text/css" >
-    .chartGalleryDescription {
-        margin-top: 1em;
-    }
-</style>
-</%def>
-
 <div class="container">
     <div class="content no-border">
 
