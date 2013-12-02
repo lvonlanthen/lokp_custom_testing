@@ -161,12 +161,12 @@
         <i class="icon-time"></i>&nbsp;${_('History')}
     </a>
     % if request.user and 'id' in cstruct:
-        &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='form', uid=cstruct['id'])}">
+        &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='form', uid=cstruct['id'], _query=(('v', cstruct['version']),))}">
             <i class="icon-pencil"></i>&nbsp;${editLinkText}
         </a>
         % if isModerator and statusId == '1':
             &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='review', uid=cstruct['id'])}">
-                <i class="icon-check"></i>&nbsp;${_('Review this version')}
+                <i class="icon-check"></i>&nbsp;${_('Review')}
             </a>
         % endif
     % endif

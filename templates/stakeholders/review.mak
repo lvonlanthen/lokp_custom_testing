@@ -179,6 +179,12 @@
                 <p>${reviewableMessage}</p>
             </div>
         % endif
+        % if recalculated:
+            <div class="alert alert-info alert-block alert-recalculated-version">
+                <p><strong>${_('Notice')}</strong></p>
+                <p>${_('The two versions are not based directly on each other. The new version is calculated to display only the changes made to this version. Approving it will create a new version.')}</p>
+            </div>
+        % endif
         <div class="row-fluid comments">
             <div class="span12">
                 <div class="span5">

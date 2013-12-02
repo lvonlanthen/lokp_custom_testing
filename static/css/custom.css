@@ -2240,7 +2240,8 @@ ul.links li {
 .deal-moderate-button {
     cursor: pointer !important;
 }
-.alert-missing-mandatory-keys {
+.alert-missing-mandatory-keys,
+.alert-recalculated-version {
     margin-top: 10px;
     margin-bottom: 0;
 }
