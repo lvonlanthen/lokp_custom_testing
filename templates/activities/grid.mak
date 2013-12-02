@@ -6,6 +6,7 @@
 
 <%
     import urllib
+    import datetime
     from lmkp.views.views import getQueryString
 
     # Get the keys and their translation
@@ -68,6 +69,14 @@
             ${_('is involved.')}<br/><a href="${request.route_url('activities_read_many', output='html')}">${_('Remove this filter and show all Deals')}</a>.
         </div>
         % endif
+        
+        ## Status Filter
+        % if statusfilter:
+        <div class="alert alert-info">
+            <i class="icon-filter"></i>&nbsp;
+            <strong>${_('Status Filter')}</strong>: ${_('You are only seeing Deals with the following status:')} ${statusfilter}
+        </div>
+        % endif
 
         ## Tabs
         <ul class="nav nav-tabs table_tabs">
@@ -94,9 +103,20 @@
                 % else:
                     <li>
                 % endif
-                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir'])}">${t[1]}</a>
+                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${t[1]}</a>
                 </li>
             % endfor
+            % if isModerator:
+                % if 'status=pending' in request.path_qs:
+                    <li class="grid-show-pending active pointer">
+                        <a href="${getQueryString(request.url, remove=['status'])}">${_('Show all')}</a>
+                    </li>
+                % else:
+                    <li class="grid-show-pending">
+                        <a href="${getQueryString(request.url, add=[('status', 'pending')])}">${_('Show only pending')}</a>
+                    </li>
+                % endif
+            % endif
         </ul>
 
         ## Table
@@ -127,18 +147,35 @@
                         ## The table headers
                         <tr>
                             <th>${_('Deal ID')}</th>
+                            <th>
+                                ${_('Last Change')}
+                                <a href="${getQueryString(request.url, add=[('order_by', 'timestamp'), ('dir', 'asc')])}">
+                                    <div class="desc
+                                         % if 'order_by=timestamp' in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
+                                            active
+                                         % endif
+                                         ">&nbsp;</div>
+                                </a>
+                                <a href="${getQueryString(request.url, add=[('order_by', 'timestamp'), ('dir', 'desc')])}">
+                                <div class="asc
+                                     % if ('order_by=timestamp' in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs) or 'order_by=' not in request.path_qs:
+                                        active
+                                     % endif
+                                     ">&nbsp;</div>
+                                </a>
+                            </th>
                             % for k in keys:
                                 <th>${k[1]}
-                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
+                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
                                         <div class="desc
-                                             % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs:
+                                             % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
                                                 active
                                              % endif
                                              ">&nbsp;</div>
                                     </a>
-                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
+                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
                                     <div class="asc
-                                         % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
+                                         % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs:
                                             active
                                          % endif
                                          ">&nbsp;</div>
@@ -158,7 +195,9 @@
                                 if 'status_id' in d and d['status_id'] == 1:
                                     pending = True
 
-                                id = d['id'] if 'id' in d else 'Unknown id'
+                                id = d['id'] if 'id' in d else _('Unknown')
+                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M') 
+                                    if 'timestamp' in d else _('Unknown'))
                                 values = []
                                 translatedkeys = []
                                 for k in keys:
@@ -181,6 +220,7 @@
                                         ${id[:6]}
                                     </a>
                                 </td>
+                                <td>${timestamp}</td>
                                 % for v in values:
                                     <td>${v}</td>
                                 % endfor

@@ -679,12 +679,12 @@ table.table-self {
 }
 
 .desc {
-	background: url("../img/to-top-gray.png") right bottom no-repeat;
+	background: url("../img/to-top-gray.png") right top no-repeat;
 	margin-top: -10px;
 }
 
 .desc:hover {
-	background: url("../img/to-top-black.png") right bottom no-repeat;
+	background: url("../img/to-top-black.png") right top no-repeat;
 }
 
 .deal-editor-menu-bar {
@@ -2188,6 +2188,12 @@ tr.pending {
 .show-investors a {
     text-decoration: none;
     color: white;
+}
+.grid-show-pending {
+    float: right !important;
+}
+.grid-show-pending.active > a {
+    cursor: pointer !important;
 }
 
 /* About */
