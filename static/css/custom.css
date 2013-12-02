@@ -679,12 +679,12 @@ table.table-self {
 }
 
 .desc {
-	background: url("../img/to-top-gray.png") right bottom no-repeat;
+	background: url("../img/to-top-gray.png") right top no-repeat;
 	margin-top: -10px;
 }
 
 .desc:hover {
-	background: url("../img/to-top-black.png") right bottom no-repeat;
+	background: url("../img/to-top-black.png") right top no-repeat;
 }
 
 .deal-editor-menu-bar {

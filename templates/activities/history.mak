@@ -15,7 +15,7 @@
                 <tr>
                     <th></th>
                     <th>${_('Status')}</th>
-                    <th>${_('Timestamp')}</th>
+                    <th>${_('Last Change')}</th>
                     <th>${_('Username')}</th>
                     <th>${_('Version')}</th>
                 </tr>

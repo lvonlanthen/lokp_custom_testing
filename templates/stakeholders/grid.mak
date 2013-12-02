@@ -6,6 +6,7 @@
 
 <%
     import urllib
+    import datetime
     from lmkp.views.views import getQueryString
 
     # Get the keys and their translation
@@ -126,18 +127,35 @@
                         ## The table headers
                         <tr>
                             <th>${_('Investor ID')}</th>
+                            <th>
+                                ${_('Last Change')}
+                                <a href="${getQueryString(request.url, add=[('order_by', 'timestamp'), ('dir', 'asc')])}">
+                                    <div class="desc
+                                         % if 'order_by=timestamp' in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
+                                            active
+                                         % endif
+                                         ">&nbsp;</div>
+                                </a>
+                                <a href="${getQueryString(request.url, add=[('order_by', 'timestamp'), ('dir', 'desc')])}">
+                                <div class="asc
+                                     % if ('order_by=timestamp' in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs) or 'order_by=' not in request.path_qs:
+                                        active
+                                     % endif
+                                     ">&nbsp;</div>
+                                </a>
+                            </th>
                             % for k in keys:
                                 <th>${k[1]}
-                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
+                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
                                         <div class="desc
-                                             % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs:
+                                             % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
                                                 active
                                              % endif
                                              ">&nbsp;</div>
                                     </a>
-                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
+                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
                                     <div class="asc
-                                         % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
+                                         % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs:
                                             active
                                          % endif
                                          ">&nbsp;</div>
@@ -157,7 +175,9 @@
                                 if 'status_id' in d and d['status_id'] == 1:
                                     pending = True
 
-                                id = d['id'] if 'id' in d else 'Unknown id'
+                                id = d['id'] if 'id' in d else _('Unknown')
+                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M') 
+                                    if 'timestamp' in d else _('Unknown'))
                                 values = []
                                 translatedkeys = []
                                 for k in keys:
@@ -180,6 +200,7 @@
                                         ${id[:6]}
                                     </a>
                                 </td>
+                                <td>${timestamp}</td>
                                 % for v in values:
                                     <td>${v}</td>
                                 % endfor
