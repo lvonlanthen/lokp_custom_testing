@@ -115,7 +115,8 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                             [
                                                 request.route_url('grid_view'),
                                                 request.route_url('activities_read_many', output='html'),
-                                                request.route_url('stakeholders_read_many', output='html')
+                                                request.route_url('stakeholders_read_many', output='html'),
+                                                request.route_url('stakeholders_byactivities_all', output='html')
                                             ],
                                             'icon-align-justify',
                                             _('Grid')
@@ -136,7 +137,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                             class="active grid"
                                         % endif
                                         >
-                                        <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['bbox', 'order_by', 'dir'])}">
+                                        <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['bbox', 'order_by', 'dir', 'status'])}">
                                             <i class="${t[1]}"></i>&nbsp;&nbsp;${t[2]}
                                         </a>
                                     </li>

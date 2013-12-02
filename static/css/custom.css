@@ -2189,6 +2189,12 @@ tr.pending {
     text-decoration: none;
     color: white;
 }
+.grid-show-pending {
+    float: right !important;
+}
+.grid-show-pending.active > a {
+    cursor: pointer !important;
+}
 
 /* About */
 ul.about {

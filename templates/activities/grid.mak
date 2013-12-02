@@ -69,6 +69,14 @@
             ${_('is involved.')}<br/><a href="${request.route_url('activities_read_many', output='html')}">${_('Remove this filter and show all Deals')}</a>.
         </div>
         % endif
+        
+        ## Status Filter
+        % if statusfilter:
+        <div class="alert alert-info">
+            <i class="icon-filter"></i>&nbsp;
+            <strong>${_('Status Filter')}</strong>: ${_('You are only seeing Deals with the following status:')} ${statusfilter}
+        </div>
+        % endif
 
         ## Tabs
         <ul class="nav nav-tabs table_tabs">
@@ -95,9 +103,20 @@
                 % else:
                     <li>
                 % endif
-                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir'])}">${t[1]}</a>
+                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${t[1]}</a>
                 </li>
             % endfor
+            % if isModerator:
+                % if 'status=pending' in request.path_qs:
+                    <li class="grid-show-pending active pointer">
+                        <a href="${getQueryString(request.url, remove=['status'])}">${_('Show all')}</a>
+                    </li>
+                % else:
+                    <li class="grid-show-pending">
+                        <a href="${getQueryString(request.url, add=[('status', 'pending')])}">${_('Show only pending')}</a>
+                    </li>
+                % endif
+            % endif
         </ul>
 
         ## Table

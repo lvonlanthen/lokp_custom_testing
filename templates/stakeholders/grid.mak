@@ -70,6 +70,14 @@
         </div>
         % endif
 
+        ## Status Filter
+        % if statusfilter:
+        <div class="alert alert-info">
+            <i class="icon-filter"></i>&nbsp;
+            <strong>${_('Status Filter')}</strong>: ${_('You are only seeing Investors with the following status:')} ${statusfilter}
+        </div>
+        % endif
+        
         ## Tabs
         <ul class="nav nav-tabs table_tabs">
             <%
@@ -84,7 +92,8 @@
                     ], [
                         [
                             request.route_url('stakeholders_byactivities_all', output='html'),
-                            request.route_url('stakeholders_byactivities', output='html', uids=a_uids)
+                            request.route_url('stakeholders_byactivities', output='html', uids=a_uids),
+                            request.route_url('stakeholders_read_many', output='html')
                         ], _('Investors')
                     ]
                 ]
@@ -95,9 +104,20 @@
                 % else:
                     <li>
                 % endif
-                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir'])}">${t[1]}</a>
+                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${t[1]}</a>
                 </li>
             % endfor
+            % if isModerator:
+                % if 'status=pending' in request.path_qs:
+                    <li class="grid-show-pending active pointer">
+                        <a href="${getQueryString(request.route_url('stakeholders_byactivities_all', output='html'), remove=['status'])}">${_('Show all')}</a>
+                    </li>
+                % else:
+                    <li class="grid-show-pending">
+                        <a href="${getQueryString(request.route_url('stakeholders_read_many', output='html'), add=[('status', 'pending')])}">${_('Show only pending')}</a>
+                    </li>
+                % endif
+            % endif
         </ul>
 
         ## Table
