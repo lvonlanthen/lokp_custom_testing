@@ -10,6 +10,7 @@ from lmkp.views.profile import _getCurrentProfileExtent
 from lmkp.views.views import getOverviewKeys
 from lmkp.views.views import getFilterValuesForKey
 from lmkp.views.views import getMapSymbolKeys
+from lmkp.views.config import form_geomtaggroups
 import json
 
 aKeys, shKeys = getOverviewKeys(request)
@@ -19,12 +20,15 @@ mapCriteria = mapSymbols[0]
 mapSymbolValues = [v[0] for v in sorted(getFilterValuesForKey(request,
     predefinedType='a', predefinedKey=mapCriteria[1]),
     key=lambda value: value[1])]
+geomTaggroups = form_geomtaggroups(request)
 %>
     var profilePolygon = ${extent | n};
     var aKeys = ${json.dumps(aKeys) | n};
     var shKeys = ${json.dumps(shKeys) | n};
     var mapValues = ${json.dumps(mapSymbolValues) | n};
     var mapCriteria = ${json.dumps(mapCriteria) | n};
+    var areaNames = ${json.dumps(geomTaggroups['mainkeys']) | n};
+    var allMapCriteria = ${json.dumps(mapSymbols) | n};
 
     ## JS Translation
     var tForDeals = '${_("Deal")}';
@@ -37,7 +41,6 @@ mapSymbolValues = [v[0] for v in sorted(getFilterValuesForKey(request,
     var tForMoredeals = '${_(" more deals ...")}';
     var tForNodealselected = '${_("No deal selected.")}';
     var tForSelecteddeals = '${_("Selected Deals")}';
-    var tForDealsGroupedBy = '${_("The deals are grouped by")}';
 
 </script>
 </%def>
@@ -69,6 +72,31 @@ mapSymbolValues = [v[0] for v in sorted(getFilterValuesForKey(request,
         <input name="q" id="search" class="search-query" placeholder="${_('search location')}" />
         <input value="Search" id="search-submit" />
     </form><br/>
+    
+    <!-- Deals -->
+    <div class="map-menu-deals">
+        <h6 class="map-deals"><b class="caret"></b>${_('Deals')}</h6>
+        <div class="map-deals-content">
+            <ul>
+                <li>
+                    <div class="checkbox-modified-small">
+                        <input class="input-top" type="checkbox" id="activityLayerToggle" checked="checked">
+                        <label for="activityLayerToggle"></label>
+                    </div>
+                    
+                    <div id="map-deals-symbolization" class="dropdown context-layers-description">
+                        ${_('Loading ...')}
+                    </div>
+                    <ul id="map-points-list">
+                        <!-- Placeholder for map points -->
+                    </ul>
+                </li>
+            </ul>
+            <ul id="map-areas-list">
+                <!-- Placeholder for area entries -->
+            </ul>
+        </div>
+    </div>
 
     <!-- Base layers -->
     <div class="map-menu-base-layers">
@@ -94,16 +122,6 @@ mapSymbolValues = [v[0] for v in sorted(getFilterValuesForKey(request,
         <div class="context-layers-content">
             <ul id="context-layers-list">
                 <!--  Placeholder for context layers entries -->
-            </ul>
-        </div>
-    </div>
-
-    <!-- Map legend -->
-    <div class="map-menu-legend">
-        <h6 class="map-legend"><b class="caret"></b>${_('Map Legend')}</h6>
-        <div class="map-legend-content">
-            <ul id="map-legend-list">
-                <!--  Placeholder for map legend entries -->
             </ul>
         </div>
     </div>
