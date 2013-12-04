@@ -1,4 +1,4 @@
-<%inherit file="lmkp:customization/lo/templates/base.mak" />
+<%inherit file="lmkp:customization/testing/templates/base.mak" />
 
 <%def name="title()">${_('Map View')}</%def>
 
@@ -45,7 +45,7 @@ mapSymbolValues = [v[0] for v in sorted(getFilterValuesForKey(request,
 ## Start of content
 
 ## Filter
-<%include file="lmkp:customization/lo/templates/parts/filter.mak" />
+<%include file="lmkp:customization/testing/templates/parts/filter.mak" />
 
 <!-- content -->
 <div id="googleMapFull">

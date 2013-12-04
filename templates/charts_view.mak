@@ -1,14 +1,6 @@
-<%inherit file="lmkp:customization/lo/templates/base.mak" />
+<%inherit file="lmkp:customization/testing/templates/base.mak" />
 
 <%def name="title()">Charts View</%def>
-
-<%def name="head_tags()">
-<style type="text/css" >
-    .chartGalleryDescription {
-        margin-top: 1em;
-    }
-</style>
-</%def>
 
 <div class="container">
     <div class="content no-border">

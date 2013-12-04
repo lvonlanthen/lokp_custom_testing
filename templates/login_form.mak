@@ -1,9 +1,8 @@
-<%inherit file="lmkp:customization/lo/templates/base.mak" />
+<%inherit file="lmkp:customization/testing/templates/base.mak" />
 
 <%def name="title()">${_('Login')}</%def>
 
 <%def name="head_tags()">
-    ## TODO: This should be fixed in bootstrap
     <style type="text/css" >
         p.login-info {
             margin-left: 30px;

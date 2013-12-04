@@ -68,140 +68,6 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
 
         <script type="text/javascript" src="/custom/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 
-        <style type="text/css">
-            .header-select {
-                border: 0px;
-                color: black;
-                font-size: 0.8em;
-                height: 22px;
-                width: 100px;
-            }
-            .logouttemp {
-                color: black;
-                text-decoration: underline;
-            }
-            .desired-form-field:after {
-                content: '*';
-                font-weight: bold;
-                color: #3a87ad;
-            }
-            .required-form-field:after {
-                content: '*';
-                font-weight: bold;
-                color: #b94a48;
-            }
-            .sequencestyle, #coordinates-div {
-                background-color: #F7F7F7;
-                border: 1px solid silver;
-                color: #333333;
-            }
-            .sequence-close {
-                color: #8B1A1A;
-                opacity: 0.5;
-            }
-            .filter_area_openclose {
-                cursor: pointer;
-            }
-            #new-filter-value-internal {
-                width: 178px;
-            }
-            .input-append #new-filter-value {
-                width: 147px;
-            }
-            .new-filter .dropdown-menu {
-                max-height: 300px;
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
-            #new-filter-value-box button {
-                margin-right: 0;
-            }
-            .select_btn_operator_right {
-                margin-right: 3px;
-            }
-            .filterCategory {
-                font-weight: bold;
-                padding: 5px 0 5px 10px;
-            }
-            #new-filter-key {
-                overflow: hidden;
-                width: 108px;
-            }
-            #new-filter-operator-display {
-                width: 40px;
-                overflow: hidden;
-            }
-            .filter_area input:focus {
-                border: medium none;
-                box-shadow: none;
-            }
-            [class*="filter-variable"] {
-                width: 425px;
-            }
-            div.grid-area div.row-fluid div.span5 h5 {
-                font-weight: normal !important;
-            }
-            div.grid-area div.row-fluid:first-child div.span5 h5 {
-                font-weight: bold !important;
-            }
-            .form-button-visited {
-                float: right;
-                margin-left: 5px;
-            }
-            .stakeholder-editor-menu-bar-embedded {
-                position: absolute;
-                right: 5%;
-                top: 5%;
-            }
-            .confirmButtons {
-                margin-right: 5px;
-            }
-            .file-upload-button {
-                position: relative;
-                right: 0;
-                top: 0;
-            }
-            .fileDisplay {
-                margin-bottom: 5px;
-            }
-            .fileNameField input {
-                border: 1px solid #A4A4A4;
-                box-shadow: 0 0 3px #D8D8D8 inset;
-                color: #585858 !important;
-                outline: medium none;
-                height: 16px;
-                margin-right: 10px;
-            }
-            .fileNameField input:focus {
-                border: 1px solid #A4A4A4;
-                box-shadow: 0 0 3px #D8D8D8 inset;
-            }
-            .fileNameField a, .fileNameField button {
-                margin: 0 4px 8px 0;
-            }
-            .uploadButton {
-                margin-bottom: 15px;
-            }
-            .fileUploadTitle {
-                padding-top: 0;
-            }
-            .fileInput {
-                width: 300px !important;
-            }
-            #coordinates-div {
-                padding: 10px;
-            }
-            .show-investors {
-                height: auto;
-            }
-            .blacklink,
-            .blacklink:hover {
-                color: black;
-                text-decoration: underline;
-            }
-
-        </style>
-
         ## Include the head tags of the child template if available.
         <%
             try:
@@ -249,7 +115,8 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                             [
                                                 request.route_url('grid_view'),
                                                 request.route_url('activities_read_many', output='html'),
-                                                request.route_url('stakeholders_read_many', output='html')
+                                                request.route_url('stakeholders_read_many', output='html'),
+                                                request.route_url('stakeholders_byactivities_all', output='html')
                                             ],
                                             'icon-align-justify',
                                             _('Grid')
@@ -270,7 +137,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                             class="active grid"
                                         % endif
                                         >
-                                        <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['bbox', 'order_by', 'dir'])}">
+                                        <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['bbox', 'order_by', 'dir', 'status'])}">
                                             <i class="${t[1]}"></i>&nbsp;&nbsp;${t[2]}
                                         </a>
                                     </li>
@@ -278,7 +145,6 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
 
                                 ## If the user is logged in, show link to add a new deal
                                 % if request.user:
-                                    <li></li>
                                     <li
                                         % if request.current_route_url() == request.route_url('activities_read_many', output='form'):
                                             class="active grid"
@@ -365,19 +231,6 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                 </div>
 
                 ## End of Header
-
-                ## Show session messages if available
-                % if request.session.peek_flash():
-                <div class="row-fluid">
-                    <div class="alert alert-block" style="margin-bottom:0;">
-                        % for message in request.session.pop_flash():
-                            <p>
-                                <% context.write(message) %>
-                            </p>
-                        % endfor
-                    </div>
-                </div>
-                % endif
 
                 ## Content
 

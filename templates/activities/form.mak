@@ -1,6 +1,6 @@
-<%inherit file="lmkp:customization/lo/templates/base.mak" />
+<%inherit file="lmkp:customization/testing/templates/base.mak" />
 
-<%def name="title()">Deal Editor</%def>
+<%def name="title()">${_('Deal Editor')}</%def>
 
 <%def name="head_tags()">
     <link rel="stylesheet" href="/static/form.css" type="text/css" />
@@ -23,6 +23,10 @@
 
 <div class="container deal-edit-content">
     <div class="content no-border">
+        
+        ## Session messages
+        <%include file="lmkp:templates/parts/sessionmessage.mak"/>
+        
         ${form | n}
     </div>
 </div>

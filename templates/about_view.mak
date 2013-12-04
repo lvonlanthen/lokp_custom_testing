@@ -1,21 +1,8 @@
-<%inherit file="lmkp:customization/lo/templates/base.mak" />
+<%inherit file="lmkp:customization/testing/templates/base.mak" />
 
 <%def name="title()">${_('About')}</%def>
 
 <%def name="head_tags()">
-<style type="text/css" >
-    ul.about {
-        list-style-type: disc;
-        margin: 0 25px 15px;
-    }
-    ul.about li {
-        margin: 5px 0;
-    }
-    .introvideo {
-        margin-top: 40px;
-    }
-</style>
-
 <script type="text/javascript"> <!--
     function UnCryptMailto( s )
     {
