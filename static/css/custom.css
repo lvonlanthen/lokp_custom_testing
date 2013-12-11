@@ -1021,7 +1021,7 @@ p.deal-detail {
 }
 
 .map-menu-base-layers h6 {
-    color: #424242; 
+    color: #424242;
 }
 
 .base-layers,
@@ -1034,7 +1034,9 @@ p.deal-detail {
 	display: none;
 }
 
-.context-layers-content {
+.context-layers-content,
+.map-deals-content,
+.base-layers-content {
 	margin-bottom: 15px;
 }
 
@@ -1090,8 +1092,8 @@ p.deal-detail {
 	margin: -24px 0 4px 20px;
 }
 #map-points-list {
-    margin-bottom: 15px;
-    margin-left: 5px;
+    margin-bottom: 10px;
+    margin-left: 15px;
 }
 
 
@@ -2110,12 +2112,13 @@ h3.form-below-toolbar {
 .legendEntry {
     margin-bottom: 2px !important;
     margin-top: 2px;
+    line-height: 15px;
 }
 .vectorLegendSymbol {
     float: left;
-    height: 20px;
+    height: 14px;
     margin-right: 5px;
-    width: 20px;
+    width: 14px;
 }
 .vectorLegendSymbolSmallInside {
     float: left;
@@ -2131,9 +2134,6 @@ h3.form-below-toolbar {
 .context-layers {
     margin-bottom: 0;
 }
-.base-layers-content {
-    margin-bottom: 15px;
-}
 .map-menu-deals {
     cursor: pointer;
 }
@@ -2143,6 +2143,23 @@ h3.form-below-toolbar {
 }
 #mapModal h3 {
     padding-top: 0;
+}
+#form-map-menu-content .accordion-body {
+    margin-top: 0;
+}
+#form-map-menu-content h6.map-deals {
+    margin-top: 0;
+}
+#form-map-menu-content #map-points-list {
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+#form-map-menu-content .contentLayersMainCheckbox {
+    margin-bottom: -6px;
+}
+#form-map-menu-content .icon-chevron-down,
+#form-map-menu-content .icon-chevron-right {
+    float: none;
 }
 
 /* Filter */

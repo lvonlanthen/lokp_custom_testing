@@ -75,7 +75,10 @@ geomTaggroups = form_geomtaggroups(request)
     
     <!-- Deals -->
     <div class="map-menu-deals">
-        <h6 class="map-deals"><b class="caret"></b>${_('Deals')}</h6>
+        <h6 class="map-deals">
+            <i class="icon-chevron-down"></i>
+            ${_('Deals')}
+        </h6>
         <div class="map-deals-content">
             <ul>
                 <li>
@@ -100,7 +103,10 @@ geomTaggroups = form_geomtaggroups(request)
 
     <!-- Base layers -->
     <div class="map-menu-base-layers">
-        <h6 class="base-layers"><b class="caret"></b>${_('Base layers')}</h6>
+        <h6 class="base-layers">
+            <i class="icon-chevron-right"></i>
+            ${_('Base layers')}
+        </h6>
         <div class="base-layers-content">
             <ul>
                 <li>
@@ -118,7 +124,10 @@ geomTaggroups = form_geomtaggroups(request)
 
     <!-- Context layers -->
     <div class="map-menu-context-layers">
-        <h6 class="context-layers"><b class="caret"></b>${_('Context layers')}</h6>
+        <h6 class="context-layers">
+            <i class="icon-chevron-right"></i>
+            ${_('Context layers')}
+        </h6>
         <div class="context-layers-content">
             <ul id="context-layers-list">
                 <!--  Placeholder for context layers entries -->

@@ -33,6 +33,10 @@
 
 <%def name="bottom_tags()">
     <script type="text/javascript">
+        
+        var identifier = '${uid}';
+        var version = ${version};
+        
         if (deform) {
             deform.load();
         }
