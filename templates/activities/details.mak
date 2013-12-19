@@ -46,6 +46,11 @@
 
 <%def name="bottom_tags()">
 
+<script type="text/javascript">
+    var identifier = '${uid}';
+    var version = ${version};
+</script>
+
 <%include file="lmkp:templates/map/mapform.mak" args="readonly=True" />
 
 % if site_key is not None:

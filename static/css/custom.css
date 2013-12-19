@@ -1016,9 +1016,12 @@ p.deal-detail {
 	line-height: 1.4em;
 }
 
+.map-menu-deals h6 {
+    margin-top: 20px;
+}
+
 .map-menu-base-layers h6 {
-	margin-top: 30px;
-    color: #424242; 
+    color: #424242;
 }
 
 .base-layers,
@@ -1031,7 +1034,9 @@ p.deal-detail {
 	display: none;
 }
 
-.context-layers-content {
+.context-layers-content,
+.map-deals-content,
+.base-layers-content {
 	margin-bottom: 15px;
 }
 
@@ -1078,12 +1083,17 @@ p.deal-detail {
 }
 
 .map-menu label,
-.map-menu-context-layers {
+.map-menu-context-layers,
+.map-menu-deals {
 	font-size: 0.8em;
 }
 
 .context-layers-description {
 	margin: -24px 0 4px 20px;
+}
+#map-points-list {
+    margin-bottom: 10px;
+    margin-left: 15px;
 }
 
 
@@ -2017,6 +2027,9 @@ div.grid-area div.row-fluid:first-child div.span5 h5 {
 .form-map-compare-legend div.span6 {
     min-height: 0;
 }
+.form-map-compare-legend li {
+    list-style: none;
+}
 
 .compare-legend {
     padding-left: 1em;
@@ -2100,31 +2113,32 @@ h3.form-below-toolbar {
 
 /* Map */
 .legendEntry {
-    font-size: 0.8em;
     margin-bottom: 2px !important;
     margin-top: 2px;
-}
-.legendExplanation {
-    font-size: 0.8em;
-    margin-bottom: 5px;
+    line-height: 15px;
 }
 .vectorLegendSymbol {
     float: left;
-    height: 20px;
+    height: 14px;
     margin-right: 5px;
-    width: 20px;
+    width: 14px;
+}
+.vectorLegendSymbolSmallInside {
+    float: left;
+    height: 10px;
+    width: 10px;
+}
+.vectorLegendSymbolSmall {
+    float: left;
+    height: 10px;
+    margin: 3px 5px 0 0;
+    width: 10px;
 }
 .context-layers {
     margin-bottom: 0;
 }
-.base-layers-content {
-    margin-bottom: 15px;
-}
-.map-legend {
+.map-menu-deals {
     cursor: pointer;
-}
-.map-legend-content {
-    margin-bottom: 15px;
 }
 #deal-shortid-span a {
     color: inherit;
@@ -2132,6 +2146,23 @@ h3.form-below-toolbar {
 }
 #mapModal h3 {
     padding-top: 0;
+}
+#form-map-menu-content .accordion-body {
+    margin-top: 0;
+}
+#form-map-menu-content h6.map-deals {
+    margin-top: 0;
+}
+#form-map-menu-content #map-points-list {
+    margin-bottom: 5px;
+    margin-left: 20px;
+}
+#form-map-menu-content .contentLayersMainCheckbox {
+    margin-bottom: -6px;
+}
+#form-map-menu-content .icon-chevron-down,
+#form-map-menu-content .icon-chevron-right {
+    float: none;
 }
 
 /* Filter */
@@ -2173,6 +2204,16 @@ h3.form-below-toolbar {
 }
 [class*="filter-variable"] {
     width: 425px;
+}
+.map-point-symbol-dropdown,
+.map-point-symbol-dropdown:hover {
+    margin: 0;
+}
+.map-point-symbol-drodpown-menu {
+    padding-left: 0 !important;
+}
+.map-point-symbol-drodpown-menu li {
+    margin-bottom: 0;
 }
 
 /* Grid */

@@ -3,7 +3,7 @@
 <%def name="title()">${_('About')}</%def>
 
 <%def name="head_tags()">
-<script type="text/javascript"> <!--
+<script type="text/javascript">
     function UnCryptMailto( s )
     {
         var n = 0;
@@ -24,7 +24,7 @@
     {
         location.href=UnCryptMailto( s );
     }
-    // --> </script>
+</script>
 </%def>
 
 <div class="container">
@@ -58,7 +58,7 @@
             ${_('Updated information on land will benefit citizens, but also governments and companies interested in sustainability.')}
         </p>
         <p>
-            ${_('If you are experiencing any technical difficulties, have questions or would like to send us feedback about how to improve user experience, please email us:')} <a href="javascript:linkTo_UnCryptMailto('nbjmup;mboe`pctfswbupszAvojcf/def/di');">land_observatory@unibe.cde.ch</a>
+            ${_('If you are experiencing any technical difficulties, have questions or would like to send us feedback about how to improve user experience, please email us:')} <a href="javascript:linkTo_UnCryptMailto('nbjmup;mboe`pctfswbupszAdef/vojcf/di');">land_observatory@cde.unibe.ch</a>
         </p>
 
         <div class="introvideo text-center">
