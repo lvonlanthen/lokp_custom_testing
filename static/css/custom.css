@@ -2027,6 +2027,9 @@ div.grid-area div.row-fluid:first-child div.span5 h5 {
 .form-map-compare-legend div.span6 {
     min-height: 0;
 }
+.form-map-compare-legend li {
+    list-style: none;
+}
 
 .compare-legend {
     padding-left: 1em;
