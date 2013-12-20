@@ -1,9 +1,6 @@
 <%
     isStakeholder = 'itemType' in cstruct and cstruct['itemType'] == 'stakeholders'
     geomChanged = cstruct['geomchange'] if 'geomchange' in cstruct else False
-    
-    print "===="
-    print geomChanged
 
     from pyramid.security import ACLAllowed
     from pyramid.security import has_permission

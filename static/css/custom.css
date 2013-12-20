@@ -1424,14 +1424,6 @@ background-color: #CB820E;
 	background-color: #A3A708;
 }
 
-.deal-moderate-content .comments { 
-	margin-top: 20px;
-}
-
-.deal-moderate-content .comments .input-style {
-	width: 97%;
-}
-
 /*	footer   */
 
 .footer {
@@ -1965,6 +1957,31 @@ div.grid-area div.row-fluid:first-child div.span5 h5 {
 }
 .fileInput {
     width: 300px !important;
+}
+.deal-bottom-toolbar {
+    margin-top: 50px;
+}
+
+/* Comments */
+.juvia-topic > h3 {
+    font-size: 14px;
+    padding-top: 0;
+}
+.juvia-preview > h4 {
+    font-size: 14px;
+    padding-top: 15px;
+}
+.juvia-no-comments {
+    margin-bottom: 20px;
+}
+.comments-div {
+    margin-top: 30px;
+}
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: -10px;
 }
 
 /* Map / Map Form */

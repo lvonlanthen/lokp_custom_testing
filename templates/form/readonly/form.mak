@@ -39,7 +39,7 @@
 
 <div class="row-fluid">
     <div class="span9 text-right">
-        ${editToolbar(True)}
+        ${editToolbar()}
     </div>
 </div>
 
@@ -164,27 +164,24 @@
     ${child.render_template(field.widget.readonly_item_template)}
 % endfor
 
-<div class="span12">
-    ${editToolbar(False)}
+<div class="row-fluid">
+    <div class="span9 text-right deal-bottom-toolbar">
+        ${editToolbar()}
+    </div>
 </div>
 
-<%def name="editToolbar(top)">
-% if top is False:
-    <p>&nbsp;</p>
-% endif
-<div class="row-fluid">
-    <a href="${request.route_url(routeName, output='history', uid=cstruct['id'])}">
-        <i class="icon-time"></i>&nbsp;${_('History')}
+<%def name="editToolbar()">
+<a href="${request.route_url(routeName, output='history', uid=cstruct['id'])}">
+    <i class="icon-time"></i>&nbsp;${_('History')}
+</a>
+% if request.user and 'id' in cstruct:
+    &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='form', uid=cstruct['id'], _query=(('v', cstruct['version']),))}">
+        <i class="icon-pencil"></i>&nbsp;${editLinkText}
     </a>
-    % if request.user and 'id' in cstruct:
-        &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='form', uid=cstruct['id'], _query=(('v', cstruct['version']),))}">
-            <i class="icon-pencil"></i>&nbsp;${editLinkText}
+    % if isModerator and statusId == '1':
+        &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='review', uid=cstruct['id'])}">
+            <i class="icon-check"></i>&nbsp;${_('Review')}
         </a>
-        % if isModerator and statusId == '1':
-            &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='review', uid=cstruct['id'])}">
-                <i class="icon-check"></i>&nbsp;${_('Review')}
-            </a>
-        % endif
     % endif
-</div>
+% endif
 </%def>
