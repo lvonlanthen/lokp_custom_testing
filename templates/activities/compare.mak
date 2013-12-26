@@ -148,6 +148,10 @@
 <%def name="bottom_tags()">
     <%include file="lmkp:templates/map/mapform.mak" args="readonly=True, compare=True" />
     <script>
+        
+        var identifier = '${identifier}';
+        var refVersion = ${refVersion};
+        var newVersion = ${newVersion};
 
         $(document).ready(function(){
             

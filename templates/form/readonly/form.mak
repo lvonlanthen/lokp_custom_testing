@@ -6,13 +6,6 @@
     from pyramid.security import has_permission
     isModerator = isinstance(has_permission('moderate', request.context, request), ACLAllowed)
 
-    from mako.template import Template
-    from pyramid.path import AssetResolver
-    from lmkp.config import getTemplatePath
-    lmkpAssetResolver = AssetResolver('lmkp')
-    activitiesResolver = lmkpAssetResolver.resolve(getTemplatePath(request, 'parts/items/activities.mak'))
-    activitiesTemplate = Template(filename=activitiesResolver.abspath())
-    
     if isStakeholder:
         routeName = 'stakeholders_read_one'
         editLinkText = _('Edit this Investor')
@@ -46,7 +39,7 @@
 
 <div class="row-fluid">
     <div class="span9 text-right">
-        ${editToolbar(True)}
+        ${editToolbar()}
     </div>
 </div>
 
@@ -78,11 +71,57 @@
                     <div class="form-map-menu pull-right">
                         <button type="button" class="btn btn-mini pull-right form-map-menu-toggle ttip" data-close-text="<i class='icon-remove'></i>" data-toggle="tooltip" title="${_('Turn layers on and off')}"><i class="icon-cog"></i></button>
                         <div class="accordion" id="form-map-menu-content">
+                            
+                            <!-- This deal -->
+                            <div id="thisDealSection" class="map-menu-deals accordion-group">
+                                <h6 class="map-deals">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#form-map-menu-content" href="#thisLayer">
+                                        <i class="icon-chevron-down"></i>
+                                        ${_('This Deal')}
+                                    </a>
+                                </h6>
+                                <div id="thisLayer" class="accordion-body collapse in">
+                                    <ul id="map-this-areas-list">
+                                        <!-- Placeholder for area entries -->
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- All deals -->
+                            <div class="map-menu-deals accordion-group">
+                                <h6 class="map-deals">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#form-map-menu-content" href="#contentLayers">
+                                        <i class="icon-chevron-right"></i>
+                                        ${_('All Deals')}
+                                    </a>
+                                </h6>
+                                <div id="contentLayers" class="accordion-body collapse">
+                                    <ul>
+                                        <li class="contentLayersMainCheckbox">
+                                            <div class="checkbox-modified-small">
+                                                <input class="input-top" type="checkbox" id="activityLayerToggle">
+                                                <label for="activityLayerToggle"></label>
+                                            </div>
+                                            <div id="map-deals-symbolization" class="dropdown context-layers-description">
+                                                ${_('Loading ...')}
+                                            </div>
+                                            <ul id="map-points-list" class="hide">
+                                                <!-- Placeholder for map points -->
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                    <ul id="map-areas-list">
+                                        <!-- Placeholder for area entries -->
+                                    </ul>
+                                </div>
+                            </div>
+                            
                             <!-- Base layers -->
                             <div class="accordion-group">
                                 <h6>
                                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#form-map-menu-content" href="#baseLayers">
-                                        <b class="caret"></b>${_('Base layers')}
+                                        <i class="icon-chevron-right"></i>
+                                        ${_('Base layers')}
                                     </a>
                                 </h6>
                                 <div id="baseLayers" class="accordion-body collapse">
@@ -103,37 +142,14 @@
                             <div class="accordion-group">
                                 <h6>
                                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#form-map-menu-content" href="#contextLayers">
-                                        <b class="caret"></b>${_('Context layers')}
+                                        <i class="icon-chevron-right"></i>
+                                        ${_('Context layers')}
                                     </a>
                                 </h6>
                                 <div id="contextLayers" class="accordion-body collapse">
                                     <ul id="context-layers-list">
                                           <!-- Placeholder for context layers entries -->
                                     </ul>
-                                </div>
-                            </div>
-                            <!-- Activity layers -->
-                            <div class="accordion-group">
-                                <h6>
-                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#form-map-menu-content" href="#activityLayers">
-                                        <b class="caret"></b>${activitiesTemplate.render(request=request, _=_)}
-                                    </a>
-                                </h6>
-                                <div id="activityLayers" class="accordion-body collapse">
-                                    <ul>
-                                        <li>
-                                            <div class="checkbox-modified-small">
-                                                <input type="checkbox" id="activityLayerToggle" class="input-top">
-                                                <label for="activityLayerToggle"></label>
-                                            </div>
-                                            <p class="context-layers-description">
-                                                ${_('Show on map')}
-                                            </p>
-                                        </li>
-                                    </ul>
-                                    <div id="map-legend-list">
-                                        <!-- Placeholder for legend -->
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -148,27 +164,24 @@
     ${child.render_template(field.widget.readonly_item_template)}
 % endfor
 
-<div class="span12">
-    ${editToolbar(False)}
+<div class="row-fluid">
+    <div class="span9 text-right deal-bottom-toolbar">
+        ${editToolbar()}
+    </div>
 </div>
 
-<%def name="editToolbar(top)">
-% if top is False:
-    <p>&nbsp;</p>
-% endif
-<div class="row-fluid">
-    <a href="${request.route_url(routeName, output='history', uid=cstruct['id'])}">
-        <i class="icon-time"></i>&nbsp;${_('History')}
+<%def name="editToolbar()">
+<a href="${request.route_url(routeName, output='history', uid=cstruct['id'])}">
+    <i class="icon-time"></i>&nbsp;${_('History')}
+</a>
+% if request.user and 'id' in cstruct:
+    &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='form', uid=cstruct['id'], _query=(('v', cstruct['version']),))}">
+        <i class="icon-pencil"></i>&nbsp;${editLinkText}
     </a>
-    % if request.user and 'id' in cstruct:
-        &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='form', uid=cstruct['id'], _query=(('v', cstruct['version']),))}">
-            <i class="icon-pencil"></i>&nbsp;${editLinkText}
+    % if isModerator and statusId == '1':
+        &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='review', uid=cstruct['id'])}">
+            <i class="icon-check"></i>&nbsp;${_('Review')}
         </a>
-        % if isModerator and statusId == '1':
-            &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='review', uid=cstruct['id'])}">
-                <i class="icon-check"></i>&nbsp;${_('Review')}
-            </a>
-        % endif
     % endif
-</div>
+% endif
 </%def>

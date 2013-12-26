@@ -21,24 +21,20 @@
     .row-fluid [class*="span"] h5 {
         font-weight: normal;
     }
-    .juvia-topic > h3 {
-        font-size: 14px;
-    }
-    .juvia-preview > h4 {
-        font-size: 14px;
-    }
 </style>
 </%def>
 
 <div class="container">
     <div class="content no-border">
         ${form | n}
+        %if site_key is not None:
+            <div class="row-fluid">
+                <div id="comments-div" class="span9 comments-div">
+                    ${_('Loading comments ...')}
+                </div>
+            </div>
+        %endif
     </div>
-    %if site_key is not None:
-    <div id="comments-div" class="comments content no-border">
-        ${_('Loading ...')}
-    </div>
-    %endif
 </div>
 
 <%def name="bottom_tags()">
