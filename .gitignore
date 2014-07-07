@@ -1,0 +1,45 @@
+# Ignore compiled Python files
+*.pyc
+*.pyo
+
+# Ignore PyDev project files
+.project
+.pydevproject
+.settings
+
+# Ignore Netbeans project folder
+/nbproject/
+
+# Ignore Pyramid log folder
+/logs/
+
+# Ignore Application YAML configuration files
+/profiles/
+/profiles-production/
+*.yml
+
+# Ignore packages
+*.egg
+*.egg-info
+
+# Ignore JavaScript libraries
+lmkp/static/lib/
+lmkp/static/lib.tar.gz
+.pydevproject
+.project
+
+# Ignore configuration files
+*.ini
+
+# Ignore all customization folders except the sample folder
+lmkp/customization/*
+!lmkp/customization/sample/
+
+# Ignore generate JSON files
+activities.json
+stakeholders.json
+# Ignore LMKP egg
+LMKP.egg-info/
+
+# Ignore documentation builds
+/docs/_build/*
