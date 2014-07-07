@@ -9,3 +9,5 @@ def doLogin(testcase):
     form['password'] = PASSWORD
     form.submit('form.submitted')
 
+def getStatusFromItemJSON(json):
+    return json['data'][0]['status']

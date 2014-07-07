@@ -52,4 +52,84 @@ class ActivityCreateTests(unittest.TestCase):
         json = getReadManyActivities(self, 'json')
         self.assertEqual(json['total'], 1)
     
+
+@pytest.mark.usefixtures("db_session")
+class ActivityModerateTests(unittest.TestCase):
+
+    def setUp(self):
+        settings = get_appsettings(CONFIG_FILE)
+        app = main({}, settings=settings)
+        self.testapp = TestApp(app)
     
+    def test_new_activities_can_be_approved(self):
+        """
+        New Activities with all mandatory keys can be approved.
+        """
+        doLogin(self)
+        uid = createActivity(self, getActivityDiff(), returnUid=True)
+        
+        res = getReadOneActivity(self, uid, 'json')
+        status = getStatusFromItemJSON(res)
+        self.assertEqual('pending', status)
+        
+        reviewActivity(self, uid)
+        
+        res = getReadOneActivity(self, uid, 'json')
+        status = getStatusFromItemJSON(res)
+        self.assertEqual('active', status)
+    
+    def test_new_activities_can_be_rejected(self):
+        """
+        New Activities with all mandatory keys can be rejected.
+        """
+        doLogin(self)
+        uid = createActivity(self, getActivityDiff(), returnUid=True)
+        
+        res = getReadOneActivity(self, uid, 'json')
+        status = getStatusFromItemJSON(res)
+        self.assertEqual('pending', status)
+        
+        reviewActivity(self, uid, reviewDecision='reject')
+        
+        # Rejected Activities are currently not displayed anymore.
+        res = getReadOneActivity(self, uid, 'json')
+        self.assertEqual(res['total'], 0)
+        
+    def test_new_incomplete_activities_can_be_rejected(self):
+        """
+        New Activities with missing mandatory keys can be rejected.
+        """
+        doLogin(self)
+        uid = createActivity(self, getActivityDiff(2), returnUid=True)
+        
+        res = getReadOneActivity(self, uid, 'json')
+        status = getStatusFromItemJSON(res)
+        self.assertEqual('pending', status)
+        
+        reviewActivity(self, uid, reviewDecision='reject')
+        
+        # Rejected Activities are currently not displayed anymore.
+        res = getReadOneActivity(self, uid, 'json')
+        self.assertEqual(res['total'], 0)
+    
+    def test_new_incomplete_activities_cannot_be_approved(self):
+        """
+        New Activities with missing mandatory keys can NOT be approved.
+        """
+        doLogin(self)
+        uid = createActivity(self, getActivityDiff(2), returnUid=True)
+        
+        res = getReadOneActivity(self, uid, 'json')
+        status = getStatusFromItemJSON(res)
+        self.assertEqual('pending', status)
+        
+        res = reviewActivity(self, uid, expectErrors=True)
+
+        self.assertEqual(400, res.status_int)
+        self.assertIn('Not all mandatory keys are provided', res.body)
+        
+        # The Activity is still there and pending
+        res = getReadOneActivity(self, uid, 'json')
+        self.assertEqual(res['total'], 1)
+        status = getStatusFromItemJSON(res)
+        self.assertEqual('pending', status)
