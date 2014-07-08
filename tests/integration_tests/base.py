@@ -1,4 +1,4 @@
-CONFIG_FILE = 'unit_tests.ini'
+#CONFIG_FILE = 'unit_tests.ini'
 USERNAME = 'admin'
 PASSWORD = 'asdf'
 
