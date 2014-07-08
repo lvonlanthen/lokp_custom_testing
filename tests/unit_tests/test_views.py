@@ -1,23 +1,17 @@
-import unittest
 import pytest
-from webtest import TestApp
-from pyramid.paster import get_appsettings
+from unittest import TestCase
 
-from lmkp import main
 from .base import *
 
 
-@pytest.mark.usefixtures("db_session")
-class LoginTests(unittest.TestCase):
-    def setUp(self):
-        settings = get_appsettings(CONFIG_FILE)
-        app = main({}, settings=settings)
-        self.testapp = TestApp(app)
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+class ViewTests(TestCase):
         
     def test_root(self):
         """
         The root page (/) is available.
         """
-        res = self.testapp.get('/')
+        res = self.app.get('/')
         self.assertEqual(res.status_int, 200)
         self.assertIn(b'Land Observatory', res.body)

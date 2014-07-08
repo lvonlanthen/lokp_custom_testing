@@ -4,6 +4,7 @@ BASE_URL = 'http://localhost:6543'
 USERNAME = 'admin'
 PASSWORD = 'asdf'
 
+PROJECT_TITLE = 'Land Observatory'
 LOGIN_BUTTON = 'Login'.upper()
 USERNAME_BUTTON = USERNAME.upper()
 MAP_VIEW_TITLE = 'Map View'

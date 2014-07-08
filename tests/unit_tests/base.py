@@ -2,12 +2,17 @@ CONFIG_FILE = 'unit_tests.ini'
 USERNAME = 'admin'
 PASSWORD = 'asdf'
 
-def doLogin(testcase):
-    res = testcase.testapp.get('/login')
-    form = res.form
-    form['login'] = USERNAME
-    form['password'] = PASSWORD
-    form.submit('form.submitted')
-
+def doLogin(testcase, redirect=None):
+    params = {
+        'login': USERNAME, 
+        'password': PASSWORD, 
+        'form.submitted': 'true'
+    }
+    res = testcase.app.post('/login', params=params)
+    return res.follow()
+    
 def getStatusFromItemJSON(json):
     return json['data'][0]['status']
+
+def getInvolvementsFromItemJSON(json):
+    return json['data'][0]['involvements']

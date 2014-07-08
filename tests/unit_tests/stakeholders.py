@@ -2,37 +2,68 @@
 
 def getReadManyStakeholders(testcase, format):
     if format == 'json':
-        res = testcase.testapp.get('/stakeholders/json')
+        res = testcase.app.get('/stakeholders/json')
         return res.json
     elif format == 'html':
-        res = testcase.testapp.get('/stakeholders/html')
+        res = testcase.app.get('/stakeholders/html')
         return res
     else:
         testcase.fail('Unknown format: %s' % format)
 
 def getReadOneStakeholder(testcase, uid, format):
     if format == 'json':
-        res = testcase.testapp.get('/stakeholders/json/%s' % uid)
+        res = testcase.app.get('/stakeholders/json/%s' % uid)
         return res.json
     else:
         testcase.fail('Unknown format: %s' % format)
 
 def createStakeholder(testcase, diff, returnUid=False):
-    ret = testcase.testapp.post_json('/stakeholders', diff)
+    ret = testcase.app.post_json('/stakeholders', diff)
     if returnUid is True:
         return ret.json['data'][0]['id']
     return ret
 
 def reviewStakeholder(testcase, identifier, reviewDecision='approve', version=1, 
     comment='', expectErrors=False):
-    return testcase.testapp.post('/stakeholders/review', {
+    return testcase.app.post('/stakeholders/review', {
         'identifier': identifier,
         'version': version,
         'review_decision': reviewDecision,
         'review_comment': comment
     }, expect_errors=expectErrors)
 
-def getStakeholderDiff(type=1):
+def getEditStakeholderDiff(uid, version=1, type=1):
+    """
+    1: Add a new Taggroup to Stakeholder (based on type 1 from 
+        getNewStakeholderDiff)
+    """
+    if type == 1:
+        return {
+            'stakeholders': [
+              {
+                'taggroups': [
+                  {
+                    'main_tag': {
+                      'value': u'[SH] Value D1', 
+                      'key': u'[SH] Checkbox 1'
+                    }, 
+                    'tags': [
+                      {
+                        'value': u'[SH] Value D1', 
+                        'key': u'[SH] Checkbox 1', 
+                        'op': 'add'
+                      }
+                    ], 
+                    'op': 'add'
+                  }
+                ], 
+                'version': version, 
+                'id': uid
+              }
+            ]
+          }
+
+def getNewStakeholderDiff(type=1):
     """
     1: Complete Stakeholder
     2: Incomplete Stakeholder

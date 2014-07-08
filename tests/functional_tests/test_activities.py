@@ -1,9 +1,13 @@
-import unittest
+import pytest
 from selenium import webdriver
-from lmkp.tests.functional_tests import *
+from unittest import TestCase
 
+from . import *
 
-class ActivitiesTests(unittest.TestCase):
+@pytest.mark.test
+@pytest.mark.functional
+@pytest.mark.activities
+class ActivitiesTests(TestCase):
     
     def setUp(self):
         self.driver = webdriver.Firefox()

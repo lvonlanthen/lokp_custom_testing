@@ -1,9 +1,13 @@
-import unittest
+import pytest
 from selenium import webdriver
-from lmkp.tests.functional_tests import *
+from unittest import TestCase
+
+from . import *
 
 
-class ModerationTests(unittest.TestCase):
+@pytest.mark.functional
+@pytest.mark.moderation
+class ModerationTests(TestCase):
     
     def setUp(self):
         self.driver = webdriver.Firefox()
@@ -75,5 +79,32 @@ class ModerationTests(unittest.TestCase):
         self.driver.find_element_by_link_text(DEAL_STAKEHOLDER_LINK).click()
         self.assertFalse(checkIsPending(self.driver))
         
+#    def test_blabla(self):
+#
+#        utBase.doLogin(self)
+#        shUid = utSh.createStakeholder(self, utSh.getNewStakeholderDiff(), returnUid=True)
+#        utSh.reviewStakeholder(self, shUid)
+#        invData = {
+#            'id': shUid,
+#            'version': 1,
+#            'role': 6
+#        }
+#        aUid = utA.createActivity(self, utA.getActivityDiff(3, data=invData), 
+#            returnUid=True)
+#        utA.reviewActivity(self, aUid)
+#        
+#        shUid = utSh.createStakeholder(self, utSh.getEditStakeholderDiff(shUid, version=2), returnUid=True)
+#
+#        doLogin(self.driver)
+#        self.driver.get(createUrl('/map?_PROFILE_=global'))
+##        self.driver.implicitly_wait(10) # seconds
+#        self.driver.get(createUrl('/stakeholders/review/%s' % shUid))
+#        import time
+#        time.sleep(30)
+#        
+#        # Make sure the button to approve the Stakeholder is available and 
+#        # clickable.
+#        self.assertIn(DEAL_MODERATION_TITLE, self.driver.title)
+#        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % APPROVE_BUTTON).click()
         
         
