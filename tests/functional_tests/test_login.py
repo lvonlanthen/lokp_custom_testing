@@ -2,7 +2,7 @@ import pytest
 from selenium import webdriver
 from unittest import TestCase
 
-from . import *
+from .base import *
 
 
 @pytest.mark.functional
@@ -24,9 +24,9 @@ class LoginTests(TestCase):
         # Make sure the user is not logged in. On Map View, the login link
         # should appear but no username.
         self.driver.get(createUrl('/map'))
-        self.assertIn(MAP_VIEW_TITLE, self.driver.title)
-        self.assertFalse(checkElExists(self.driver, 'link_text', USERNAME_BUTTON))
-        self.assertTrue(checkElExists(self.driver, 'link_text', LOGIN_BUTTON))
+        self.assertIn(TITLE_MAP_VIEW, self.driver.title)
+        self.assertFalse(checkElExists(self.driver, 'link_text', BUTTON_USERNAME))
+        self.assertTrue(checkElExists(self.driver, 'link_text', BUTTON_LOGIN))
         
         # Login
         self.driver.get(createUrl('/login'))
@@ -39,7 +39,7 @@ class LoginTests(TestCase):
         
         # Check that the user is now logged in. We should be back on the Map
         # View, with the username showing instead of the login link.
-        self.assertIn(MAP_VIEW_TITLE, self.driver.title)
-        self.assertTrue(checkElExists(self.driver, 'link_text', USERNAME_BUTTON))
-        self.assertFalse(checkElExists(self.driver, 'link_text', LOGIN_BUTTON))
+        self.assertIn(TITLE_MAP_VIEW, self.driver.title)
+        self.assertTrue(checkElExists(self.driver, 'link_text', BUTTON_USERNAME))
+        self.assertFalse(checkElExists(self.driver, 'link_text', BUTTON_LOGIN))
     

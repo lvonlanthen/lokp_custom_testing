@@ -4,6 +4,7 @@ import unittest
 from .base import *
 from .activities import *
 from .stakeholders import *
+from ..base import *
 
 
 @pytest.mark.usefixtures('app')
@@ -18,7 +19,7 @@ class ActivityCreateTests(unittest.TestCase):
         res = createActivity(self, {})
         
         self.assertEqual(res.status_int, 200)
-        self.assertIn(b'Please login', res.body)
+        res.mustcontain(FEEDBACK_LOGIN_NEEDED)
         
     def test_activity_can_be_created(self):
         """
@@ -76,7 +77,7 @@ class ActivityCreateTests(unittest.TestCase):
         res = getReadOneActivity(self, aUid, 'json')
         self.assertEqual(res['total'], 1)
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
+        self.assertEqual(STATUS_PENDING, status)
         inv = getInvolvementsFromItemJSON(res)[0]['data']
         self.assertEqual(inv['id'], shUid)
         self.assertEqual(inv['version'], 2)
@@ -119,7 +120,7 @@ class ActivityCreateTests(unittest.TestCase):
         res = getReadOneActivity(self, aUid, 'json')
         self.assertEqual(res['total'], 1)
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
+        self.assertEqual(STATUS_PENDING, status)
         inv = getInvolvementsFromItemJSON(res)[0]['data']
         self.assertEqual(inv['id'], shUid)
         self.assertEqual(inv['version'], 2)
@@ -154,13 +155,13 @@ class ActivityModerateTests(unittest.TestCase):
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
+        self.assertEqual(STATUS_PENDING, status)
         
         reviewActivity(self, uid)
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
-        self.assertEqual('active', status)
+        self.assertEqual(STATUS_ACTIVE, status)
     
     def test_new_activities_can_be_rejected(self):
         """
@@ -171,7 +172,7 @@ class ActivityModerateTests(unittest.TestCase):
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
+        self.assertEqual(STATUS_PENDING, status)
         
         reviewActivity(self, uid, reviewDecision='reject')
         
@@ -188,7 +189,7 @@ class ActivityModerateTests(unittest.TestCase):
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
+        self.assertEqual(STATUS_PENDING, status)
         
         reviewActivity(self, uid, reviewDecision='reject')
         
@@ -205,18 +206,18 @@ class ActivityModerateTests(unittest.TestCase):
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
+        self.assertEqual(STATUS_PENDING, status)
         
         res = reviewActivity(self, uid, expectErrors=True)
 
         self.assertEqual(400, res.status_int)
-        self.assertIn('Not all mandatory keys are provided', res.body)
+        res.mustcontain(FEEDBACK_MANDATORY_KEYS_MISSING)
         
         # The Activity is still there and pending
         res = getReadOneActivity(self, uid, 'json')
         self.assertEqual(res['total'], 1)
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
+        self.assertEqual(STATUS_PENDING, status)
     
     def test_new_activities_with_existing_stakeholder_can_be_approved(self):
         """
@@ -241,7 +242,7 @@ class ActivityModerateTests(unittest.TestCase):
         res = getReadOneActivity(self, aUid, 'json')
         self.assertEqual(res['total'], 1)
         status = getStatusFromItemJSON(res)
-        self.assertEqual('active', status)
+        self.assertEqual(STATUS_ACTIVE, status)
         inv = getInvolvementsFromItemJSON(res)[0]['data']
         self.assertEqual(inv['id'], shUid)
         self.assertEqual(inv['version'], 2)
@@ -282,9 +283,8 @@ class ActivityModerateTests(unittest.TestCase):
         # message and does not approve the item.
         res = res.follow()
         self.assertEqual(200, res.status_int)
-        self.assertIn('At least one of the involved Stakeholders cannot be reviewed', res.body)
+        res.mustcontain(FEEDBACK_INVOLVED_STAKEHOLDERS_CANNOT_BE_REVIEWED)
         res = getReadOneActivity(self, aUid, 'json')
         status = getStatusFromItemJSON(res)
-        self.assertEqual('pending', status)
-        
+        self.assertEqual(STATUS_PENDING, status)
         

@@ -1,6 +1,4 @@
-#CONFIG_FILE = 'unit_tests.ini'
-USERNAME = 'admin'
-PASSWORD = 'asdf'
+from ..base import *
 
 def doLogin(testcase, redirect=None):
     params = {

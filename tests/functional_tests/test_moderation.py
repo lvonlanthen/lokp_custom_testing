@@ -2,7 +2,7 @@ import pytest
 from selenium import webdriver
 from unittest import TestCase
 
-from . import *
+from .base import *
 
 
 @pytest.mark.functional
@@ -29,11 +29,11 @@ class ModerationTests(TestCase):
         self.driver.get(link)
         self.assertTrue(checkIsPending(self.driver))
         reviewLink = self.driver.find_element_by_xpath("//a[contains(@href, '/activities/review/')]")
-        self.assertIn(REVIEW_LINK, reviewLink.text)
+        self.assertIn(LINK_REVIEW, reviewLink.text)
         
         self.driver.get(reviewLink.get_attribute('href'))
-        self.assertIn(DEAL_MODERATION_TITLE, self.driver.title)
-        btn = self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % APPROVE_BUTTON)
+        self.assertIn(TITLE_DEAL_MODERATION, self.driver.title)
+        btn = self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE)
         btn.click()
         
         self.assertTrue(checkElExists(self.driver, 'class_name', 'alert-success'))
@@ -53,13 +53,13 @@ class ModerationTests(TestCase):
         
         # Check that the Activity cannot be reviewed because of the pending SH
         self.driver.get(createUrl('/activities/review/%s' % aUid))
-        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % APPROVE_BUTTON)
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % BUTTON_APPROVE)
         self.assertTrue(checkElExists(self.driver, 'class_name', 'alert-missing-mandatory-keys'))
         
         # Make sure the Stakeholder can be reviewed and do this
         self.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").click()
-        self.assertIn(STAKEHOLDER_MODERATION_TITLE, self.driver.title)
-        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % APPROVE_BUTTON).click()
+        self.assertIn(TITLE_STAKEHOLDER_MODERATION, self.driver.title)
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
         
         # Make sure there is a Success message and a notice that the Activity 
         # can now be reviewed.
@@ -68,15 +68,15 @@ class ModerationTests(TestCase):
         self.driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
         
         # Make sure the Activity can now be reviewed.
-        self.assertIn(DEAL_MODERATION_TITLE, self.driver.title)
-        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % APPROVE_BUTTON).click()
+        self.assertIn(TITLE_DEAL_MODERATION, self.driver.title)
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
         
         # Make sure the Activity is not pending anymore
         self.driver.get(createUrl('/activities/html/%s' % aUid))
         self.assertFalse(checkIsPending(self.driver))
         
         # Go to Stakeholder and make sure it is not pending anymore
-        self.driver.find_element_by_link_text(DEAL_STAKEHOLDER_LINK).click()
+        self.driver.find_element_by_link_text(LINK_DEAL_SHOW_INVOLVEMENT).click()
         self.assertFalse(checkIsPending(self.driver))
         
 #    def test_blabla(self):
@@ -104,7 +104,7 @@ class ModerationTests(TestCase):
 #        
 #        # Make sure the button to approve the Stakeholder is available and 
 #        # clickable.
-#        self.assertIn(DEAL_MODERATION_TITLE, self.driver.title)
-#        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % APPROVE_BUTTON).click()
+#        self.assertIn(TITLE_DEAL_MODERATION, self.driver.title)
+#        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
         
         
