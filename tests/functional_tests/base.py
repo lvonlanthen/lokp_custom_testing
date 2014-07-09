@@ -88,11 +88,11 @@ def doReview(driver, aOrSh, uid, reject=False, withInv=False):
     # withInv is only valid vor Activities
     if withInv is True and aOrSh == 'a':
         driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").click()
-        driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % APPROVE_BUTTON).click()
+        driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
         driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
     
     if reject is False:
-        driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % APPROVE_BUTTON).click()
+        driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
     else:
         # TODO
         pass

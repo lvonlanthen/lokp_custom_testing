@@ -3,6 +3,7 @@ from selenium import webdriver
 from unittest import TestCase
 
 from .base import *
+from ..base import *
 
 
 @pytest.mark.functional
@@ -78,33 +79,36 @@ class ModerationTests(TestCase):
         # Go to Stakeholder and make sure it is not pending anymore
         self.driver.find_element_by_link_text(LINK_DEAL_SHOW_INVOLVEMENT).click()
         self.assertFalse(checkIsPending(self.driver))
+    
+    def test_edited_stakeholders_with_involvements_can_be_approved(self):
+        """
+        Bugfix: Edited Stakeholders with an involvement could not be approved
+        from Stakeholder side, thus blocking the review process.
+        """
         
-#    def test_blabla(self):
-#
-#        utBase.doLogin(self)
-#        shUid = utSh.createStakeholder(self, utSh.getNewStakeholderDiff(), returnUid=True)
-#        utSh.reviewStakeholder(self, shUid)
-#        invData = {
-#            'id': shUid,
-#            'version': 1,
-#            'role': 6
-#        }
-#        aUid = utA.createActivity(self, utA.getActivityDiff(3, data=invData), 
-#            returnUid=True)
-#        utA.reviewActivity(self, aUid)
-#        
-#        shUid = utSh.createStakeholder(self, utSh.getEditStakeholderDiff(shUid, version=2), returnUid=True)
-#
-#        doLogin(self.driver)
-#        self.driver.get(createUrl('/map?_PROFILE_=global'))
-##        self.driver.implicitly_wait(10) # seconds
-#        self.driver.get(createUrl('/stakeholders/review/%s' % shUid))
-#        import time
-#        time.sleep(30)
-#        
-#        # Make sure the button to approve the Stakeholder is available and 
-#        # clickable.
-#        self.assertIn(TITLE_DEAL_MODERATION, self.driver.title)
-#        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
+        doLogin(self.driver)
         
+        aUid = doCreateActivity(self.driver, createSH=True)
         
+        # Review both Activity (first) and Stakeholder (second)
+        self.driver.get(createUrl('/activities/review/%s' % aUid))
+        shLink = self.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").get_attribute('href')
+        shUid = shLink.split('/')[len(shLink.split('/'))-1]
+        self.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").click()
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
+        self.driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
+        
+        # Go to Stakeholder and edit it
+        self.driver.get(createUrl('/stakeholders/form/%s' % shUid))
+        self.driver.find_element_by_xpath("//textarea[@name='[SH] Textarea 1']").send_keys('Added input')
+        self.driver.find_element_by_id('stakeholderformsubmit').click()
+        
+        # Go to moderation of the Stakeholder, it should be approvable
+        self.driver.get(createUrl('/stakeholders/review/%s' % shUid))
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
+
+        # Make sure the Stakeholderw as approved correctly
+        self.assertTrue(checkElExists(self.driver, 'class_name', 'alert-success'))
+        self.driver.get(createUrl('/stakeholders/html/%s' % shUid))
+        self.assertFalse(checkIsPending(self.driver))
