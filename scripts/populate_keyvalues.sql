@@ -76,9 +76,13 @@ INSERT INTO data.categories(id, name, type, fk_language, description, fk_categor
   (49, '[SH-T] Subcategory 7', NULL, 3, NULL, 23),
   (50, '[SH-T] Subcategory 8', NULL, 3, NULL, 24),
   (51, '[SH-T] Subcategory 9', NULL, 3, NULL, 25),
-  (52, '[SH-T] Subcategory 10', NULL, 3, NULL, 26)
+  (52, '[SH-T] Subcategory 10', NULL, 3, NULL, 26),
+  (53, '[A] Category 4', 'activities', 1, NULL, NULL),
+  (54, '[A] Category 5', 'activities', 1, NULL, NULL),
+  (55, '[SH] Category 4', 'stakeholders', 1, NULL, NULL),
+  (56, '[SH] Category 5', 'stakeholders', 1, NULL, NULL)
 ;
-SELECT setval('data.categories_id_seq', 52, true);
+SELECT setval('data.categories_id_seq', 56, true);
 
 INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, description, validator) VALUES
   (1, NULL, NULL, '[A] Textfield 1', 'String', NULL, NULL, NULL),
@@ -108,9 +112,9 @@ INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, descript
   (25, NULL, NULL, '[A] Inputtoken 1', 'InputToken', NULL, NULL, NULL),
   (26, NULL, NULL, '[A] Inputtoken 2', 'InputToken', NULL, NULL, NULL),
   (27, NULL, NULL, '[A] Inputtoken 3', 'InputToken', NULL, NULL, NULL),
-  (28, NULL, NULL, '[A] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, NULL),
-  (29, NULL, NULL, '[A] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, NULL),
-  (30, NULL, NULL, '[A] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, NULL),
+  (28, NULL, NULL, '[A] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (29, NULL, NULL, '[A] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (30, NULL, NULL, '[A] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, '[1,5]'),
   (31, 1, 1, '[A] Textfield 1', NULL, NULL, NULL, NULL),
   (32, 2, 1, '[A] Textfield 2', NULL, NULL, NULL, NULL),
   (33, 3, 1, '[A] Textfield 3', NULL, NULL, NULL, NULL),
@@ -374,9 +378,9 @@ INSERT INTO data.sh_keys (id, fk_sh_key, fk_language, key, type, helptext, descr
   (25, NULL, NULL, '[SH] Inputtoken 1', 'InputToken', NULL, NULL, NULL),
   (26, NULL, NULL, '[SH] Inputtoken 2', 'InputToken', NULL, NULL, NULL),
   (27, NULL, NULL, '[SH] Inputtoken 3', 'InputToken', NULL, NULL, NULL),
-  (28, NULL, NULL, '[SH] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, NULL),
-  (29, NULL, NULL, '[SH] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, NULL),
-  (30, NULL, NULL, '[SH] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, NULL),
+  (28, NULL, NULL, '[SH] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (29, NULL, NULL, '[SH] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (30, NULL, NULL, '[SH] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, '[1,5]'),
   (31, 1, 1, '[SH] Textfield 1', NULL, NULL, NULL, NULL),
   (32, 2, 1, '[SH] Textfield 2', NULL, NULL, NULL, NULL),
   (33, 3, 1, '[SH] Textfield 3', NULL, NULL, NULL, NULL),

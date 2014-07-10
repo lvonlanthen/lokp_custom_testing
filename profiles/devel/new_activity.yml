@@ -101,9 +101,25 @@
         name: 'secondaryinvestor'
         roles: [2,3,4,5]
         repeat: true
-#    # [C-THG] Subcategory 8
-#    11:
-#      order: 3
+  # [C] Category 4
+  53:
+    order: 4
+    # [C-THG] Subcategory 8
+    11:
+      order: 1
+      # [TG]
+      1:
+        order: 1
+        # [K] 28: IntegerDropdown 1
+        28:
+          maintag: true
+      # [TG]
+      2:
+        order: 2
+        # [K] 29: IntegerDropdown 1
+        29:
+          maintag: true
+
 #    # [C-THG] Subcategory 9
 #    12:
 #      order: 4

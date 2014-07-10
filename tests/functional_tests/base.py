@@ -4,22 +4,45 @@ from ..base import *
 
 BASE_URL = 'http://localhost:6543'
 
+def openItemDetailsPage(testcase, itemType, uid):
+    checkValidItemType(testcase, itemType)
+    testcase.driver.get(createUrl('/%s/html/%s' % (itemType, uid)))
+
+def openItemFormPage(testcase, itemType, uid=None, reset=True):
+    checkValidItemType(testcase, itemType)
+    url = '/%s/form' % itemType
+    if uid is not None:
+        url = '/%s/form/%s' % (itemType, uid)
+    if reset is True:
+        url = '%s%s' % ('/form/clearsession/%s/form?url=' % itemType, url)
+    testcase.driver.get(createUrl(url))
+
+def checkValidItemType(testcase, itemType):
+    valid = ['activities', 'stakeholders']
+    testcase.assertIn(itemType, valid, '"%s" is not a valid itemType. Try one of %s' % (itemType, ', '.join(valid)))
+
 def createUrl(url):
     return '%s%s' % (BASE_URL, url)
 
-def checkElExists(driver, by, element):
+def getEl(testcase, by, selector, inverse=False):
     try:
         if by == 'link_text':
-            driver.find_element_by_link_text(element)
+            el = testcase.driver.find_element_by_link_text(selector)
         elif by == 'tag_name':
-            driver.find_element_by_tag_name(element)
+            el = testcase.driver.find_element_by_tag_name(selector)
         elif by == 'class_name':
-            driver.find_element_by_class_name(element)
+            el = testcase.driver.find_element_by_class_name(selector)
+        elif by == 'xpath':
+            el = testcase.driver.find_element_by_xpath(selector)
         else:
-            return False
+            testcase.fail('"%s" is not a valid "by" to find the element.' % by)
     except NoSuchElementException:
-        return False
-    return True
+        if inverse is True:
+            return
+        testcase.fail('Element "%s" not found.' % selector)
+    if inverse is True:
+        testcase.fail('Element "%s" was unexpectedly found.' % selector)
+    return el
 
 def checkIsPending(driver):
     try:
@@ -29,52 +52,76 @@ def checkIsPending(driver):
     except NoSuchElementException:
         return False
     return True
-    
 
-def doLogin(driver):
-    driver.get(createUrl('/login'))
-    driver.find_element_by_name('login').send_keys(USERNAME)
-    driver.find_element_by_name('password').send_keys(PASSWORD)
-    driver.find_element_by_name('form.submitted').click()
+def findTextOnPage(testcase, text, count=None):
+    els = testcase.driver.find_elements_by_xpath("//*[contains(text(), '%s')]" % text)
+    if count is None:
+        testcase.assertTrue(len(els) > 0, 'Text "%s" not found on page' % text)
+    else:
+        testcase.assertEqual(len(els), count, 'Expected appearances of text "%s" on page: %s, found it %s times' % (text, count, len(els)))
 
-def doCreateActivity(driver, dd1='[A] Value A1', nf1=123.45, noSubmit=False, 
-    createSH=False, shValues={}):
-    
-    driver.get(createUrl('/activities/form'))
-    driver.find_element_by_class_name('olMapViewport').click()
-    driver.find_element_by_xpath("//select[@name='[A] Dropdown 1']/option[@value='%s']" % dd1).click()
-    driver.find_element_by_id('activityformstep_2').click()
-    driver.find_element_by_xpath("//input[@name='[A] Numberfield 1']").send_keys(str(nf1))
+def doLogin(testcase, redirect=None, gotForm=False):
+    if gotForm is False:
+        testcase.driver.get(createUrl('/login'))
+    testcase.driver.find_element_by_name('login').send_keys(USERNAME)
+    testcase.driver.find_element_by_name('password').send_keys(PASSWORD)
+    if redirect is not None:
+        testcase.driver.execute_script(\
+            "document.getElementsByName('came_from')[0].value='%s'" % redirect)
+    testcase.driver.find_element_by_name('form.submitted').click()
+
+def doCreateActivity(testcase, dd1='[A] Value A1', nf1=123.45, cat4={}, 
+    noSubmit=False, createSH=False, shValues={}):
+    openItemFormPage(testcase, 'activities', reset=True)
+    if TITLE_LOGIN_VIEW in testcase.driver.title:
+        doLogin(testcase, gotForm=True)
+    testcase.driver.find_element_by_class_name('olMapViewport').click()
+    testcase.driver.find_element_by_xpath("//select[@name='[A] Dropdown 1']/option[@value='%s']" % dd1).click()
+    testcase.driver.find_element_by_id('activityformstep_2').click()
+    testcase.driver.find_element_by_xpath("//input[@name='[A] Numberfield 1']").send_keys(str(nf1))
     
     if createSH is True:
-        driver.find_element_by_id('activityformstep_3').click()
-        shbtn = driver.find_elements_by_class_name('accordion-toggle')
+        testcase.driver.find_element_by_id('activityformstep_3').click()
+        shbtn = testcase.driver.find_elements_by_class_name('accordion-toggle')
         for el in shbtn:
             el.click()
-        driver.find_element_by_name('createinvolvement_primaryinvestor').click()
-        doCreateStakeholder(driver, shValues=shValues)
+        testcase.driver.find_element_by_name('createinvolvement_primaryinvestor').click()
+        doCreateStakeholder(testcase, shValues=shValues)
+    
+    if cat4 != {}:
+        testcase.driver.find_element_by_id('activityformstep_53').click()
+        for key in cat4:
+            testcase.driver.find_element_by_xpath("//select[@name='%s']/option[@value=%s]" % (key, cat4[key])).click()
     
     if noSubmit is True:
         return
         
-    driver.find_element_by_id('activityformsubmit').click()
+    testcase.driver.find_element_by_id('activityformsubmit').click()
     
-    link = driver.find_element_by_link_text(LINK_VIEW_DEAL).get_attribute('href')
+    link = testcase.driver.find_element_by_link_text(LINK_VIEW_DEAL).get_attribute('href')
     uid = link.split('/')[len(link.split('/'))-1]
     
     return uid
 
+def doActivitySubmit(testcase):
+    testcase.driver.find_element_by_id('activityformsubmit').click()
     
-def doCreateStakeholder(driver, tf1='Stakeholder Name', nf1=234.5, shValues={}):
+    link = testcase.driver.find_element_by_link_text(LINK_VIEW_DEAL).get_attribute('href')
+    uid = link.split('/')[len(link.split('/'))-1]
+    
+    return uid
+    
+def doCreateStakeholder(testcase, tf1='Stakeholder Name', nf1=234.5, 
+    shValues={}):
     
     if shValues != {}:
         tf1 = shValues['tf1'] if 'tf1' in shValues else tf1
         nf1 = shValues['nf1'] if 'nf1' in shValues else nf1
     
-    driver.find_element_by_xpath("//input[@name='[SH] Textfield 1']").send_keys(tf1)
-    driver.find_element_by_id('stakeholderformstep_15').click()
-    driver.find_element_by_xpath("//input[@name='[SH] Numberfield 1']").send_keys(str(nf1))
-    driver.find_element_by_id('stakeholderformsubmit').click()
+    testcase.driver.find_element_by_xpath("//input[@name='[SH] Textfield 1']").send_keys(tf1)
+    testcase.driver.find_element_by_id('stakeholderformstep_15').click()
+    testcase.driver.find_element_by_xpath("//input[@name='[SH] Numberfield 1']").send_keys(str(nf1))
+    testcase.driver.find_element_by_id('stakeholderformsubmit').click()
 
 
 def doReview(driver, aOrSh, uid, reject=False, withInv=False):

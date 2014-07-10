@@ -15,7 +15,6 @@ class LoginTests(TestCase):
     def tearDown(self):
         self.driver.quit()
 
-
     def test_login(self):
         """
         Tests the login
@@ -25,8 +24,8 @@ class LoginTests(TestCase):
         # should appear but no username.
         self.driver.get(createUrl('/map'))
         self.assertIn(TITLE_MAP_VIEW, self.driver.title)
-        self.assertFalse(checkElExists(self.driver, 'link_text', BUTTON_USERNAME))
-        self.assertTrue(checkElExists(self.driver, 'link_text', BUTTON_LOGIN))
+        getEl(self, 'link_text', BUTTON_USERNAME, inverse=True)
+        getEl(self, 'link_text', BUTTON_LOGIN)
         
         # Login
         self.driver.get(createUrl('/login'))
@@ -40,6 +39,6 @@ class LoginTests(TestCase):
         # Check that the user is now logged in. We should be back on the Map
         # View, with the username showing instead of the login link.
         self.assertIn(TITLE_MAP_VIEW, self.driver.title)
-        self.assertTrue(checkElExists(self.driver, 'link_text', BUTTON_USERNAME))
-        self.assertFalse(checkElExists(self.driver, 'link_text', BUTTON_LOGIN))
+        getEl(self, 'link_text', BUTTON_USERNAME)
+        getEl(self, 'link_text', BUTTON_LOGIN, inverse=True)
     

@@ -21,9 +21,7 @@ class ModerationTests(TestCase):
         Test that a new Activity can be approved.
         """
         
-        doLogin(self.driver)
-        
-        uid = doCreateActivity(self.driver)
+        uid = doCreateActivity(self)
         link = createUrl('/activities/html/%s' % uid)
 
         # Check that it is pending and there is a moderation link
@@ -37,7 +35,7 @@ class ModerationTests(TestCase):
         btn = self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE)
         btn.click()
         
-        self.assertTrue(checkElExists(self.driver, 'class_name', 'alert-success'))
+        getEl(self, 'class_name', 'alert-success')
         
         # Make sure the Activity is not pending anymore
         self.driver.get(link)
@@ -48,14 +46,12 @@ class ModerationTests(TestCase):
         Test that a new Activity with a new involvement can be approved.
         """
         
-        doLogin(self.driver)
-        
-        aUid = doCreateActivity(self.driver, createSH=True)
+        aUid = doCreateActivity(self, createSH=True)
         
         # Check that the Activity cannot be reviewed because of the pending SH
         self.driver.get(createUrl('/activities/review/%s' % aUid))
         self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % BUTTON_APPROVE)
-        self.assertTrue(checkElExists(self.driver, 'class_name', 'alert-missing-mandatory-keys'))
+        getEl(self, 'class_name', 'alert-missing-mandatory-keys')
         
         # Make sure the Stakeholder can be reviewed and do this
         self.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").click()
@@ -64,7 +60,7 @@ class ModerationTests(TestCase):
         
         # Make sure there is a Success message and a notice that the Activity 
         # can now be reviewed.
-        self.assertTrue(checkElExists(self.driver, 'class_name', 'alert-success'))
+        getEl(self, 'class_name', 'alert-success')
         self.assertIn('You had to review this', self.driver.page_source)
         self.driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
         
@@ -86,9 +82,7 @@ class ModerationTests(TestCase):
         from Stakeholder side, thus blocking the review process.
         """
         
-        doLogin(self.driver)
-        
-        aUid = doCreateActivity(self.driver, createSH=True)
+        aUid = doCreateActivity(self, createSH=True)
         
         # Review both Activity (first) and Stakeholder (second)
         self.driver.get(createUrl('/activities/review/%s' % aUid))
@@ -109,6 +103,6 @@ class ModerationTests(TestCase):
         self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
 
         # Make sure the Stakeholderw as approved correctly
-        self.assertTrue(checkElExists(self.driver, 'class_name', 'alert-success'))
+        getEl(self, 'class_name', 'alert-success')
         self.driver.get(createUrl('/stakeholders/html/%s' % shUid))
         self.assertFalse(checkIsPending(self.driver))

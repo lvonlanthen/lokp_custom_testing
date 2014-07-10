@@ -21,6 +21,7 @@ TEXT_PENDING_VERSION = 'Pending version'.upper()
 TITLE_DEAL_DETAILS = 'Deal Details'
 TITLE_DEAL_EDITOR = 'Deal Editor'
 TITLE_DEAL_MODERATION = 'Deal Moderation'
+TITLE_LOGIN_VIEW = 'Login'
 TITLE_MAP_VIEW = 'Map View'
 TITLE_STAKEHOLDER_DETAILS = 'Stakeholder Details'
 TITLE_STAKEHOLDER_EDITOR = 'Stakeholder Editor'
