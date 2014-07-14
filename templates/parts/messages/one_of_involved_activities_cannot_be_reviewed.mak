@@ -1,0 +1,1 @@
+${_('At least one of the involved Activities cannot be reviewed. Click on the icon next to the involvement for further details.')}
