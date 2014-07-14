@@ -8,9 +8,11 @@
 
     if isStakeholder:
         routeName = 'stakeholders_read_one'
+        historyRouteName = 'stakeholders_read_one_history'
         editLinkText = _('Edit this Investor')
     else:
         routeName = 'activities_read_one'
+        historyRouteName = 'activities_read_one_history'
         editLinkText = _('Edit this Deal')
 %>
 
@@ -171,7 +173,7 @@
 </div>
 
 <%def name="editToolbar()">
-<a href="${request.route_url(routeName, output='history', uid=cstruct['id'])}">
+<a href="${request.route_url(historyRouteName, output='html', uid=cstruct['id'])}">
     <i class="icon-time"></i>&nbsp;${_('History')}
 </a>
 % if request.user and 'id' in cstruct:

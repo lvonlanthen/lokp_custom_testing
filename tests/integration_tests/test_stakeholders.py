@@ -157,7 +157,7 @@ class StakeholderModerateTests(TestCase):
             'version': 1,
             'role': 6
         }
-        aUid = createActivity(self, getActivityDiff(3, data=invData),
+        aUid = createActivity(self, getNewActivityDiff(3, data=invData),
             returnUid=True)
         reviewActivity(self, aUid)
 
@@ -171,3 +171,20 @@ class StakeholderModerateTests(TestCase):
         self.assertEqual(res['data'][1]['status_id'], 3)
         self.assertEqual(res['data'][0]['status_id'], 2)
     
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+@pytest.mark.stakeholders
+@pytest.mark.moderation
+class StakeholderHistoryTests(TestCase):
+    
+    def test_history_view(self):
+        """
+        Test that a history view is available for newly created Activities.
+        """
+        doLogin(self)
+        uid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        
+        res = self.app.get('/stakeholders/history/html/%s' % uid)
+        self.assertEqual(res.status_int, 200)
+        self.assertIn(TITLE_HISTORY_VIEW, res.body)

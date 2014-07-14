@@ -1,5 +1,5 @@
 import pytest
-import unittest
+from unittest import TestCase
 
 from .base import *
 from .activities import *
@@ -10,7 +10,7 @@ from ..base import *
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
 @pytest.mark.activities
-class ActivityCreateTests(unittest.TestCase):
+class ActivityCreateTests(TestCase):
         
     def test_activity_cannot_be_created_without_login(self):
         """
@@ -26,7 +26,7 @@ class ActivityCreateTests(unittest.TestCase):
         New Activities can be created if the user is logged in.
         """
         doLogin(self)
-        res = createActivity(self, getActivityDiff())
+        res = createActivity(self, getNewActivityDiff())
         self.assertEqual(res.status_int, 201)
         json = res.json
         self.assertEqual(json['total'], 1)
@@ -44,7 +44,7 @@ class ActivityCreateTests(unittest.TestCase):
         self.assertEqual(json['data'], [])
         self.assertEqual(json['total'], 0)
         
-        createActivity(self, getActivityDiff())
+        createActivity(self, getNewActivityDiff())
         
         json = getReadManyActivities(self, 'json')
         self.assertEqual(json['total'], 1)
@@ -69,7 +69,7 @@ class ActivityCreateTests(unittest.TestCase):
             'version': 1,
             'role': 6
         }
-        aUid = createActivity(self, getActivityDiff(3, data=invData), 
+        aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
         # One pending Activity version should have been created, with the 
@@ -112,7 +112,7 @@ class ActivityCreateTests(unittest.TestCase):
             'version': 1,
             'role': 6
         }
-        aUid = createActivity(self, getActivityDiff(3, data=invData), 
+        aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
         # One pending Activity version should have been created, with the 
@@ -144,14 +144,14 @@ class ActivityCreateTests(unittest.TestCase):
 @pytest.mark.integration
 @pytest.mark.activities
 @pytest.mark.moderation
-class ActivityModerateTests(unittest.TestCase):
+class ActivityModerateTests(TestCase):
 
     def test_new_activities_can_be_approved(self):
         """
         New Activities with all mandatory keys can be approved.
         """
         doLogin(self)
-        uid = createActivity(self, getActivityDiff(), returnUid=True)
+        uid = createActivity(self, getNewActivityDiff(), returnUid=True)
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
@@ -168,7 +168,7 @@ class ActivityModerateTests(unittest.TestCase):
         New Activities with all mandatory keys can be rejected.
         """
         doLogin(self)
-        uid = createActivity(self, getActivityDiff(), returnUid=True)
+        uid = createActivity(self, getNewActivityDiff(), returnUid=True)
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
@@ -185,7 +185,7 @@ class ActivityModerateTests(unittest.TestCase):
         New Activities with missing mandatory keys can be rejected.
         """
         doLogin(self)
-        uid = createActivity(self, getActivityDiff(2), returnUid=True)
+        uid = createActivity(self, getNewActivityDiff(2), returnUid=True)
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
@@ -202,7 +202,7 @@ class ActivityModerateTests(unittest.TestCase):
         New Activities with missing mandatory keys can NOT be approved.
         """
         doLogin(self)
-        uid = createActivity(self, getActivityDiff(2), returnUid=True)
+        uid = createActivity(self, getNewActivityDiff(2), returnUid=True)
         
         res = getReadOneActivity(self, uid, 'json')
         status = getStatusFromItemJSON(res)
@@ -232,7 +232,7 @@ class ActivityModerateTests(unittest.TestCase):
             'version': 1,
             'role': 6
         }
-        aUid = createActivity(self, getActivityDiff(3, data=invData), 
+        aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
         reviewActivity(self, aUid)
@@ -274,7 +274,7 @@ class ActivityModerateTests(unittest.TestCase):
             'version': 1,
             'role': 6
         }
-        aUid = createActivity(self, getActivityDiff(3, data=invData), 
+        aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
         res = reviewActivity(self, aUid, expectErrors=True)
@@ -287,4 +287,22 @@ class ActivityModerateTests(unittest.TestCase):
         res = getReadOneActivity(self, aUid, 'json')
         status = getStatusFromItemJSON(res)
         self.assertEqual(STATUS_PENDING, status)
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+@pytest.mark.activities
+@pytest.mark.moderation
+class ActivityHistoryTests(TestCase):
+    
+    def test_history_view(self):
+        """
+        Test that a history view is available for newly created Activities.
+        """
+        doLogin(self)
+        uid = createActivity(self, getNewActivityDiff(), returnUid=True)
+        
+        res = self.app.get('/activities/history/html/%s' % uid)
+        self.assertEqual(res.status_int, 200)
+        self.assertIn(TITLE_HISTORY_VIEW, res.body)
         

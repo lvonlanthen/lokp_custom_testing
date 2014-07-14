@@ -47,7 +47,7 @@ def createGeometry(country):
     else:
         raiseException('Invalid country for geometry: %s' % country)
 
-def getActivityDiff(type=1, data={}):
+def getNewActivityDiff(type=1, data={}):
     """
     1: Complete Activity with its Point somewhere in Laos.
     2: Incomplete Activity with its Point somewhere in Laos.
