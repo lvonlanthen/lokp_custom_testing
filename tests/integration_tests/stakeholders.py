@@ -1,5 +1,8 @@
 # Some helper functions for the Stakeholder tests.
 
+from ..base import *
+
+
 def getReadManyStakeholders(testcase, format):
     if format == 'json':
         res = testcase.app.get('/stakeholders/json')
@@ -32,6 +35,14 @@ def reviewStakeholder(testcase, identifier, reviewDecision='approve', version=1,
         'review_comment': comment
     }, expect_errors=expectErrors)
 
+def checkReviewStakeholderNotPossibleBcInvolvements(testcase, response):
+    # If a review cannot be done, the response still returns a valid HTTP status
+    # code and redirects to the history page, but flashes an error message and 
+    # does not approve the item.
+    response = response.follow()
+    testcase.assertEqual(200, response.status_int)
+    response.mustcontain(FEEDBACK_INVOLVED_ACTIVITIES_CANNOT_BE_REVIEWED)
+
 def getEditStakeholderDiff(uid, version=1, type=1):
     """
     1: Add a new Taggroup to Stakeholder (based on type 1 from 
@@ -62,6 +73,8 @@ def getEditStakeholderDiff(uid, version=1, type=1):
               }
             ]
           }
+    else:
+        raiseException('Invalid type for Stakeholder diff: %s' % type)
 
 def getNewStakeholderDiff(type=1):
     """

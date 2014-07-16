@@ -2,6 +2,8 @@
 import decimal
 import random
 
+from ..base import *
+
 
 def getReadManyActivities(testcase, format):
     if format == 'json':
@@ -35,6 +37,14 @@ def reviewActivity(testcase, identifier, reviewDecision='approve', version=1,
         'review_comment': comment
     }, expect_errors=expectErrors)
 
+def checkReviewActivityNotPossibleBcStakeholder(testcase, response):
+    # If a review cannot be done, the response still returns a valid HTTP status
+    # code and redirects to the history page, but flashes an error message and 
+    # does not approve the item.
+    response = response.follow()
+    testcase.assertEqual(200, response.status_int)
+    response.mustcontain(FEEDBACK_INVOLVED_STAKEHOLDERS_CANNOT_BE_REVIEWED)
+
 def createGeometry(country):
     if country == 'laos':
         return {
@@ -47,11 +57,12 @@ def createGeometry(country):
     else:
         raiseException('Invalid country for geometry: %s' % country)
 
-def getNewActivityDiff(type=1, data={}):
+def getNewActivityDiff(type=1, data=None):
     """
     1: Complete Activity with its Point somewhere in Laos.
     2: Incomplete Activity with its Point somewhere in Laos.
-    3: Complete Activity with an Involvement (from 'data' dict)
+    3: Complete Activity with one or more Involvements (provided data array 
+       needed)
     """
     if type == 1:
         return {
@@ -117,6 +128,15 @@ def getNewActivityDiff(type=1, data={}):
             ]
         }
     elif type == 3:
+        involvements = []
+        for d in data:
+            op = 'add' if 'op' not in d else d['op']
+            involvements.append({
+                'id': d['id'],
+                'version': d['version'],
+                'role': d['role'],
+                'op': op
+            })
         return {
             'activities': [
                 {
@@ -151,14 +171,60 @@ def getNewActivityDiff(type=1, data={}):
                     }
                   ], 
                   'version': 1,
-                  'stakeholders': [
-                    {
-                      'id': data['id'],
-                      'version': data['version'],
-                      'role': data['role'],
-                      'op': 'add'
-                    }
-                  ]
+                  'stakeholders': involvements
+                }
+            ]
+        }
+    else:
+        raiseException('Invalid type for Activity diff: %s' % type)
+        
+def getEditActivityDiff(uid, version=1, type=1, data=None):
+    """
+    1: Add a new Taggroup to Activity (based on type 1 from getNewActivityDiff)
+    2: Add or remove one or more existing Stakeholder (provided data array 
+       needed)
+    """
+    if type == 1:
+        return {
+            'activities': [
+                {
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'key': '[A] Checkbox 1',
+                                'value': '[A] Value D1'
+                            },
+                            'tags': [
+                                {
+                                    'key': '[A] Checkbox 1',
+                                    'value': '[A] Value D1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif type == 2:
+        involvements = []
+        for d in data:
+            op = 'add' if 'op' not in d else d['op']
+            involvements.append({
+                'id': d['id'],
+                'version': d['version'],
+                'role': d['role'],
+                'op': op
+            })
+        return {
+            'activities': [
+                {
+                  'stakeholders': involvements,
+                  'version': version,
+                  'id': uid
                 }
             ]
         }

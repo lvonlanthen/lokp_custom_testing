@@ -9,8 +9,11 @@ def doLogin(testcase, redirect=None):
     res = testcase.app.post('/login', params=params)
     return res.follow()
     
-def getStatusFromItemJSON(json):
-    return json['data'][0]['status']
+def getStatusFromItemJSON(json, pos=0):
+    return json['data'][pos]['status']
 
-def getInvolvementsFromItemJSON(json):
-    return json['data'][0]['involvements']
+def getInvolvementsFromItemJSON(json, pos=0):
+    try:
+        return json['data'][pos]['involvements']
+    except KeyError:
+        return []

@@ -44,9 +44,9 @@ def getEl(testcase, by, selector, inverse=False):
         testcase.fail('Element "%s" was unexpectedly found.' % selector)
     return el
 
-def checkIsPending(driver):
+def checkIsPending(testcase):
     try:
-        pending = driver.find_element_by_tag_name('h4')
+        pending = testcase.driver.find_element_by_tag_name('h4')
         if TEXT_PENDING_VERSION not in pending.text:
             return False
     except NoSuchElementException:
@@ -71,7 +71,7 @@ def doLogin(testcase, redirect=None, gotForm=False):
     testcase.driver.find_element_by_name('form.submitted').click()
 
 def doCreateActivity(testcase, dd1='[A] Value A1', nf1=123.45, cat4={}, 
-    noSubmit=False, createSH=False, shValues={}):
+    noSubmit=False, createSH=False, shValues={}, knownSh=[]):
     openItemFormPage(testcase, 'activities', reset=True)
     if TITLE_LOGIN_VIEW in testcase.driver.title:
         doLogin(testcase, gotForm=True)
@@ -85,8 +85,14 @@ def doCreateActivity(testcase, dd1='[A] Value A1', nf1=123.45, cat4={},
         shbtn = testcase.driver.find_elements_by_class_name('accordion-toggle')
         for el in shbtn:
             el.click()
-        testcase.driver.find_element_by_name('createinvolvement_primaryinvestor').click()
-        doCreateStakeholder(testcase, shValues=shValues)
+        if len(knownSh) > 0:
+            for k in knownSh:
+                getEl(testcase, 'class_name', 'ui-autocomplete-input').send_keys(k['name'])
+                testcase.driver.implicitly_wait(10)
+                getEl(testcase, 'xpath', "//a[contains(text(), '%s')]" % k['name']).click()
+        else:
+            testcase.driver.find_element_by_name('createinvolvement_primaryinvestor').click()
+            doCreateStakeholder(testcase, shValues=shValues)
     
     if cat4 != {}:
         testcase.driver.find_element_by_id('activityformstep_53').click()
@@ -110,7 +116,7 @@ def doActivitySubmit(testcase):
     uid = link.split('/')[len(link.split('/'))-1]
     
     return uid
-    
+
 def doCreateStakeholder(testcase, tf1='Stakeholder Name', nf1=234.5, 
     shValues={}):
     
@@ -124,22 +130,22 @@ def doCreateStakeholder(testcase, tf1='Stakeholder Name', nf1=234.5,
     testcase.driver.find_element_by_id('stakeholderformsubmit').click()
 
 
-def doReview(driver, aOrSh, uid, reject=False, withInv=False):
+def doReview(testcase, aOrSh, uid, reject=False, withInv=False):
     
     type = 'activities'
     if aOrSh == 'sh':
         type = 'stakeholders'
     
-    driver.get(createUrl('/%s/review/%s' % (type, uid)))
+    testcase.driver.get(createUrl('/%s/review/%s' % (type, uid)))
     
     # withInv is only valid vor Activities
     if withInv is True and aOrSh == 'a':
-        driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").click()
-        driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
-        driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
+        testcase.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").click()
+        testcase.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
+        testcase.driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
     
     if reject is False:
-        driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
+        testcase.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
     else:
         # TODO
         pass

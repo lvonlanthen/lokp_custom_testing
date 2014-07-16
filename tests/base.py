@@ -7,6 +7,12 @@ BUTTON_APPROVE = 'Approve'
 BUTTON_LOGIN = 'Login'.upper()
 BUTTON_USERNAME = USERNAME.upper()
 PROJECT_TITLE = 'Land Observatory'
+FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED = \
+    'At least one of the involvements prevents automatic revision.'
+FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED_FROM_STAKEHOLDER = \
+    'This version contains changed involvements which prevent automatic revision.'
+FEEDBACK_INVOLVED_ACTIVITIES_CANNOT_BE_REVIEWED = \
+    'At least one of the involved Activities cannot be reviewed'
 FEEDBACK_INVOLVED_STAKEHOLDERS_CANNOT_BE_REVIEWED = \
     'At least one of the involved Stakeholders cannot be reviewed'
 FEEDBACK_LOGIN_NEEDED = 'Please login'
@@ -16,6 +22,8 @@ LINK_REVIEW = 'Review'
 LINK_STAKEHOLDER_SHOW_INVOLVEMENT = 'View Deal'
 LINK_VIEW_DEAL = 'View the Deal.'
 STATUS_ACTIVE = 'active'
+STATUS_EDITED = 'edited'
+STATUS_INACTIVE = 'inactive'
 STATUS_PENDING = 'pending'
 TEXT_PENDING_VERSION = 'Pending version'.upper()
 TITLE_DEAL_DETAILS = 'Deal Details'

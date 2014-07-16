@@ -40,7 +40,7 @@ class ActivitiesTests(TestCase):
         # Check that a detail page is available
         self.driver.get(createUrl('/activities/html/%s' % uid))
         self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
-        self.assertTrue(checkIsPending(self.driver))
+        self.assertTrue(checkIsPending(self))
 
     def test_create_activity_with_new_involvement(self):
         """
@@ -93,6 +93,6 @@ class ActivitiesTests(TestCase):
 #
 #        aUid = doCreateActivity(self, createSH=True)
 #
-#        doReview(self.driver, 'a', aUid, withInv=True)
+#        doReview(driver, 'a', aUid, withInv=True)
             
             

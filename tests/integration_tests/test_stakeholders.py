@@ -152,11 +152,11 @@ class StakeholderModerateTests(TestCase):
         doLogin(self)
         shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
         reviewStakeholder(self, shUid)
-        invData = {
+        invData = [{
             'id': shUid,
             'version': 1,
             'role': 6
-        }
+        }]
         aUid = createActivity(self, getNewActivityDiff(3, data=invData),
             returnUid=True)
         reviewActivity(self, aUid)

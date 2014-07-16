@@ -64,8 +64,9 @@ ${field.end_mapping()}
 
 <%
     import json
-    from lmkp.views.views import getOverviewKeys
+    from lmkp.views.views import getOverviewKeys, getOverviewRawKeys
     aKeys, shKeys = getOverviewKeys(request)
+    aRawKeys, shRawKeys = getOverviewRawKeys(request)
 %>
 
 <script type="text/javascript">
@@ -76,12 +77,13 @@ ${field.end_mapping()}
     var searchPrefix = 'sh';
     var queryUrl = "${request.route_url('stakeholders_read_many', output='json')}";
     var shKeys = ${json.dumps(shKeys) | n};
+    var shRawKeys = ${json.dumps(shRawKeys) | n};
 
     deform.addCallback(
         'searchinvinput-${field.oid}',
         function(oid) {
             createSearch(oid, tForUnknown, tForToomanyresults, tForNothingfound,
-                queryUrl, searchPrefix, shKeys);
+                queryUrl, searchPrefix, shKeys, shRawKeys);
         }
     );
 </script>

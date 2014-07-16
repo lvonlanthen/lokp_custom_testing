@@ -1,3 +1,7 @@
+# Some of the more complicated test setups and procedures are explained 
+# schematically in files available in a Google Drive folder:
+# https://drive.google.com/folderview?id=0B49ePOKDgdN-WFZXVGlCX2ZZR2M&usp=sharing
+
 import pytest
 from unittest import TestCase
 
@@ -64,11 +68,11 @@ class ActivityCreateTests(TestCase):
         status = getStatusFromItemJSON(res)
         self.assertEqual('active', status)
         
-        invData = {
+        invData = [{
             'id': shUid,
             'version': 1,
             'role': 6
-        }
+        }]
         aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
@@ -107,11 +111,11 @@ class ActivityCreateTests(TestCase):
         
         shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
         
-        invData = {
+        invData = [{
             'id': shUid,
             'version': 1,
             'role': 6
-        }
+        }]
         aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
@@ -227,11 +231,11 @@ class ActivityModerateTests(TestCase):
         doLogin(self)
         shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
         reviewStakeholder(self, shUid)
-        invData = {
+        invData = [{
             'id': shUid,
             'version': 1,
             'role': 6
-        }
+        }]
         aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
@@ -269,25 +273,729 @@ class ActivityModerateTests(TestCase):
         """
         doLogin(self)
         shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
-        invData = {
+        invData = [{
             'id': shUid,
             'version': 1,
             'role': 6
-        }
+        }]
         aUid = createActivity(self, getNewActivityDiff(3, data=invData), 
             returnUid=True)
         
-        res = reviewActivity(self, aUid, expectErrors=True)
-        # If a review cannot be done, the response still returns a valid HTTP
-        # status code and redirects to the history page, but flashes an error 
-        # message and does not approve the item.
-        res = res.follow()
-        self.assertEqual(200, res.status_int)
-        res.mustcontain(FEEDBACK_INVOLVED_STAKEHOLDERS_CANNOT_BE_REVIEWED)
+        res = reviewActivity(self, aUid)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
         res = getReadOneActivity(self, aUid, 'json')
         status = getStatusFromItemJSON(res)
         self.assertEqual(STATUS_PENDING, status)
 
+    def test_new_stakeholders_with_multiple_activities_can_be_reviewed(self):
+        """
+        
+        """
+        doLogin(self)
+        shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        invData1 = [{
+            'id': shUid,
+            'version': 1,
+            'role': 6
+        }]
+        aUid1 = createActivity(self, getNewActivityDiff(3, data=invData1), 
+            returnUid=True)
+        invData2 = invData1
+        invData2[0]['version'] = 2
+        aUid2 = createActivity(self, getNewActivityDiff(3, data=invData2),
+            returnUid=True)
+        
+        # Check that everything was created correctly
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res))
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res))
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 2))
+        
+        # A1v1 cannot be reviewed because of SH1
+        res = reviewActivity(self, aUid1)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        
+        # SH1v1 can be reviewed
+        reviewStakeholder(self, shUid, version=1)
+        
+        # A1v1 can now be reviewed, will set SH1v2 to ACTIVE (!!)
+        reviewActivity(self, aUid1)
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res))
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        
+        # A2v1 can be reviewed, will set SH1v2 to inactive, SH1v3 to active.
+        reviewActivity(self, aUid2)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res))
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_add_pending_stakeholder_to_pending_activity(self):
+        """
+        
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData1 = [{
+            'id': shUid,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid, version=1, type=2, 
+            data=invData1))
+        
+        # Check that everything was added correctly
+        res = getReadOneActivity(self, aUid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+    
+    def test_review_add_pending_stakeholder_to_pending_activity(self):
+        """
+        
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData1 = [{
+            'id': shUid,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid, version=1, type=2, 
+            data=invData1))
+        
+        # A1v2 cannot be reviewed because of SH
+        res = reviewActivity(self, aUid, version=2)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        
+        # SH1v1 can be reviewed
+        reviewStakeholder(self, shUid, version=1)
+        
+        # A1v2 can now be reviewed, will set SH1v2 active and SH1v1 inactive
+        reviewActivity(self, aUid, version=2)
+        
+        res = getReadOneActivity(self, aUid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        
+    def test_add_pending_stakeholder_to_multiple_pending_activities(self):
+        """
+        
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData1 = [{
+            'id': shUid,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity
+        aUid2 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData2 = [{
+            'id': shUid,
+            'version': 2,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid2, version=1, type=2, 
+            data=invData2))
+        
+        # Check that everything was added correctly
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_review_add_pending_stakeholder_to_multiple_pending_activities(self):
+        """
+        
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData1 = [{
+            'id': shUid,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity
+        aUid2 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData2 = [{
+            'id': shUid,
+            'version': 2,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid2, version=1, type=2, 
+            data=invData2))
+        
+        # A1v2 cannot be reviewed because of SH
+        res = reviewActivity(self, aUid1, version=2)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        # A2v2 cannot be reviewed because of SH
+        res = reviewActivity(self, aUid2, version=2)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        
+        # SH1v1 can be reviewed
+        reviewStakeholder(self, shUid, version=1)
+        
+        # A1v2 can now be reviewed
+        reviewActivity(self, aUid1, version=2)
+        
+        # A2v2 can also be reviewed
+        reviewActivity(self, aUid2, version=2)
+        
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_add_pending_stakeholder_to_multiple_activities(self):
+        """
+        
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData1 = [{
+            'id': shUid,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity, directly with SH 1
+        invData2 = [{
+            'id': shUid,
+            'version': 2,
+            'role': 6
+        }]
+        aUid2 = createActivity(self, getNewActivityDiff(3, data=invData2), 
+            returnUid=True)
+        
+        # Check that everything was added correctly
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_review_add_pending_stakeholder_to_multiple_activities(self):
+        """
+        
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the Stakeholder as involvement
+        invData1 = [{
+            'id': shUid,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity, directly with SH 1
+        invData2 = [{
+            'id': shUid,
+            'version': 2,
+            'role': 6
+        }]
+        aUid2 = createActivity(self, getNewActivityDiff(3, data=invData2), 
+            returnUid=True)
+        
+        # A1v2 cannot be reviewed because of SH
+        res = reviewActivity(self, aUid1, version=2)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        
+        # A2v1 cannot be reviewed because of SH
+        res = reviewActivity(self, aUid2, version=1)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        
+        # SH1v1 can be reviewed
+        reviewStakeholder(self, shUid, version=1)
+        
+        # A1v2 can now be reviewed
+        reviewActivity(self, aUid1, version=2)
+        
+        # A2v1 can also be reviewed
+        reviewActivity(self, aUid2, version=1)
+        
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        res = getReadOneStakeholder(self, shUid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_setup_01(self):
+        """
+        For the rather complicated setup of this test, have a look at 
+        "Setup Test 01" in the drive folder.
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid1 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a second Stakeholder
+        shUid2 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the first Stakeholder as involvement
+        invData1 = [{
+            'id': shUid1,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity and add the second Stakeholder as involvement
+        invData2 = [{
+            'id': shUid2,
+            'version': 1,
+            'role': 6
+        }]
+        aUid2 = createActivity(self, getNewActivityDiff(3, data=invData2), 
+            returnUid=True)
+        # Create a third Activity and add both Stakeholders as involvement
+        invData3 = [{
+            'id': shUid1,
+            'version': 2,
+            'role': 6
+        }, {
+            'id': shUid2,
+            'version': 2,
+            'role': 6
+        }]
+        aUid3 = createActivity(self, getNewActivityDiff(3, data=invData3), 
+            returnUid=True)
+        
+        # Check that everything was added correctly
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        res = getReadOneActivity(self, aUid3, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        res = getReadOneStakeholder(self, shUid1, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+        res = getReadOneStakeholder(self, shUid2, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_setup_01_review(self):
+        """
+        For the rather complicated setup of this test, have a look at 
+        "Setup Test 01" in the drive folder.
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid1 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a second Stakeholder
+        shUid2 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the first Stakeholder as involvement
+        invData1 = [{
+            'id': shUid1,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity and add the second Stakeholder as involvement
+        invData2 = [{
+            'id': shUid2,
+            'version': 1,
+            'role': 6
+        }]
+        aUid2 = createActivity(self, getNewActivityDiff(3, data=invData2), 
+            returnUid=True)
+        # Create a third Activity and add both Stakeholders as involvement
+        invData3 = [{
+            'id': shUid1,
+            'version': 2,
+            'role': 6
+        }, {
+            'id': shUid2,
+            'version': 2,
+            'role': 6
+        }]
+        aUid3 = createActivity(self, getNewActivityDiff(3, data=invData3), 
+            returnUid=True)
+
+        # None of the Activities can be reviewed because of SH
+        res = reviewActivity(self, aUid1, version=2)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        res = reviewActivity(self, aUid2, version=1)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        res = reviewActivity(self, aUid3, version=1)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        
+        # SH1v1 can be reviewed
+        reviewStakeholder(self, shUid1, version=1)
+        
+        # A1v2 can be reviewed
+        reviewActivity(self, aUid1, version=2)
+        
+        # SH1v3 cannot be reviewed because of A3
+        res = reviewStakeholder(self, shUid1, version=3)
+        checkReviewStakeholderNotPossibleBcInvolvements(self, res)
+        
+        # A3v1 can not be reviewed because of SH2
+        res = reviewActivity(self, aUid3, version=1)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+
+        # SH2v1 can be reviewed
+        reviewStakeholder(self, shUid2, version=1)
+        
+        # A2v1 can now be reviewed
+        reviewActivity(self, aUid2, version=1)
+        
+        # A3v1 can now be reviewed
+        reviewActivity(self, aUid3, version=1)
+        
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        res = getReadOneActivity(self, aUid3, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        res = getReadOneStakeholder(self, shUid1, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+        res = getReadOneStakeholder(self, shUid2, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_setup_02(self):
+        """
+        For the rather complicated setup of this test, have a look at 
+        "Setup Test 02" in the drive folder.
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid1 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a second Stakeholder
+        shUid2 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the first Stakeholder as involvement
+        invData1 = [{
+            'id': shUid1,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity and add the second Stakeholder as involvement
+        invData2 = [{
+            'id': shUid2,
+            'version': 1,
+            'role': 6
+        }]
+        aUid2 = createActivity(self, getNewActivityDiff(3, data=invData2), 
+            returnUid=True)
+        # Create a third Activity and add both Stakeholders as involvement
+        invData3 = [{
+            'id': shUid1,
+            'version': 2,
+            'role': 6
+        }, {
+            'id': shUid2,
+            'version': 2,
+            'role': 6
+        }]
+        aUid3 = createActivity(self, getNewActivityDiff(3, data=invData3), 
+            returnUid=True)
+        # Edit the third Activity
+        createActivity(self, getEditActivityDiff(aUid3, type=1))
+        
+        # Check that everything was added correctly
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        res = getReadOneActivity(self, aUid3, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 2)
+        res = getReadOneStakeholder(self, shUid1, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+        res = getReadOneStakeholder(self, shUid2, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_PENDING, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+
+    def test_setup_02_review(self):
+        """
+        For the rather complicated setup of this test, have a look at 
+        "Setup Test 02" in the drive folder.
+        """
+        doLogin(self)
+        # Create a first Stakeholder
+        shUid1 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a second Stakeholder
+        shUid2 = createStakeholder(self, getNewStakeholderDiff(), returnUid=True)
+        # Create a first Activity
+        aUid1 = createActivity(self, getNewActivityDiff(1), returnUid=True)
+        # Edit the Activity and add the first Stakeholder as involvement
+        invData1 = [{
+            'id': shUid1,
+            'version': 1,
+            'role': 6
+        }]
+        createActivity(self, getEditActivityDiff(aUid1, version=1, type=2, 
+            data=invData1))
+        # Create a second Activity and add the second Stakeholder as involvement
+        invData2 = [{
+            'id': shUid2,
+            'version': 1,
+            'role': 6
+        }]
+        aUid2 = createActivity(self, getNewActivityDiff(3, data=invData2), 
+            returnUid=True)
+        # Create a third Activity and add both Stakeholders as involvement
+        invData3 = [{
+            'id': shUid1,
+            'version': 2,
+            'role': 6
+        }, {
+            'id': shUid2,
+            'version': 2,
+            'role': 6
+        }]
+        aUid3 = createActivity(self, getNewActivityDiff(3, data=invData3), 
+            returnUid=True)
+        # Edit the third Activity
+        createActivity(self, getEditActivityDiff(aUid3, type=1))
+        
+        # None of the Activities can be reviewed because of SH
+        res = reviewActivity(self, aUid1, version=2)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        res = reviewActivity(self, aUid2, version=1)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        res = reviewActivity(self, aUid3, version=2)
+        checkReviewActivityNotPossibleBcStakeholder(self, res)
+        
+        # SH1v1 can be reviewed
+        reviewStakeholder(self, shUid1, version=1)
+        
+        # A1v2 can now be reviewed
+        reviewActivity(self, aUid1, version=2)
+        
+        # SH2v1 can be reviewd
+        reviewStakeholder(self, shUid2, version=1)
+        
+        # A2v1 can now be reviewed.
+        reviewActivity(self, aUid2, version=1)
+        
+        # A3v2 can now be reviewed.
+        reviewActivity(self, aUid3, version=2)
+        
+        res = getReadOneActivity(self, aUid1, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 0)
+        res = getReadOneActivity(self, aUid2, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 1)
+        res = getReadOneActivity(self, aUid3, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_EDITED, getStatusFromItemJSON(res, 1))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 2)
+        res = getReadOneStakeholder(self, shUid1, 'json')
+        res = getReadOneStakeholder(self, shUid2, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
+        res = getReadOneStakeholder(self, shUid2, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, getStatusFromItemJSON(res, 0))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 1))
+        self.assertEqual(STATUS_INACTIVE, getStatusFromItemJSON(res, 2))
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 0)), 2)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 1)), 1)
+        self.assertEqual(len(getInvolvementsFromItemJSON(res, 2)), 0)
 
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration

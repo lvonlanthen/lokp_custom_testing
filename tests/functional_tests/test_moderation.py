@@ -1,4 +1,5 @@
 import pytest
+import uuid
 from selenium import webdriver
 from unittest import TestCase
 
@@ -26,7 +27,7 @@ class ModerationTests(TestCase):
 
         # Check that it is pending and there is a moderation link
         self.driver.get(link)
-        self.assertTrue(checkIsPending(self.driver))
+        self.assertTrue(checkIsPending(self))
         reviewLink = self.driver.find_element_by_xpath("//a[contains(@href, '/activities/review/')]")
         self.assertIn(LINK_REVIEW, reviewLink.text)
         
@@ -39,7 +40,7 @@ class ModerationTests(TestCase):
         
         # Make sure the Activity is not pending anymore
         self.driver.get(link)
-        self.assertFalse(checkIsPending(self.driver))
+        self.assertFalse(checkIsPending(self))
     
     def test_approve_activity_with_new_involvement(self):
         """
@@ -70,11 +71,11 @@ class ModerationTests(TestCase):
         
         # Make sure the Activity is not pending anymore
         self.driver.get(createUrl('/activities/html/%s' % aUid))
-        self.assertFalse(checkIsPending(self.driver))
+        self.assertFalse(checkIsPending(self))
         
         # Go to Stakeholder and make sure it is not pending anymore
         self.driver.find_element_by_link_text(LINK_DEAL_SHOW_INVOLVEMENT).click()
-        self.assertFalse(checkIsPending(self.driver))
+        self.assertFalse(checkIsPending(self))
     
     def test_edited_stakeholders_with_involvements_can_be_approved(self):
         """
@@ -91,6 +92,7 @@ class ModerationTests(TestCase):
         self.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").click()
         self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
         self.driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
+        self.driver.implicitly_wait(10)
         self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
         
         # Go to Stakeholder and edit it
@@ -102,7 +104,80 @@ class ModerationTests(TestCase):
         self.driver.get(createUrl('/stakeholders/review/%s' % shUid))
         self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
 
-        # Make sure the Stakeholderw as approved correctly
+        # Make sure the Stakeholder was approved correctly
         getEl(self, 'class_name', 'alert-success')
         self.driver.get(createUrl('/stakeholders/html/%s' % shUid))
-        self.assertFalse(checkIsPending(self.driver))
+        self.assertFalse(checkIsPending(self))
+
+    def test_show_warning_prevent_automatic_revision_of_involvements(self):
+        """
+        Test that the warning that indicates prevention of automatic revision is
+        shown where it should be.
+        It is shown on Activity side if the involved Stakeholder has no active
+        version yet.
+        It is shown on Stakeholder side if there is an involvement because these
+        always have to be reviewed from Activity side.
+        """
+        
+        # Create a Stakeholder with a known name.
+        shName = str(uuid.uuid4())
+        shValues = {
+            'tf1': shName
+        }
+        doCreateActivity(self, createSH=True, shValues=shValues, noSubmit=True)
+        
+        # Create an Activity with the Stakeholder
+        knownSh = [{
+            'name': shName
+        }]
+        aUid1 = doCreateActivity(self, createSH=True, knownSh=knownSh)
+        
+        # Create another Activity with the same Stakeholder
+        aUid2 = doCreateActivity(self, createSH=True, knownSh=knownSh)
+        
+        # A1v1 cannot be reviewed because of SH
+        self.driver.get(createUrl('/activities/review/%s' % aUid1))
+        shLink = self.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").get_attribute('href')
+        shUid = shLink.split('/')[len(shLink.split('/'))-1]
+        shUid = shUid.split('?')[0]
+        
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % BUTTON_APPROVE)
+        findTextOnPage(self, FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED)
+        
+        # A2v1 cannot be reviewed because of SH
+        self.driver.get(createUrl('/activities/review/%s' % aUid2))
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % BUTTON_APPROVE)
+        findTextOnPage(self, FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED)
+        
+        # SHv3 cannot be reviewed because of A
+        self.driver.get(createUrl('/stakeholders/review/%s?new=3' % shUid))
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % BUTTON_APPROVE)
+        findTextOnPage(self, FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED_FROM_STAKEHOLDER)
+        
+        # SHv1 can now be reviewed
+        doReview(self, 'sh', shUid)
+        
+        # SHv3 can still not be reviewed because of A
+        self.driver.get(createUrl('/stakeholders/review/%s?new=3' % shUid))
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % BUTTON_APPROVE)
+        findTextOnPage(self, FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED_FROM_STAKEHOLDER)
+        
+        # A1v1 can now be reviewed
+        doReview(self, 'a', aUid1)
+        
+        # SHv3 can still not be reviewed because of A
+        self.driver.get(createUrl('/stakeholders/review/%s?new=3' % shUid))
+        self.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' disabled ') and contains(text(), '%s')]" % BUTTON_APPROVE)
+        findTextOnPage(self, FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED_FROM_STAKEHOLDER)
+        
+        # Review A2v1
+        doReview(self, 'a', aUid2)
+        
+        # All should be active now
+        openItemDetailsPage(self, 'activities', aUid1)
+        self.assertFalse(checkIsPending(self))
+        openItemDetailsPage(self, 'activities', aUid2)
+        self.assertFalse(checkIsPending(self))
+        openItemDetailsPage(self, 'stakeholders', shUid)
+        self.assertFalse(checkIsPending(self))
+        
