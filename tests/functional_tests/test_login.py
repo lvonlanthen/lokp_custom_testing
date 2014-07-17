@@ -29,7 +29,7 @@ class LoginTests(TestCase):
         
         # Login
         self.driver.get(createUrl('/login'))
-        loginfield = self.driver.find_element_by_name('login')
+        loginfield = self.driver.find_element_by_name('login') #
         loginfield.send_keys(USERNAME)
         passwordfield = self.driver.find_element_by_name('password')
         passwordfield.send_keys(PASSWORD)

@@ -34,6 +34,8 @@ def getEl(testcase, by, selector, inverse=False):
             el = testcase.driver.find_element_by_class_name(selector)
         elif by == 'xpath':
             el = testcase.driver.find_element_by_xpath(selector)
+        elif by == 'name':
+            el = testcase.driver.find_element_by_name(selector)
         else:
             testcase.fail('"%s" is not a valid "by" to find the element.' % by)
     except NoSuchElementException:
@@ -60,11 +62,12 @@ def findTextOnPage(testcase, text, count=None):
     else:
         testcase.assertEqual(len(els), count, 'Expected appearances of text "%s" on page: %s, found it %s times' % (text, count, len(els)))
 
-def doLogin(testcase, redirect=None, gotForm=False):
+def doLogin(testcase, redirect=None, gotForm=False, password=None):
+    pwd = PASSWORD if password is None else password
     if gotForm is False:
         testcase.driver.get(createUrl('/login'))
     testcase.driver.find_element_by_name('login').send_keys(USERNAME)
-    testcase.driver.find_element_by_name('password').send_keys(PASSWORD)
+    testcase.driver.find_element_by_name('password').send_keys(pwd)
     if redirect is not None:
         testcase.driver.execute_script(\
             "document.getElementsByName('came_from')[0].value='%s'" % redirect)
