@@ -20,14 +20,18 @@ p.deal-detail {
 .row-fluid [class*="span"] h5 {
     font-weight: normal;
 }
-.row-fluid.thmgtitle h5 {
-    font-weight: bold;
-    margin-left: 10px;
-}
 .row-fluid.thmgtitle .span9.grid-area {
     border-top: 0;
 }
-.row-fluid.thmgtitle .span9.grid-area h5.green {
+.row-fluid.thmgtitle>.span9.grid-area {
+    border-top: 1px solid gray;
+    
+}
+div.row-fluid.thmgtitle div.grid-area div.row-fluid:first-child div.span5 h5 {
     font-weight: normal !important;
     margin-left: 0;
+}
+.row-fluid.thmgtitle>.span9.grid-area>h5.green {
+    margin-left: 10px;
+    font-weight: bold;
 }
