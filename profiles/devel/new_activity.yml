@@ -107,6 +107,7 @@
     # [C-THG] Subcategory 8
     11:
       order: 1
+      showindetails: true
       # [TG]
       1:
         order: 1
@@ -116,7 +117,7 @@
       # [TG]
       2:
         order: 2
-        # [K] 29: IntegerDropdown 1
+        # [K] 29: IntegerDropdown 2
         29:
           maintag: true
 

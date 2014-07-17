@@ -17,6 +17,8 @@ def getReadOneStakeholder(testcase, uid, format):
     if format == 'json':
         res = testcase.app.get('/stakeholders/json/%s' % uid)
         return res.json
+    elif format == 'html':
+        return testcase.app.get('/stakeholders/html/%s' % uid)
     else:
         testcase.fail('Unknown format: %s' % format)
 
@@ -78,8 +80,10 @@ def getEditStakeholderDiff(uid, version=1, type=1):
 
 def getNewStakeholderDiff(type=1):
     """
-    1: Complete Stakeholder
+    1: Complete Stakeholder (minimal)
     2: Incomplete Stakeholder
+    3: Complete Stakeholder with two values (IntegerDropdown) of Subcategory 8 
+       filled out.
     """
     if type == 1:
         return {
@@ -132,6 +136,69 @@ def getNewStakeholderDiff(type=1):
                         {
                           'value': 123.0, 
                           'key': u'[SH] Numberfield 1', 
+                          'op': 'add'
+                        }
+                      ], 
+                      'op': 'add'
+                    }
+                  ], 
+                  'version': 1
+                }
+            ]
+        }
+    elif type == 3:
+        return {
+            'stakeholders': [
+                {
+                  'taggroups': [
+                    {
+                      'main_tag': {
+                        'value': 123.0, 
+                        'key': u'[SH] Numberfield 1'
+                      }, 
+                      'tags': [
+                        {
+                          'value': 123.0, 
+                          'key': u'[SH] Numberfield 1', 
+                          'op': 'add'
+                        }
+                      ], 
+                      'op': 'add'
+                    }, {
+                      'main_tag': {
+                        'value': u'asdf', 
+                        'key': u'[SH] Textfield 1'
+                      },  
+                      'tags': [
+                        {
+                          'value': u'asdf', 
+                          'key': u'[SH] Textfield 1', 
+                          'op': 'add'
+                        }
+                      ], 
+                      'op': 'add'
+                    }, {
+                      'main_tag': {
+                        'value': 1, 
+                        'key': '[SH] Integerdropdown 1'
+                      },  
+                      'tags': [
+                        {
+                          'value': 1, 
+                          'key': '[SH] Integerdropdown 1', 
+                          'op': 'add'
+                        }
+                      ], 
+                      'op': 'add'
+                    }, {
+                      'main_tag': {
+                        'value': 2, 
+                        'key': '[SH] Integerdropdown 2'
+                      },  
+                      'tags': [
+                        {
+                          'value': 2, 
+                          'key': '[SH] Integerdropdown 2', 
                           'op': 'add'
                         }
                       ], 

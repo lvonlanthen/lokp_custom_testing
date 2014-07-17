@@ -1,0 +1,33 @@
+/**
+Custom CSS fixes for the details pages, both Activities and Stakeholders.
+*/
+.olTileImage {
+    max-width: none !important;
+}
+p.deal-detail {
+    font-weight: normal;
+}
+.row-fluid [class*="span"]:first-child {
+    margin-left: 10px;
+}
+.row-fluid [class*="span"] {
+    margin-left: 10px;
+}
+.row-fluid [class*="span"]:first-child [class*="span"]:first-child h5 {
+    color: #A3A708;
+    font-weight: bold;
+}
+.row-fluid [class*="span"] h5 {
+    font-weight: normal;
+}
+.row-fluid.thmgtitle h5 {
+    font-weight: bold;
+    margin-left: 10px;
+}
+.row-fluid.thmgtitle .span9.grid-area {
+    border-top: 0;
+}
+.row-fluid.thmgtitle .span9.grid-area h5.green {
+    font-weight: normal !important;
+    margin-left: 0;
+}

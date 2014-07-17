@@ -99,10 +99,22 @@
   # [C] Category 3
   16:
     order: 3
-#    # [C-THG] Subcategory 6
-#    22:
-#      order: 1
-#      # [TG]
+    # [C-THG] Subcategory 6
+    22:
+      order: 1
+      showindetails: true
+      # [TG]
+      1:
+        # [K] 28: IntegerDropdown 1
+        28:
+          maintag: true
+      # [TG]
+      2:
+        # [K] 29: IntegerDropdown 2
+        29:
+          maintag: true
+
+
 #      involvement:
 #        name: 'primaryinvestor'
 #        roles: [1]

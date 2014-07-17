@@ -19,6 +19,8 @@ def getReadOneActivity(testcase, uid, format):
     if format == 'json':
         res = testcase.app.get('/activities/json/%s' % uid)
         return res.json
+    elif format == 'html':
+        return testcase.app.get('/activities/html/%s' % uid)
     else:
         testcase.fail('Unknown format: %s' % format)
 
@@ -62,7 +64,9 @@ def getNewActivityDiff(type=1, data=None):
     1: Complete Activity with its Point somewhere in Laos.
     2: Incomplete Activity with its Point somewhere in Laos.
     3: Complete Activity with one or more Involvements (provided data array 
-       needed)
+       needed).
+    4: Complete Activity with its Point somewhere in Laos and two values 
+       (IntegerDropdown) of Subcategory 8 filled out.
     """
     if type == 1:
         return {
@@ -172,6 +176,70 @@ def getNewActivityDiff(type=1, data=None):
                   ], 
                   'version': 1,
                   'stakeholders': involvements
+                }
+            ]
+        }
+    elif type == 4:
+        return {
+            'activities': [
+                {
+                  'geometry': createGeometry('laos'),
+                  'taggroups': [
+                    {
+                      'main_tag': {
+                        'value': u'[A] Value A1', 
+                        'key': u'[A] Dropdown 1'
+                      }, 
+                      'tags': [
+                        {
+                          'value': u'[A] Value A1', 
+                          'key': u'[A] Dropdown 1', 
+                          'op': 'add'
+                        }
+                      ], 
+                      'op': 'add'
+                    }, {
+                      'main_tag': {
+                        'value': 123.45, 
+                        'key': u'[A] Numberfield 1'
+                      },  
+                      'tags': [
+                        {
+                          'value': 123.45, 
+                          'key': u'[A] Numberfield 1',
+                          'op': 'add'
+                        }
+                      ], 
+                      'op': 'add'
+                    }, {
+                        'main_tag': {
+                            'key': '[A] Integerdropdown 1',
+                            'value': 1
+                        },
+                        'tags': [
+                            {
+                                'key': '[A] Integerdropdown 1',
+                                'value': 1,
+                                'op': 'add'
+                            }
+                        ],
+                        'op': 'add'
+                    }, {
+                        'main_tag': {
+                            'key': '[A] Integerdropdown 2',
+                            'value': 2
+                        },
+                        'tags': [
+                            {
+                                'key': '[A] Integerdropdown 2',
+                                'value': 2,
+                                'op': 'add'
+                            }
+                        ],
+                        'op': 'add'
+                    }
+                  ], 
+                  'version': 1
                 }
             ]
         }
