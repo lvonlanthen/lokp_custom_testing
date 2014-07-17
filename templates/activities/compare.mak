@@ -103,7 +103,7 @@
                 <div class="span3">
                     <ul class="nav nav-tabs table_tabs">
                         <li>
-                            <a href="${request.route_url('activities_read_one', output='history', uid=identifier)}">${_('History')}</a>
+                            <a href="${request.route_url('activities_read_one_history', output='html', uid=identifier)}">${_('History')}</a>
                         </li>
                     </ul>
                 </div>
