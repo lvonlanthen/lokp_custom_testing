@@ -70,7 +70,25 @@ def findTextOnPage(testcase, text, count=None):
     else:
         testcase.assertEqual(len(els), count, 'Expected appearances of text "%s" on page: %s, found it %s times' % (text, count, len(els)))
 
-def doLogin(testcase, redirect=None, gotForm=False, password=None):
+def doChangeProfile(testcase, new, old=None, gui=False, redirect=None):
+    """
+    Change the profile
+    """
+    if gui is True:
+        if old == 'global': 
+            old = 'select profile'
+        getEl(testcase, 'link_text', old.upper()).click()
+        getEl(testcase, 'link_text', new.upper()).click()
+        if redirect is not None:
+            testcase.driver.get(createUrl(redirect))
+    else:
+        if redirect is None:
+            testcase.driver.get(testcase.driver.current_url + '?_PROFILE_=%s' % new)
+        else:
+            testcase.driver.get(createUrl(redirect + '?_PROFILE_=%s' % new))
+
+def doLogin(testcase, redirect=None, gotForm=False, username=None, 
+    password=None):
     """
     Do the Login procedure.
     """
@@ -82,7 +100,8 @@ def doLogin(testcase, redirect=None, gotForm=False, password=None):
             testcase.driver.get(redirect)
         return
     pwd = PASSWORD if password is None else password
-    testcase.driver.find_element_by_name('login').send_keys(USERNAME)
+    user = USERNAME if username is None else username
+    testcase.driver.find_element_by_name('login').send_keys(user)
     testcase.driver.find_element_by_name('password').send_keys(pwd)
     if redirect is not None:
         testcase.driver.execute_script(\

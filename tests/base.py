@@ -5,6 +5,7 @@ PASSWORD = 'asdfasdf'
 # Strings needed during testing as found in the templates
 BUTTON_APPROVE = 'Approve'
 BUTTON_LOGIN = 'Login'.upper()
+BUTTON_SHOW_ONLY_PENDING = 'Show only pending'.upper()
 BUTTON_USERNAME = USERNAME.upper()
 PROJECT_TITLE = 'Land Observatory'
 FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED = \
