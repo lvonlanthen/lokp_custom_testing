@@ -1,4 +1,5 @@
-from selenium.common.exceptions import NoSuchElementException     
+import time
+from selenium.common.exceptions import NoSuchElementException    
 
 from ..base import *
 
@@ -23,6 +24,13 @@ def checkValidItemType(testcase, itemType):
 
 def createUrl(url):
     return '%s%s' % (BASE_URL, url)
+
+def checkEl(testcase, by, selector):
+    try:
+        getEl(testcase, by, selector)
+    except:
+        return False
+    return True
 
 def getEl(testcase, by, selector, inverse=False):
     try:
@@ -63,9 +71,17 @@ def findTextOnPage(testcase, text, count=None):
         testcase.assertEqual(len(els), count, 'Expected appearances of text "%s" on page: %s, found it %s times' % (text, count, len(els)))
 
 def doLogin(testcase, redirect=None, gotForm=False, password=None):
-    pwd = PASSWORD if password is None else password
+    """
+    Do the Login procedure.
+    """
     if gotForm is False:
         testcase.driver.get(createUrl('/login'))
+    if checkEl(testcase, 'name', 'login') is False:
+        # Already logged in
+        if redirect is not None:
+            testcase.driver.get(redirect)
+        return
+    pwd = PASSWORD if password is None else password
     testcase.driver.find_element_by_name('login').send_keys(USERNAME)
     testcase.driver.find_element_by_name('password').send_keys(pwd)
     if redirect is not None:
@@ -88,6 +104,7 @@ def doCreateActivity(testcase, dd1='[A] Value A1', nf1=123.45, cat4={},
         shbtn = testcase.driver.find_elements_by_class_name('accordion-toggle')
         for el in shbtn:
             el.click()
+            time.sleep(1)
         if len(knownSh) > 0:
             for k in knownSh:
                 getEl(testcase, 'class_name', 'ui-autocomplete-input').send_keys(k['name'])

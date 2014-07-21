@@ -1,90 +1,106 @@
+import time
 import pytest
-from selenium import webdriver
-from unittest import TestCase
 
-from .base import *
+from .base import (
+    checkIsPending,
+    createUrl,
+    doCreateActivity,
+    doCreateStakeholder,
+    doLogin,
+    getEl,
+)
+from ..base import (
+    LINK_DEAL_SHOW_INVOLVEMENT,
+    LINK_STAKEHOLDER_SHOW_INVOLVEMENT,
+    LINK_VIEW_DEAL,
+    TEXT_PENDING_VERSION,
+    TITLE_DEAL_DETAILS,
+    TITLE_DEAL_EDITOR,
+    TITLE_STAKEHOLDER_DETAILS,
+    TITLE_STAKEHOLDER_EDITOR,
+)
+
 
 @pytest.mark.functional
 @pytest.mark.activities
-class ActivitiesTests(TestCase):
-    
-    def setUp(self):
-        self.driver = webdriver.Firefox()
-    
-    def tearDown(self):
-        self.driver.quit()
-    
-    def test_create_activity(self):
-        """
-        Test that a new Activity can be created.
-        """
-        
-        # Count how many Activities there are already
-        doLogin(self, createUrl('/activities/html'))
-        
+def test_create_activity(testcase):
+    """
+    Test that a new Activity can be created.
+    """
+
+    # Count how many Activities there are already
+    doLogin(testcase, createUrl('/activities/html'))
+
+    try:
+        getEl(testcase, 'tag_name', 'h5')
+        countBefore = 0
+    except:
+        countBefore = testcase.driver.find_element_by_xpath("//div[contains(@class, 'span4')]/strong")
+        countBefore = int(countBefore.text)
+
+    uid = doCreateActivity(testcase)
+
+    # Count how many Activities there are now
+    testcase.driver.get(createUrl('/activities/html'))
+    countAfter = testcase.driver.find_element_by_xpath("//div[contains(@class, 'span4')]/strong")
+    countAfter = int(countAfter.text)
+    testcase.assertEqual(countBefore + 1, countAfter)
+
+    # Check that a detail page is available
+    testcase.driver.get(createUrl('/activities/html/%s' % uid))
+    testcase.assertIn(TITLE_DEAL_DETAILS, testcase.driver.title)
+    testcase.assertTrue(checkIsPending(testcase))
+
+
+@pytest.mark.functional
+@pytest.mark.activities
+def test_create_activity_with_new_involvement(testcase):
+    """
+    Test that a new Activity can be created with a new Involvement.
+    """
+
+    # Define some values
+    aType = '[A] Value A1'
+    shName = 'Specific SH'
+
+    # Start the Activity form
+    doCreateActivity(testcase, dd1=aType, noSubmit=True)
+
+    # Add an involvement
+    testcase.driver.find_element_by_id('activityformstep_3').click()
+    testcase.assertIn(TITLE_DEAL_EDITOR, testcase.driver.title)
+    shbtn = testcase.driver.find_elements_by_xpath('//a[contains(@class, "accordion-toggle collapsed")]')
+    for el in shbtn:
         try:
-            getEl(self, 'tag_name', 'h5')
-            countBefore = 0
-        except:
-            countBefore = self.driver.find_element_by_xpath("//div[contains(@class, 'span4')]/strong")
-            countBefore = int(countBefore.text)
-        
-        uid = doCreateActivity(self)
-
-        # Count how many Activities there are now
-        self.driver.get(createUrl('/activities/html'))
-        countAfter = self.driver.find_element_by_xpath("//div[contains(@class, 'span4')]/strong")
-        countAfter = int(countAfter.text)
-        self.assertEqual(countBefore + 1, countAfter)
-
-        # Check that a detail page is available
-        self.driver.get(createUrl('/activities/html/%s' % uid))
-        self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
-        self.assertTrue(checkIsPending(self))
-
-    def test_create_activity_with_new_involvement(self):
-        """
-        Test that a new Activity can be created with a new Involvement.
-        """
-        
-        # Define some values
-        aType = '[A] Value A1'
-        shName = 'Specific SH'
-        
-        # Start the Activity form
-        doCreateActivity(self, dd1=aType, noSubmit=True)
-        
-        # Add an involvement
-        self.driver.find_element_by_id('activityformstep_3').click()
-        self.assertIn(TITLE_DEAL_EDITOR, self.driver.title)
-        shbtn = self.driver.find_elements_by_class_name('accordion-toggle')
-        for el in shbtn:
             el.click()
-        self.driver.find_element_by_name('createinvolvement_primaryinvestor').click()
-        self.assertIn(TITLE_STAKEHOLDER_EDITOR, self.driver.title)
-        
-        # Create and submit a Stakeholder
-        doCreateStakeholder(self, tf1=shName)
-        
-        # Make sure we are back in Activity form and submit
-        self.assertIn(TITLE_DEAL_EDITOR, self.driver.title)
-        self.driver.find_element_by_id('activityformsubmit').click()
-        link = self.driver.find_element_by_link_text(LINK_VIEW_DEAL).get_attribute('href')
-        self.driver.get(link)
-        self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
-        pending = self.driver.find_element_by_tag_name('h4').text
-        self.assertIn(TEXT_PENDING_VERSION, pending)
-        
-        # Make sure the Stakeholder is linked and view it's details
-        self.assertIn(shName, self.driver.page_source)
-        self.driver.find_element_by_link_text(LINK_DEAL_SHOW_INVOLVEMENT).click()
-        self.assertIn(TITLE_STAKEHOLDER_DETAILS, self.driver.title)
-        pending = self.driver.find_element_by_tag_name('h4').text
-        self.assertIn(TEXT_PENDING_VERSION, pending)
+        except:
+            pass
+    time.sleep(1)
+    testcase.driver.find_element_by_name('createinvolvement_primaryinvestor').click()
+    testcase.assertIn(TITLE_STAKEHOLDER_EDITOR, testcase.driver.title)
 
-        # Make sure the Activity is linked
-        self.assertIn(aType, self.driver.page_source)
-        getEl(self, 'link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT)
+    # Create and submit a Stakeholder
+    doCreateStakeholder(testcase, tf1=shName)
+
+    # Make sure we are back in Activity form and submit
+    testcase.assertIn(TITLE_DEAL_EDITOR, testcase.driver.title)
+    testcase.driver.find_element_by_id('activityformsubmit').click()
+    link = testcase.driver.find_element_by_link_text(LINK_VIEW_DEAL).get_attribute('href')
+    testcase.driver.get(link)
+    testcase.assertIn(TITLE_DEAL_DETAILS, testcase.driver.title)
+    pending = testcase.driver.find_element_by_tag_name('h4').text
+    testcase.assertIn(TEXT_PENDING_VERSION, pending)
+
+    # Make sure the Stakeholder is linked and view it's details
+    testcase.assertIn(shName, testcase.driver.page_source)
+    testcase.driver.find_element_by_link_text(LINK_DEAL_SHOW_INVOLVEMENT).click()
+    testcase.assertIn(TITLE_STAKEHOLDER_DETAILS, testcase.driver.title)
+    pending = testcase.driver.find_element_by_tag_name('h4').text
+    testcase.assertIn(TEXT_PENDING_VERSION, pending)
+
+    # Make sure the Activity is linked
+    testcase.assertIn(aType, testcase.driver.page_source)
+    getEl(testcase, 'link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT)
         
 #    def test_create_activity_with_existing_involvement(self):
 #        """

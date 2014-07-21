@@ -1,18 +1,46 @@
 # Somewhat based on:
 # http://blog.lostpropertyhq.com/testing-with-sqlalchemy-and-pytest/
+# and
+# http://blogs.gnome.org/danni/2012/11/15/combining-py-test-and-selenium-to-test-webapps/
 
 import pytest
 import os
 from pyramid.paster import get_app
 from pyramid.paster import get_appsettings
+from selenium import webdriver
 from sqlalchemy import engine_from_config
+from unittest import TestCase
 from webtest import TestApp
 
 from lmkp.scripts.populate import _populate
 from lmkp.models import meta
 
+# Specify the INI configuration files for the tests to run.
 INTEGRATION_TESTS_INI = 'integration_tests.ini'
 FUNCTIONAL_TESTS_INI = 'functional_tests.ini'
+
+# Activate the browsers you want to run the functional tests with.
+browsers = {
+    # Firefox: No plugins needed.
+#    'firefox': webdriver.Firefox,
+
+    # Internet Explorer
+    # In order to run this on Windows, download IEDriverServer from 
+    # http://selenium-release.storage.googleapis.com/index.html and add it to 
+    # the PATH.
+    # See also: https://code.google.com/p/selenium/wiki/InternetExplorerDriver
+    # If typing runs very slow and you are running the 64bit version of the 
+    # IEDriver, try using the 32bit version instead.
+#    'ie': webdriver.Ie,
+
+    # Chrome
+    # In order to run this on Windows, download ChromeDriver from
+    # http://chromedriver.storage.googleapis.com/index.html and add it to the
+    # PATH.
+    # See also: http://code.google.com/p/selenium/wiki/ChromeDriver
+#    'chrome': webdriver.Chrome,
+}
+
 
 @pytest.fixture(scope='session')
 def connection(request):
@@ -33,7 +61,6 @@ def connection(request):
     
     request.addfinalizer(meta.Base.metadata.drop_all)
     return connection
-
 
 @pytest.fixture
 def db_session(request, connection):
@@ -66,3 +93,22 @@ def app(request, db_session):
     """
     request.cls.app = TestApp(get_app(INTEGRATION_TESTS_INI))
     return request
+
+@pytest.fixture(scope='session',
+                params=browsers.keys())
+def driver(request):
+    if browsers == {}:
+        pytest.skip('No browser activated')
+    browser = browsers[request.param]()
+    browser.set_window_size(1200, 800)
+    # Set initial profile to 'global' (important for IE)
+    from functional_tests.base import BASE_URL
+    browser.get(BASE_URL + '/global')
+    request.addfinalizer(lambda *args: browser.quit())
+    return browser
+
+@pytest.fixture
+def testcase(driver):
+    testcase = TestCase('__init__')
+    testcase.driver = driver
+    return testcase
