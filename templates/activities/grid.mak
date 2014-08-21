@@ -8,6 +8,8 @@
     import urllib
     import datetime
     from lmkp.views.views import getQueryString
+    from lmkp.views.profile import get_current_locale
+    from lmkp.views.profile import get_current_profile
 
     # Get the keys and their translation
     from lmkp.views.config import getGridColumnKeys
@@ -69,7 +71,7 @@
             ${_('is involved.')}<br/><a href="${request.route_url('activities_read_many', output='html')}">${_('Remove this filter and show all Deals')}</a>.
         </div>
         % endif
-        
+
         ## Status Filter
         % if statusfilter:
         <div class="alert alert-info">
@@ -106,6 +108,9 @@
                     <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${t[1]}</a>
                 </li>
             % endfor
+
+            <li class="grid-show-pending"><a href="${request.route_url('changesets_read_latest', output='rss', _query=(('_LOCALE_', get_current_locale(request)),('_PROFILE_', get_current_profile(request))))}"><i class="icon-rss"></i></a></li>
+
             % if isModerator:
                 % if 'status=pending' in request.path_qs:
                     <li class="grid-show-pending active pointer">
@@ -196,7 +201,7 @@
                                     pending = True
 
                                 id = d['id'] if 'id' in d else _('Unknown')
-                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M') 
+                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M')
                                     if 'timestamp' in d else _('Unknown'))
                                 values = []
                                 translatedkeys = []

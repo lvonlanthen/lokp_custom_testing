@@ -1,6 +1,6 @@
 <%inherit file="lmkp:customization/testing/templates/base.mak" />
 
-<%def name="title()">${_('Grid View')} - ${_('Investors')}</%def>
+<%def name="title()">${_('Grid View')} - ${_('Stakeholders')}</%def>
 
 ## Start of content
 
@@ -8,6 +8,8 @@
     import urllib
     import datetime
     from lmkp.views.views import getQueryString
+    from lmkp.views.profile import get_current_locale
+    from lmkp.views.profile import get_current_profile
 
     # Get the keys and their translation
     from lmkp.views.config import getGridColumnKeys
@@ -77,7 +79,7 @@
             <strong>${_('Status Filter')}</strong>: ${_('You are only seeing Investors with the following status:')} ${statusfilter}
         </div>
         % endif
-        
+
         ## Tabs
         <ul class="nav nav-tabs table_tabs">
             <%
@@ -107,6 +109,9 @@
                     <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${t[1]}</a>
                 </li>
             % endfor
+
+            <li class="grid-show-pending"><a href="${request.route_url('changesets_read_latest', output='rss', _query=(('_LOCALE_', get_current_locale(request)),('_PROFILE_', get_current_profile(request))))}"><i class="icon-rss"></i></a></li>
+
             % if isModerator:
                 % if 'status=pending' in request.path_qs:
                     <li class="grid-show-pending active pointer">
@@ -196,7 +201,7 @@
                                     pending = True
 
                                 id = d['id'] if 'id' in d else _('Unknown')
-                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M') 
+                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M')
                                     if 'timestamp' in d else _('Unknown'))
                                 values = []
                                 translatedkeys = []
