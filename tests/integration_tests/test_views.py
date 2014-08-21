@@ -1,13 +1,14 @@
 import pytest
-from unittest import TestCase
 
-from .base import *
+from .base import (
+    LmkpTestCase
+)
 
 
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
-class ViewTests(TestCase):
-        
+class ViewTests(LmkpTestCase):
+
     def test_root(self):
         """
         The root page (/) is available.
