@@ -21,9 +21,10 @@ class LmkpTestCase(TestCase):
         res = self.app.post('/login', params=params)
         return res.follow()
 
-    def create(self, item_type, diff, return_uid=False):
+    def create(
+            self, item_type, diff, return_uid=False, expect_errors=False):
         url = get_base_url_by_item_type(item_type)
-        ret = self.app.post_json(url, diff)
+        ret = self.app.post_json(url, diff, expect_errors=expect_errors)
         if return_uid is True:
             return ret.json['data'][0]['id']
         return ret

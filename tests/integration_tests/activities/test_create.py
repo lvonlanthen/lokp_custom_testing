@@ -10,7 +10,10 @@ from ..diffs import (
 )
 from ...base import (
     FEEDBACK_LOGIN_NEEDED,
+    FEEDBACK_NO_GEOMETRY_PROVIDED,
+    FEEDBACK_NOT_VALID_FORMAT,
     STATUS_PENDING,
+    TITLE_HISTORY_VIEW,
 )
 
 
@@ -28,9 +31,20 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(res.status_int, 200)
         res.mustcontain(FEEDBACK_LOGIN_NEEDED)
 
-    def test_activity_can_be_created(self):
+    def test_cannot_create_empty_activity(self):
         """
-        New Activities can be created if the user is logged in.
+        When trying to create an Activity with an empty JSON, a 400
+        (Bad Response) code is returned with an error message in the
+        body.
+        """
+        self.login()
+        res = self.create('a', {}, expect_errors=True)
+        self.assertEqual(res.status_int, 400)
+        res.mustcontain(FEEDBACK_NOT_VALID_FORMAT)
+
+    def test_activity_can_be_created_with_all_mandatory_fields(self):
+        """
+        New Activities can be created with all mandatory fields.
         """
         self.login()
         res = self.create('a', get_new_diff('a'))
@@ -41,20 +55,49 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(len(json['data']), 1)
         self.assertIn('id', json['data'][0])
 
-    def test_new_activities_appear_in_read_many_json_service(self):
+    def test_activity_can_be_created_without_mandatory_fields(self):
         """
-        Newly created Activities appear in the JSON service "read many".
+        New Activities can be created even without any mandatory fields.
         """
         self.login()
-
-        json = self.read_many('a', 'json')
-        self.assertEqual(json['data'], [])
-        self.assertEqual(json['total'], 0)
-
-        self.create('a', get_new_diff('a'))
-
-        json = self.read_many('a', 'json')
+        res = self.create('a', get_new_diff('a', 2))
+        self.assertEqual(res.status_int, 201)
+        json = res.json
         self.assertEqual(json['total'], 1)
+        self.assertTrue(json['created'])
+        self.assertEqual(len(json['data']), 1)
+        self.assertIn('id', json['data'][0])
+
+    def test_activity_cannot_be_created_with_invalid_key(self):
+        self.login()
+        diff = get_new_diff('a')
+        diff['activities'][0]['taggroups'][0]['main_tag']['key'] = 'Foo'
+        diff['activities'][0]['taggroups'][0]['tags'][0]['key'] = 'Foo'
+        res = self.create('a', diff, expect_errors=True)
+        self.assertEqual(res.status_int, 400)
+        res.mustcontain("Key: Foo or Value: [A] Value A1 is not valid.")
+
+    def test_activity_cannot_be_created_with_invalid_value(self):
+        self.login()
+        diff = get_new_diff('a')
+        diff['activities'][0]['taggroups'][0]['main_tag']['value'] = 'Foo'
+        diff['activities'][0]['taggroups'][0]['tags'][0]['value'] = 'Foo'
+        res = self.create('a', diff, expect_errors=True)
+        self.assertEqual(res.status_int, 400)
+        res.mustcontain("Key: [A] Dropdown 1 or Value: Foo is not valid.")
+
+    def test_activity_cannot_be_created_without_geometry(self):
+        """
+        When trying to create an Activity without a geometry, a 400
+        (Bad Response) code is returned with an error message in the
+        body.
+        """
+        self.login()
+        diff = get_new_diff('a', 1)
+        del diff['activities'][0]['geometry']
+        res = self.create('a', diff, expect_errors=True)
+        self.assertEqual(res.status_int, 400)
+        res.mustcontain(FEEDBACK_NO_GEOMETRY_PROVIDED)
 
     def test_new_activities_with_existing_stakeholder_can_be_created(self):
         """
@@ -146,3 +189,41 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(inv['id'], a_uid)
         self.assertEqual(inv['version'], 1)
         self.assertEqual(inv['status_id'], 1)
+
+    def test_new_activities_have_status_pending(self):
+        """
+        Test that new Activities are created with status "pending".
+        """
+        self.login()
+        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        json = self.read_one('a', uid, 'json')
+        self.assertEqual(json['total'], 1)
+        status = get_status_from_item_json(json)
+        self.assertEqual(STATUS_PENDING, status)
+
+    def test_new_activities_appear_in_read_many_json_service(self):
+        """
+        Newly created Activities appear in the JSON service "read many".
+        """
+        self.login()
+
+        json = self.read_many('a', 'json')
+        self.assertEqual(json['data'], [])
+        self.assertEqual(json['total'], 0)
+
+        self.create('a', get_new_diff('a'))
+
+        json = self.read_many('a', 'json')
+        self.assertEqual(json['total'], 1)
+
+    def test_history_view(self):
+        """
+        Test that a history view is available for newly created
+        Activities.
+        """
+        self.login()
+        uid = self.create('a', get_new_diff('a'), return_uid=True)
+
+        res = self.app.get('/activities/history/html/%s' % uid)
+        self.assertEqual(res.status_int, 200)
+        self.assertIn(TITLE_HISTORY_VIEW, res.body)

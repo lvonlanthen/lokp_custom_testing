@@ -64,13 +64,13 @@ def get_new_diff(item_type, diff_type=1, data=None):
                         'taggroups': [
                             {
                                 'main_tag': {
-                                    'value': u'[A] Value A1',
-                                    'key': u'[A] Dropdown 1'
+                                    'value': u'[A] Value D2',
+                                    'key': u'[A] Checkbox 1'
                                 },
                                 'tags': [
                                     {
-                                        'value': u'[A] Value A1',
-                                        'key': u'[A] Dropdown 1',
+                                        'value': u'[A] Value D2',
+                                        'key': u'[A] Checkbox 1',
                                         'op': 'add'
                                     }
                                 ],
@@ -240,13 +240,13 @@ def get_new_diff(item_type, diff_type=1, data=None):
                         'taggroups': [
                             {
                                 'main_tag': {
-                                    'value': 123.0,
-                                    'key': u'[SH] Numberfield 1'
+                                    'value': '[SH] Value D2',
+                                    'key': u'[SH] Checkbox 1'
                                 },
                                 'tags': [
                                     {
-                                        'value': 123.0,
-                                        'key': u'[SH] Numberfield 1',
+                                        'value': '[SH] Value D2',
+                                        'key': u'[SH] Checkbox 1',
                                         'op': 'add'
                                     }
                                 ],

@@ -1,0 +1,3 @@
+Create:
+  ☐ It should not be possible to create SH with involvements.
+      See also test in stakeholders/test_create.py

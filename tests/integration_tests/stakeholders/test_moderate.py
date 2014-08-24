@@ -1,59 +1,13 @@
 import pytest
 
-from .diffs import (
+from ..diffs import (
     get_edit_diff,
     get_new_diff,
 )
-from .base import (
+from ..base import (
     get_status_from_item_json,
     LmkpTestCase,
 )
-from ..base import (
-    TITLE_HISTORY_VIEW,
-)
-
-
-@pytest.mark.usefixtures('app')
-@pytest.mark.integration
-@pytest.mark.stakeholders
-class StakeholderCreateTests(LmkpTestCase):
-
-    def test_stakeholder_cannot_be_created_without_login(self):
-        """
-        New Stakeholders cannot be created if the user is not logged in.
-        """
-        res = self.create('sh', {})
-
-        self.assertEqual(res.status_int, 200)
-        self.assertIn(b'Please login', res.body)
-
-    def test_stakeholder_can_be_created(self):
-        """
-        New Stakeholders can be created if the user is logged in.
-        """
-        self.login()
-        res = self.create('sh', get_new_diff('sh'))
-        self.assertEqual(res.status_int, 201)
-        json = res.json
-        self.assertEqual(json['total'], 1)
-        self.assertTrue(json['created'])
-        self.assertEqual(len(json['data']), 1)
-        self.assertIn('id', json['data'][0])
-
-    def test_new_stakeholders_appear_in_read_many_json_service(self):
-        """
-        Newly created Stakeholders appear in the JSON service "read many".
-        """
-        self.login()
-
-        json = self.read_many('sh', 'json')
-        self.assertEqual(json['data'], [])
-        self.assertEqual(json['total'], 0)
-
-        self.create('sh', get_new_diff('sh'))
-
-        json = self.read_many('sh', 'json')
-        self.assertEqual(json['total'], 1)
 
 
 @pytest.mark.usefixtures('app')
@@ -178,21 +132,3 @@ class StakeholderModerateTests(LmkpTestCase):
         self.assertEqual(res['data'][2]['status_id'], 3)
         self.assertEqual(res['data'][1]['status_id'], 3)
         self.assertEqual(res['data'][0]['status_id'], 2)
-
-
-@pytest.mark.usefixtures('app')
-@pytest.mark.integration
-@pytest.mark.stakeholders
-@pytest.mark.moderation
-class StakeholderHistoryTests(LmkpTestCase):
-
-    def test_history_view(self):
-        """
-        Test that a history view is available for newly created Activities.
-        """
-        self.login()
-        uid = self.create('sh', get_new_diff('sh'), return_uid=True)
-
-        res = self.app.get('/stakeholders/history/html/%s' % uid)
-        self.assertEqual(res.status_int, 200)
-        self.assertIn(TITLE_HISTORY_VIEW, res.body)
