@@ -92,6 +92,25 @@ def get_involvements_from_item_json(json, pos=0):
         return []
 
 
+def find_key_value_in_taggroups_json(
+        taggroups_json, key, value=None, main_tag=False):
+    for taggroup in taggroups_json:
+        for tag in taggroup['tags']:
+            if tag['key'] == key:
+                if value and tag['value'] == value:
+                    if (main_tag and taggroup['main_tag']['key'] == key
+                            and taggroup['main_tag']['value'] == value):
+                        return True
+                    else:
+                        return True
+                elif (not value and main_tag
+                      and taggroup['main_tag']['key'] == key):
+                    return True
+                elif not value:
+                    return True
+    return False
+
+
 def get_valid_item_type(item_type):
     if item_type in ['a', 'activity', 'activities']:
         return 'a'

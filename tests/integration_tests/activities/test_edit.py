@@ -2,6 +2,7 @@ import pytest
 
 from ..base import (
     LmkpTestCase,
+    find_key_value_in_taggroups_json,
     get_status_from_item_json,
     get_involvements_from_item_json,
 )
@@ -20,6 +21,95 @@ from ...base import (
 @pytest.mark.activities
 @pytest.mark.moderation
 class ActivityEditTests(LmkpTestCase):
+
+    def test_first_pending_activity_add_new_taggroup(self):
+        self.login()
+        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        self.create('a', get_edit_diff('a', uid, version=1, diff_type=1))
+        res = self.read_one('a', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        taggroups_v2 = res['data'][0]['taggroups']
+        taggroups_v1 = res['data'][1]['taggroups']
+        self.assertEqual(len(taggroups_v1), 2)
+        self.assertEqual(len(taggroups_v2), 3)
+        self.assertFalse(find_key_value_in_taggroups_json(
+            taggroups_v1, '[A] Checkbox 1', value='[A] Value D1',
+            main_tag=True))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            taggroups_v2, '[A] Checkbox 1', value='[A] Value D1',
+            main_tag=True))
+
+    def test_first_pending_activity_remove_taggroup(self):
+        self.login()
+        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        self.create('a', get_edit_diff('a', uid, version=1, diff_type=3))
+        res = self.read_one('a', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        taggroups_v2 = res['data'][0]['taggroups']
+        taggroups_v1 = res['data'][1]['taggroups']
+        self.assertEqual(len(taggroups_v1), 2)
+        self.assertEqual(len(taggroups_v2), 1)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            taggroups_v1, '[A] Dropdown 1', value='[A] Value A1',
+            main_tag=True))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            taggroups_v2, '[A] Dropdown 1', value='[A] Value A1',
+            main_tag=True))
+
+    def test_first_pending_activity_edit_tag_of_taggroup(self):
+        self.login()
+        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        self.create('a', get_edit_diff('a', uid, version=1, diff_type=4))
+        res = self.read_one('a', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        taggroups_v2 = res['data'][0]['taggroups']
+        taggroups_v1 = res['data'][1]['taggroups']
+        self.assertEqual(len(taggroups_v1), 2)
+        self.assertEqual(len(taggroups_v2), 2)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            taggroups_v1, '[A] Dropdown 1', value='[A] Value A1',
+            main_tag=True))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            taggroups_v1, '[A] Dropdown 1', value='[A] Value A2',
+            main_tag=True))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            taggroups_v2, '[A] Dropdown 1', value='[A] Value A2',
+            main_tag=True))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            taggroups_v2, '[A] Dropdown 1', value='[A] Value A1',
+            main_tag=True))
+
+    @pytest.mark.test
+    def test_first_pending_activity_edit_inside_taggroup(self):
+        self.login()
+        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        self.create('a', get_edit_diff('a', uid, version=1, diff_type=5))
+        res = self.read_one('a', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        taggroups_v2 = res['data'][0]['taggroups']
+        taggroups_v1 = res['data'][1]['taggroups']
+        self.assertEqual(len(taggroups_v1), 2)
+        self.assertEqual(len(taggroups_v2), 2)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            taggroups_v1, '[A] Dropdown 1', value='[A] Value A1',
+            main_tag=True))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            taggroups_v1, '[A] Textarea 1'))
+        self.assertEqual(len(taggroups_v1[0]['tags']), 1)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            taggroups_v2, '[A] Dropdown 1', value='[A] Value A1',
+            main_tag=True))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            taggroups_v2, '[A] Textarea 1'))
+        self.assertEqual(len(taggroups_v2[0]['tags']), 2)
 
     def test_add_pending_stakeholder_to_pending_activity(self):
         """
@@ -152,3 +242,16 @@ class ActivityEditTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 2)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
+
+    def test_json_service_shows_new_versions_on_top(self):
+        self.login()
+        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        # self.review('a', uid)
+        self.create('a', get_edit_diff('a', uid, version=1, diff_type=1))
+
+        res = self.read_one('a', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        self.assertEqual(res['data'][0]['version'], 2)
+        self.assertEqual(res['data'][1]['version'], 1)

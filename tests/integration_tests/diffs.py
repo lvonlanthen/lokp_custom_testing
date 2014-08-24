@@ -330,6 +330,7 @@ def get_edit_diff(item_type, uid, version=1, diff_type=1, data=None):
     1: Add a new Taggroup to Activity (based on type 1 from getNewActivityDiff)
     2: Add or remove one or more existing Stakeholder (provided data array
        needed)
+    3: Remove an existing Taggroup (based on type 1)
     """
     """
     1: Add a new Taggroup to Stakeholder (based on type 1 from
@@ -376,6 +377,74 @@ def get_edit_diff(item_type, uid, version=1, diff_type=1, data=None):
                 'activities': [
                     {
                         'stakeholders': involvements,
+                        'version': version,
+                        'id': uid
+                    }
+                ]
+            }
+        elif diff_type == 3:
+            return {
+                'activities': [
+                    {
+                        'taggroups': [
+                            {
+                                'tg_id': 1,
+                                'tags': [
+                                    {
+                                        'value': u'[A] Value A1',
+                                        'key': u'[A] Dropdown 1',
+                                        'op': 'delete'
+                                    }
+                                ],
+                                'op': 'delete'
+                            }
+                        ],
+                        'version': version,
+                        'id': uid
+                    }
+                ]
+            }
+        elif diff_type == 4:
+            return {
+                'activities': [
+                    {
+                        'taggroups': [
+                            {
+                                'tg_id': 1,
+                                'tags': [
+                                    {
+                                        'value': u'[A] Value A1',
+                                        'key': u'[A] Dropdown 1',
+                                        'op': 'delete'
+                                    }, {
+                                        'value': u'[A] Value A2',
+                                        'key': u'[A] Dropdown 1',
+                                        'op': 'add'
+                                    }
+                                ]
+                            }
+                        ],
+                        'version': version,
+                        'id': uid
+                    }
+                ]
+            }
+        elif diff_type == 5:
+            return {
+                'activities': [
+                    {
+                        'taggroups': [
+                            {
+                                'tg_id': 1,
+                                'tags': [
+                                    {
+                                        'value': u'Foo Text',
+                                        'key': u'[A] Textarea 1',
+                                        'op': 'add'
+                                    }
+                                ]
+                            }
+                        ],
                         'version': version,
                         'id': uid
                     }
