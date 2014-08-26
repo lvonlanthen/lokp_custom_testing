@@ -395,7 +395,6 @@ class ActivityModerateTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
-    @pytest.mark.test
     def test_review_first_pending_activity_remove_pending_stakeholder(self):
         self.login()
         # Create a first Stakeholder
@@ -424,7 +423,7 @@ class ActivityModerateTests(LmkpTestCase):
         # involvement anymore.
         self.review('a', a_uid, decision='approve', version=2)
 
-        # On Activity side, therea are 2 versions:
+        # On Activity side, there are 2 versions:
         # [0] v2: without involvement, active
         # [1] v1: with involvement, edited
         res = self.read_one('a', a_uid, 'json')
