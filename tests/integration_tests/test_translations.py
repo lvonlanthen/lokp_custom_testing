@@ -53,4 +53,3 @@ class TranslationTests(LmkpTestCase):
         res = self.app.get('/activities/html/%s?_LOCALE_=es' % a_uid)
         res.mustcontain('[A-T] Dropdown 1')
         res.mustcontain('[A-T] Value A1')
-

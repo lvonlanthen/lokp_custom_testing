@@ -394,3 +394,55 @@ class ActivityModerateTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 2)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
+
+    @pytest.mark.test
+    def test_review_first_pending_activity_remove_pending_stakeholder(self):
+        self.login()
+        # Create a first Stakeholder
+        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        # Create a first Activity with the involvement
+        inv_data_add = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6,
+            'op': 'add'
+        }]
+        a_uid = self.create(
+            'a', get_new_diff('a', 3, data=inv_data_add), return_uid=True)
+        # Edit the Activity and remove the involvement
+        inv_data_delete = [{
+            'id': sh_uid,
+            'version': 2,
+            'role': 6,
+            'op': 'delete'
+        }]
+        self.create(
+            'a', get_edit_diff('a', a_uid, version=1, diff_type=2,
+            data=inv_data_delete))
+
+        # Activity v2 can be reviewed because it does not contain an
+        # involvement anymore.
+        self.review('a', a_uid, decision='approve', version=2)
+
+        # On Activity side, therea are 2 versions:
+        # [0] v2: without involvement, active
+        # [1] v1: with involvement, edited
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        self.assertEqual(len(get_involvements_from_item_json(res, 0)), 0)
+        self.assertEqual(len(get_involvements_from_item_json(res, 1)), 1)
+
+        # On Stakeholder side, there are 3 versions:
+        # [0] v3: without involvement, [edited].
+        # [1] v2: with involvement to v1 of Activity, edited.
+        # [2] v1: blank Stakeholder, no involvements, pending.
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 2))
+        self.assertEqual(len(get_involvements_from_item_json(res, 0)), 0)
+        self.assertEqual(len(get_involvements_from_item_json(res, 1)), 1)
+        self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
