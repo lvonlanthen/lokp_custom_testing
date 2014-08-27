@@ -2,9 +2,10 @@ import pytest
 
 from ..base import (
     LmkpTestCase,
+    get_involvements_from_item_json,
     find_key_value_in_taggroups_json,
     get_status_from_item_json,
-    get_involvements_from_item_json,
+    get_role_id_from_involvement_json,
 )
 from ..diffs import (
     get_new_diff,
@@ -61,7 +62,7 @@ class ActivityEditTests(LmkpTestCase):
             taggroups_v2, '[A] Dropdown 1', value='[A] Value A1',
             main_tag=True))
 
-    def test_first_pending_activity_edit_tag_of_taggroup(self):
+    def test_first_pending_activity_edit_maintag_of_taggroup(self):
         self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(104, uid, version=1))
@@ -86,7 +87,28 @@ class ActivityEditTests(LmkpTestCase):
             taggroups_v2, '[A] Dropdown 1', value='[A] Value A1',
             main_tag=True))
 
-    def test_first_pending_activity_edit_inside_taggroup(self):
+    def test_first_pending_activity_edit_tag_of_taggroup(self):
+        self.login()
+        uid = self.create('a', get_new_diff(105), return_uid=True)
+        self.create('a', get_edit_diff(107, uid, version=1))
+        res = self.read_one('a', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        taggroups_v2 = res['data'][0]['taggroups']
+        taggroups_v1 = res['data'][1]['taggroups']
+        self.assertEqual(len(taggroups_v1), 2)
+        self.assertEqual(len(taggroups_v2), 2)
+        textarea_value_v1 = find_key_value_in_taggroups_json(
+            taggroups_v1, '[A] Textarea 1', return_value=True)
+        self.assertIn('Foo', textarea_value_v1)
+        self.assertNotIn('Bar', textarea_value_v1)
+        textarea_value_v2 = find_key_value_in_taggroups_json(
+            taggroups_v2, '[A] Textarea 1', return_value=True)
+        self.assertIn('Bar', textarea_value_v2)
+        self.assertNotIn('Foo', textarea_value_v2)
+
+    def test_first_pending_activity_add_tag_to_taggroup(self):
         self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(105, uid, version=1))
@@ -194,6 +216,68 @@ class ActivityEditTests(LmkpTestCase):
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
+
+    def test_first_pending_activity_change_involvement_role(self):
+        self.login()
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        inv_data_add = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 2,
+            'op': 'add'
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data_add), return_uid=True)
+        # Edit the Activity and change the role
+        inv_data_role = [{
+            'id': sh_uid,
+            'version': 2,
+            'role': 2,
+            'op': 'delete'
+        }, {
+            'id': sh_uid,
+            'version': 2,
+            'role': '3',
+            'op': 'add'
+        }]
+        self.create(
+            'a', get_edit_diff(102, a_uid, version=1, data=inv_data_role))
+
+        # On Activity side, there are 2 versions:
+        # [0] v2: with involvement (role 3), pending
+        # [1] v1: with involvement (role 2), edited
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        involvements_a_v2 = get_involvements_from_item_json(res, 0)
+        involvements_a_v1 = get_involvements_from_item_json(res, 1)
+        self.assertEqual(len(involvements_a_v2), 1)
+        self.assertEqual(len(involvements_a_v1), 1)
+        self.assertEqual(
+            get_role_id_from_involvement_json(involvements_a_v2), 3)
+        self.assertEqual(
+            get_role_id_from_involvement_json(involvements_a_v1), 2)
+
+        # On Stakeholder side, there are 3 versions:
+        # [0] v3: with involvement (role 3) to v2 of Activity, pending.
+        # [1] v2: with involvement (role 2) to v1 of Activity, edited.
+        # [2] v1: blank Stakeholder, no involvements, pending.
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 2))
+        involvements_sh_v3 = get_involvements_from_item_json(res, 0)
+        involvements_sh_v2 = get_involvements_from_item_json(res, 1)
+        involvements_sh_v1 = get_involvements_from_item_json(res, 2)
+        self.assertEqual(len(involvements_sh_v3), 1)
+        self.assertEqual(len(involvements_sh_v2), 1)
+        self.assertEqual(len(involvements_sh_v1), 0)
+        self.assertEqual(
+            get_role_id_from_involvement_json(involvements_sh_v3), 3)
+        self.assertEqual(
+            get_role_id_from_involvement_json(involvements_sh_v2), 2)
 
     def test_first_pending_activity_remove_pending_stakeholder(self):
         self.login()

@@ -83,6 +83,16 @@ class StakeholderCreateTests(LmkpTestCase):
         self.assertEqual(res.status_int, 400)
         res.mustcontain("Key: [SH] Checkbox 1 or Value: Foo is not valid.")
 
+    def test_stakeholder_can_be_created_with_special_chars(self):
+        self.login()
+        res = self.create('sh', get_new_diff(204))
+        self.assertEqual(res.status_int, 201)
+        json = res.json
+        self.assertEqual(json['total'], 1)
+        self.assertTrue(json['created'])
+        self.assertEqual(len(json['data']), 1)
+        self.assertIn('id', json['data'][0])
+
     # def test_stakeholders_cannot_be_created_with_involvements(self):
     #     self.login()
     #     diff = get_new_diff(201)

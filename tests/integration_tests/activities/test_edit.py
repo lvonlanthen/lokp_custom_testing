@@ -21,6 +21,7 @@ from ...base import (
 @pytest.mark.moderation
 class ActivityEditTests(LmkpTestCase):
 
+    # @pytest.mark.test
     def test_add_pending_stakeholder_to_multiple_pending_activities(self):
         """
 

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from .base import create_geometry
 
 
@@ -19,10 +22,13 @@ def get_new_diff(diff_type, data=None):
             104: [A] A complete Activity with two values
                 (IntegerDropdown) of Subcategory 8 filled out and its
                 Point somewhere in Laos.
+            105: [A] A complete Activity with special characters and
+                its Point somewhere in Laos.
             201: [SH] A complete Stakeholder.
             202: [SH] An incomplete Stakeholder.
             203: [SH] A complete Stakeholder with two values
                 (IntegerDropdown) of Subcategory 8 filled out.
+            204: [SH] A complete Stakeholder with special characters.
 
     Kwargs:
         data (list): Additional data needed to create the diff.
@@ -208,6 +214,48 @@ def get_new_diff(diff_type, data=None):
                 }
             ]
         }
+    elif diff_type == 105:
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': u'[A] Value A1',
+                                'key': u'[A] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A1',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[A] Textarea 1',
+                                    'value': "Foo ‰öäüñ Æò' dróżką ສອບ",
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 123.45,
+                                'key': u'[A] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.45,
+                                    'key': u'[A] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
     elif diff_type == 201:
         return {
             'stakeholders': [
@@ -332,6 +380,43 @@ def get_new_diff(diff_type, data=None):
                 }
             ]
         }
+    elif diff_type == 204:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': 123.0,
+                                'key': u'[SH] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.0,
+                                    'key': u'[SH] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
+                                'key': u'[SH] Textfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
     else:
         raise Exception('Invalid item_type: %s' % diff_type)
 
@@ -350,11 +435,14 @@ def get_edit_diff(diff_type, uid, version=1, data=None):
                 (provided data array needed)
             103: [A] Remove an existing Taggroup.
                 (based on type 101 from get_new_diff)
-            104: [A] Edit a Tag inside an existing Taggroup.
+            104: [A] Edit the MainTag of an existing Taggroup.
                 (based on type 101 from get_new_diff)
             105: [A] Add a Tag to an existing Taggroup.
                 (based on type 101 from get_new_diff)
             106: [A] Edit the geometry of an Activity.
+            107: [A] Edit a Tag (not the MainTag) of an existing
+                Taggroup.
+                (based on type 105 from get_new_diff)
             201: [SH] Add a new Taggroup to a Stakeholder.
                 (based on type 201 from get_new_diff)
         uid (str): The identifier of the Activity or Stakeholder.
@@ -487,6 +575,31 @@ def get_edit_diff(diff_type, uid, version=1, data=None):
             'activities': [
                 {
                     'geometry': create_geometry('laos'),
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 107:
+        return {
+            'activities': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 1,
+                            'tags': [
+                                {
+                                    'key': '[A] Textarea 1',
+                                    'value': "Foo ‰öäüñ Æò' dróżką ສອບ",
+                                    'op': 'delete'
+                                }, {
+                                    'key': u'[A] Textarea 1',
+                                    'value': u'Bar ç"ö',
+                                    'op': 'add'
+                                }
+                            ]
+                        }
+                    ],
                     'version': version,
                     'id': uid
                 }

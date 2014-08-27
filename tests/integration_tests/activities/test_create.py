@@ -86,6 +86,16 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(res.status_int, 400)
         res.mustcontain("Key: [A] Dropdown 1 or Value: Foo is not valid.")
 
+    def test_activity_can_be_created_with_special_chars(self):
+        self.login()
+        res = self.create('a', get_new_diff(105))
+        self.assertEqual(res.status_int, 201)
+        json = res.json
+        self.assertEqual(json['total'], 1)
+        self.assertTrue(json['created'])
+        self.assertEqual(len(json['data']), 1)
+        self.assertIn('id', json['data'][0])
+
     def test_activity_cannot_be_created_without_geometry(self):
         """
         When trying to create an Activity without a geometry, a 400
@@ -99,7 +109,7 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(res.status_int, 400)
         res.mustcontain(FEEDBACK_NO_GEOMETRY_PROVIDED)
 
-    def test_new_activities_with_existing_stakeholder_can_be_created(self):
+    def test_new_activities_with_active_involvement_can_be_created(self):
         """
         New Activities can be created with an existing (active) Stakeholder
         attached to it.
@@ -147,7 +157,7 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(inv['version'], 1)
         self.assertEqual(inv['status_id'], 1)
 
-    def test_new_activities_with_new_involvement_can_be_created(self):
+    def test_new_activities_with_pending_involvement_can_be_created(self):
         """
         New Activities can be created with a new pending Stakeholder attached
         to it. This results in 2 pending SH versions (1 blank, 1 with the

@@ -90,7 +90,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                 <div class="navbar header_self">
                     <div class="container">
                         <div class="logo">
-                            <a href="${request.route_url('map_view')}">
+                            <a href="${request.route_url('profile_global')}">
                                 % if mode == 'demo':
                                     <img src="/custom/img/logo_demo.png" alt="${_('Land Observatory')}" />
                                 % else:

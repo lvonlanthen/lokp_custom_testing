@@ -88,25 +88,40 @@ def get_status_from_item_json(json, pos=0):
 def get_involvements_from_item_json(json, pos=0):
     try:
         return json['data'][pos]['involvements']
-    except KeyError:
+    except:
         return []
 
 
+def get_role_id_from_involvement_json(json, pos=0):
+    try:
+        return json[pos]['role_id']
+    except:
+        return None
+
+
 def find_key_value_in_taggroups_json(
-        taggroups_json, key, value=None, main_tag=False):
+        taggroups_json, key, value=None, main_tag=False, return_value=False):
     for taggroup in taggroups_json:
         for tag in taggroup['tags']:
             if tag['key'] == key:
                 if value and tag['value'] == value:
                     if (main_tag and taggroup['main_tag']['key'] == key
                             and taggroup['main_tag']['value'] == value):
+                        if return_value is True:
+                            return tag['value']
                         return True
                     else:
+                        if return_value is True:
+                            return tag['value']
                         return True
                 elif (not value and main_tag
                       and taggroup['main_tag']['key'] == key):
+                    if return_value is True:
+                        return tag['value']
                     return True
                 elif not value:
+                    if return_value is True:
+                        return tag['value']
                     return True
     return False
 

@@ -1,0 +1,63 @@
+Tests:
+
+Create:
+  Activities:
+    ✔ Login required @done (14-08-27 09:15)
+    ✔ Cannot be created empty @done (14-08-27 09:16)
+    ✔ Can be created with mandatory fields @done (14-08-27 09:16)
+    ✔ Can be created without mandatory fields @done (14-08-27 09:16)
+    ✔ Cannot be created with invalid key @done (14-08-27 09:16)
+    ✔ Cannot be created with invalid value @done (14-08-27 09:16)
+    ✔ Can be created with special characters @done (14-08-27 17:30)
+    ✔ Cannot be created without geometry @done (14-08-27 09:16)
+    ✔ Can be created with active Stakeholder @done (14-08-27 09:16)
+    ✔ Can be created with pending Stakeholder @done (14-08-27 09:16)
+    ✔ New Activities are "pending" @done (14-08-27 09:16)
+    ✔ New Activities appear in read-many-json service @done (14-08-27 09:16)
+    ✔ New Activities have a history view @done (14-08-27 09:16)
+  Stakeholders:
+    ✔ Login required @done (14-08-27 09:16)
+    ✔ Cannot be created empty @done (14-08-27 09:16)
+    ✔ Can be created with mandatory fields @done (14-08-27 09:16)
+    ✔ Can be created without mandatory fields @done (14-08-27 09:16)
+    ✔ Cannot be created with invalid key @done (14-08-27 09:17)
+    ✔ Cannot be created with invalid value @done (14-08-27 09:17)
+    ✔ Can be created with special characters @done (14-08-27 17:35)
+    ☐ Cannot be created with involvements
+    ✔ New Stakeholders are "pending" @done (14-08-27 09:17)
+    ✔ New Stakeholders appear in read-many-json service @done (14-08-27 09:17)
+    ✔ New Stakeholders have a history view @done (14-08-27 09:17)
+
+Edit:
+  Activities:
+    First pending:
+      ✔ Add new Taggroup @done (14-08-27 17:42)
+      ✔ Remove existing Taggroup @done (14-08-27 17:42)
+      ✔ Edit MainTag of existing Taggroup @done (14-08-27 18:06)
+      ✔ Edit Tag of existing Taggroup @done (14-08-27 18:06)
+      ✔ Add Tag to existing Taggroup @done (14-08-27 18:06)
+      ☐ Remove Tag of Taggroup
+      ✔ Make sure geometry is copied @done (14-08-27 18:07)
+      ✔ Edit geometry @done (14-08-27 18:07)
+      ✔ Add pending Stakeholder @done (14-08-27 18:07)
+      ✔ Add active Stakeholder @done (14-08-27 18:07)
+      ✔ Change role of involvement @done (14-08-27 18:07)
+      ✔ Remove pending Stakeholder @done (14-08-27 18:08)
+      ✔ Remove active Stakeholder @done (14-08-27 18:08)
+      ✔ Create and edit with special chars @done (14-08-27 18:08)
+
+
+☐ Add new Taggroup
+☐ Remove existing Taggroup
+☐ Edit MainTag of existing Taggroup
+☐ Edit Tag of existing Taggroup
+☐ Add Tag to existing Taggroup
+☐ Remove Tag of Taggroup
+☐ Make sure geometry is copied
+☐ Edit geometry
+☐ Add pending Stakeholder
+☐ Add active Stakeholder
+☐ Change role of involvement
+☐ Remove pending Stakeholder
+☐ Remove active Stakeholder
+☐ Create and edit with special chars
