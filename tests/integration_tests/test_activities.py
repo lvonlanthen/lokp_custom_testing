@@ -36,20 +36,18 @@ class ActivityTests(LmkpTestCase):
         """
         self.login()
         # Create a first Stakeholder
-        sh_uid1 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
-        sh_uid2 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid2 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
-        a_uid1 = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid1 = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the first Stakeholder as involvement
         inv_data1 = [{
             'id': sh_uid1,
             'version': 1,
             'role': 6
         }]
-        self.create(
-            'a',
-            get_edit_diff('a', a_uid1, version=1, diff_type=2, data=inv_data1))
+        self.create('a', get_edit_diff(102, a_uid1, version=1, data=inv_data1))
         # Create a second Activity and add the second Stakeholder as
         # involvement
         inv_data2 = [{
@@ -58,7 +56,7 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid2 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data2), return_uid=True)
+            'a', get_new_diff(103, data=inv_data2), return_uid=True)
         # Create a third Activity and add both Stakeholders as involvement
         inv_data3 = [{
             'id': sh_uid1,
@@ -70,7 +68,7 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid3 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data3), return_uid=True)
+            'a', get_new_diff(103, data=inv_data3), return_uid=True)
 
         # Check that everything was added correctly
         res = self.read_one('a', a_uid1, 'json')
@@ -111,20 +109,18 @@ class ActivityTests(LmkpTestCase):
         """
         self.login()
         # Create a first Stakeholder
-        sh_uid1 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
-        sh_uid2 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid2 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
-        a_uid1 = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid1 = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the first Stakeholder as involvement
         inv_data1 = [{
             'id': sh_uid1,
             'version': 1,
             'role': 6
         }]
-        self.create(
-            'a',
-            get_edit_diff('a', a_uid1, version=1, diff_type=2, data=inv_data1))
+        self.create('a', get_edit_diff(102, a_uid1, version=1, data=inv_data1))
         # Create a second Activity and add the second Stakeholder as
         # involvement
         inv_data2 = [{
@@ -133,7 +129,7 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid2 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data2), return_uid=True)
+            'a', get_new_diff(103, data=inv_data2), return_uid=True)
         # Create a third Activity and add both Stakeholders as involvement
         inv_data3 = [{
             'id': sh_uid1,
@@ -145,7 +141,7 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid3 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data3), return_uid=True)
+            'a', get_new_diff(103, data=inv_data3), return_uid=True)
 
         # None of the Activities can be reviewed because of SH
         res = self.review('a', a_uid1, version=2)
@@ -216,20 +212,18 @@ class ActivityTests(LmkpTestCase):
         """
         self.login()
         # Create a first Stakeholder
-        sh_uid1 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
-        sh_uid2 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid2 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
-        a_uid1 = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid1 = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the first Stakeholder as involvement
         inv_data1 = [{
             'id': sh_uid1,
             'version': 1,
             'role': 6
         }]
-        self.create(
-            'a',
-            get_edit_diff('a', a_uid1, version=1, diff_type=2, data=inv_data1))
+        self.create('a', get_edit_diff(102, a_uid1, version=1, data=inv_data1))
         # Create a second Activity and add the second Stakeholder as
         # involvement
         inv_data2 = [{
@@ -238,7 +232,7 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid2 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data2), return_uid=True)
+            'a', get_new_diff(103, data=inv_data2), return_uid=True)
         # Create a third Activity and add both Stakeholders as involvement
         inv_data3 = [{
             'id': sh_uid1,
@@ -250,9 +244,9 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid3 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data3), return_uid=True)
+            'a', get_new_diff(103, data=inv_data3), return_uid=True)
         # Edit the third Activity
-        self.create('a', get_edit_diff('a', a_uid3, diff_type=1))
+        self.create('a', get_edit_diff(101, a_uid3))
 
         # Check that everything was added correctly
         res = self.read_one('a', a_uid1, 'json')
@@ -295,20 +289,18 @@ class ActivityTests(LmkpTestCase):
         """
         self.login()
         # Create a first Stakeholder
-        sh_uid1 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
-        sh_uid2 = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid2 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
-        a_uid1 = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid1 = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the first Stakeholder as involvement
         inv_data1 = [{
             'id': sh_uid1,
             'version': 1,
             'role': 6
         }]
-        self.create(
-            'a',
-            get_edit_diff('a', a_uid1, version=1, diff_type=2, data=inv_data1))
+        self.create('a', get_edit_diff(102, a_uid1, version=1, data=inv_data1))
         # Create a second Activity and add the second Stakeholder as
         # involvement
         inv_data2 = [{
@@ -317,7 +309,7 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid2 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data2), return_uid=True)
+            'a', get_new_diff(103, data=inv_data2), return_uid=True)
         # Create a third Activity and add both Stakeholders as involvement
         inv_data3 = [{
             'id': sh_uid1,
@@ -329,9 +321,9 @@ class ActivityTests(LmkpTestCase):
             'role': 6
         }]
         a_uid3 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data3), return_uid=True)
+            'a', get_new_diff(103, data=inv_data3), return_uid=True)
         # Edit the third Activity
-        self.create('a', get_edit_diff('a', a_uid3, diff_type=1))
+        self.create('a', get_edit_diff(101, a_uid3))
 
         # None of the Activities can be reviewed because of SH
         res = self.review('a', a_uid1, version=2)
@@ -402,7 +394,7 @@ class ActivityHistoryTests(LmkpTestCase):
         Test that a history view is available for newly created Activities.
         """
         self.login()
-        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        uid = self.create('a', get_new_diff(101), return_uid=True)
 
         res = self.app.get('/activities/history/html/%s' % uid)
         self.assertEqual(res.status_int, 200)

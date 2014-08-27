@@ -47,7 +47,7 @@ class ActivityCreateTests(LmkpTestCase):
         New Activities can be created with all mandatory fields.
         """
         self.login()
-        res = self.create('a', get_new_diff('a'))
+        res = self.create('a', get_new_diff(101))
         self.assertEqual(res.status_int, 201)
         json = res.json
         self.assertEqual(json['total'], 1)
@@ -60,7 +60,7 @@ class ActivityCreateTests(LmkpTestCase):
         New Activities can be created even without any mandatory fields.
         """
         self.login()
-        res = self.create('a', get_new_diff('a', 2))
+        res = self.create('a', get_new_diff(102))
         self.assertEqual(res.status_int, 201)
         json = res.json
         self.assertEqual(json['total'], 1)
@@ -70,7 +70,7 @@ class ActivityCreateTests(LmkpTestCase):
 
     def test_activity_cannot_be_created_with_invalid_key(self):
         self.login()
-        diff = get_new_diff('a')
+        diff = get_new_diff(101)
         diff['activities'][0]['taggroups'][0]['main_tag']['key'] = 'Foo'
         diff['activities'][0]['taggroups'][0]['tags'][0]['key'] = 'Foo'
         res = self.create('a', diff, expect_errors=True)
@@ -79,7 +79,7 @@ class ActivityCreateTests(LmkpTestCase):
 
     def test_activity_cannot_be_created_with_invalid_value(self):
         self.login()
-        diff = get_new_diff('a')
+        diff = get_new_diff(101)
         diff['activities'][0]['taggroups'][0]['main_tag']['value'] = 'Foo'
         diff['activities'][0]['taggroups'][0]['tags'][0]['value'] = 'Foo'
         res = self.create('a', diff, expect_errors=True)
@@ -93,7 +93,7 @@ class ActivityCreateTests(LmkpTestCase):
         body.
         """
         self.login()
-        diff = get_new_diff('a', 1)
+        diff = get_new_diff(101)
         del diff['activities'][0]['geometry']
         res = self.create('a', diff, expect_errors=True)
         self.assertEqual(res.status_int, 400)
@@ -107,7 +107,7 @@ class ActivityCreateTests(LmkpTestCase):
         """
         self.login()
 
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)
 
         res = self.read_one('sh', sh_uid, 'json')
@@ -120,7 +120,7 @@ class ActivityCreateTests(LmkpTestCase):
             'role': 6
         }]
         a_uid = self.create(
-            'a', get_new_diff('a', 3, data=inv_data), return_uid=True)
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
 
         # One pending Activity version should have been created, with the
         # Stakeholder (version 2, pending) attached to it
@@ -155,7 +155,7 @@ class ActivityCreateTests(LmkpTestCase):
         """
         self.login()
 
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
 
         inv_data = [{
             'id': sh_uid,
@@ -163,7 +163,7 @@ class ActivityCreateTests(LmkpTestCase):
             'role': 6
         }]
         a_uid = self.create(
-            'a', get_new_diff('a', 3, data=inv_data), return_uid=True)
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
 
         # One pending Activity version should have been created, with the
         # Stakeholder (version 2, pending) attached to it
@@ -195,7 +195,7 @@ class ActivityCreateTests(LmkpTestCase):
         Test that new Activities are created with status "pending".
         """
         self.login()
-        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        uid = self.create('a', get_new_diff(101), return_uid=True)
         json = self.read_one('a', uid, 'json')
         self.assertEqual(json['total'], 1)
         status = get_status_from_item_json(json)
@@ -211,7 +211,7 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(json['data'], [])
         self.assertEqual(json['total'], 0)
 
-        self.create('a', get_new_diff('a'))
+        self.create('a', get_new_diff(101))
 
         json = self.read_many('a', 'json')
         self.assertEqual(json['total'], 1)
@@ -222,7 +222,7 @@ class ActivityCreateTests(LmkpTestCase):
         Activities.
         """
         self.login()
-        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        uid = self.create('a', get_new_diff(101), return_uid=True)
 
         res = self.app.get('/activities/history/html/%s' % uid)
         self.assertEqual(res.status_int, 200)

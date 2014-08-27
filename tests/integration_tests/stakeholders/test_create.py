@@ -44,7 +44,7 @@ class StakeholderCreateTests(LmkpTestCase):
         New Stakeholders can be created with all mandatory fields.
         """
         self.login()
-        res = self.create('sh', get_new_diff('sh'))
+        res = self.create('sh', get_new_diff(201))
         self.assertEqual(res.status_int, 201)
         json = res.json
         self.assertEqual(json['total'], 1)
@@ -57,7 +57,7 @@ class StakeholderCreateTests(LmkpTestCase):
         New Stakeholders can be created even without mandatory fields.
         """
         self.login()
-        res = self.create('sh', get_new_diff('sh', 2))
+        res = self.create('sh', get_new_diff(202))
         self.assertEqual(res.status_int, 201)
         json = res.json
         self.assertEqual(json['total'], 1)
@@ -67,7 +67,7 @@ class StakeholderCreateTests(LmkpTestCase):
 
     def test_stakeholder_cannot_be_created_with_invalid_key(self):
         self.login()
-        diff = get_new_diff('sh')
+        diff = get_new_diff(201)
         diff['stakeholders'][0]['taggroups'][0]['main_tag']['key'] = 'Foo'
         diff['stakeholders'][0]['taggroups'][0]['tags'][0]['key'] = 'Foo'
         res = self.create('sh', diff, expect_errors=True)
@@ -76,7 +76,7 @@ class StakeholderCreateTests(LmkpTestCase):
 
     def test_stakeholder_cannot_be_created_with_invalid_value(self):
         self.login()
-        diff = get_new_diff('sh', 2)
+        diff = get_new_diff(202)
         diff['stakeholders'][0]['taggroups'][0]['main_tag']['value'] = 'Foo'
         diff['stakeholders'][0]['taggroups'][0]['tags'][0]['value'] = 'Foo'
         res = self.create('sh', diff, expect_errors=True)
@@ -85,8 +85,8 @@ class StakeholderCreateTests(LmkpTestCase):
 
     # def test_stakeholders_cannot_be_created_with_involvements(self):
     #     self.login()
-    #     diff = get_new_diff('sh')
-    #     a_uid = self.create('a', get_new_diff('a'), return_uid=True)
+    #     diff = get_new_diff(201)
+    #     a_uid = self.create('a', get_new_diff(101), return_uid=True)
     #     diff['stakeholders'][0]['activities'] = [{
     #         'id': a_uid,
     #         'version': 1,
@@ -102,7 +102,7 @@ class StakeholderCreateTests(LmkpTestCase):
         Test that new Stakeholders are created with status "pending".
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
         json = self.read_one('sh', uid, 'json')
         self.assertEqual(json['total'], 1)
         status = get_status_from_item_json(json)
@@ -118,7 +118,7 @@ class StakeholderCreateTests(LmkpTestCase):
         self.assertEqual(json['data'], [])
         self.assertEqual(json['total'], 0)
 
-        self.create('sh', get_new_diff('sh'))
+        self.create('sh', get_new_diff(201))
 
         json = self.read_many('sh', 'json')
         self.assertEqual(json['total'], 1)
@@ -129,7 +129,7 @@ class StakeholderCreateTests(LmkpTestCase):
         Stakeholders.
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
 
         res = self.app.get('/stakeholders/history/html/%s' % uid)
         self.assertEqual(res.status_int, 200)

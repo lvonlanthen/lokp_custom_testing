@@ -29,7 +29,7 @@ class ActivityModerateTests(LmkpTestCase):
         New Activities with all mandatory keys can be approved.
         """
         self.login()
-        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        uid = self.create('a', get_new_diff(101), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
         status = get_status_from_item_json(res)
@@ -46,7 +46,7 @@ class ActivityModerateTests(LmkpTestCase):
         New Activities with all mandatory keys can be rejected.
         """
         self.login()
-        uid = self.create('a', get_new_diff('a'), return_uid=True)
+        uid = self.create('a', get_new_diff(101), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
         status = get_status_from_item_json(res)
@@ -63,7 +63,7 @@ class ActivityModerateTests(LmkpTestCase):
         New Activities with missing mandatory keys can be rejected.
         """
         self.login()
-        uid = self.create('a', get_new_diff('a', 2), return_uid=True)
+        uid = self.create('a', get_new_diff(102), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
         status = get_status_from_item_json(res)
@@ -80,7 +80,7 @@ class ActivityModerateTests(LmkpTestCase):
         New Activities with missing mandatory keys can NOT be approved.
         """
         self.login()
-        uid = self.create('a', get_new_diff('a', 2), return_uid=True)
+        uid = self.create('a', get_new_diff(102), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
         status = get_status_from_item_json(res)
@@ -103,7 +103,7 @@ class ActivityModerateTests(LmkpTestCase):
         This will implicitly approve the Stakeholder version 2.
         """
         self.login()
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)
         inv_data = [{
             'id': sh_uid,
@@ -111,7 +111,7 @@ class ActivityModerateTests(LmkpTestCase):
             'role': 6
         }]
         a_uid = self.create(
-            'a', get_new_diff('a', 3, data=inv_data), return_uid=True)
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
 
         self.review('a', a_uid)
 
@@ -146,14 +146,14 @@ class ActivityModerateTests(LmkpTestCase):
         first.
         """
         self.login()
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         inv_data = [{
             'id': sh_uid,
             'version': 1,
             'role': 6
         }]
         a_uid = self.create(
-            'a', get_new_diff('a', 3, data=inv_data), return_uid=True)
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
 
         res = self.review('a', a_uid)
         self.review_not_possible('a', 1, res)
@@ -166,18 +166,18 @@ class ActivityModerateTests(LmkpTestCase):
 
         """
         self.login()
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         inv_data1 = [{
             'id': sh_uid,
             'version': 1,
             'role': 6
         }]
         a_uid1 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data1), return_uid=True)
+            'a', get_new_diff(103, data=inv_data1), return_uid=True)
         inv_data2 = inv_data1
         inv_data2[0]['version'] = 2
         a_uid2 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data2), return_uid=True)
+            'a', get_new_diff(103, data=inv_data2), return_uid=True)
 
         # Check that everything was created correctly
         res = self.read_one('a', a_uid1, 'json')
@@ -228,18 +228,16 @@ class ActivityModerateTests(LmkpTestCase):
         """
         self.login()
         # Create a first Stakeholder
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
-        a_uid = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the Stakeholder as involvement
         inv_data1 = [{
             'id': sh_uid,
             'version': 1,
             'role': 6
         }]
-        self.create(
-            'a', get_edit_diff('a', a_uid, version=1, diff_type=2,
-            data=inv_data1))
+        self.create('a', get_edit_diff(102, a_uid, version=1, data=inv_data1))
 
         # A1v2 cannot be reviewed because of SH
         res = self.review('a', a_uid, version=2)
@@ -271,29 +269,25 @@ class ActivityModerateTests(LmkpTestCase):
         """
         self.login()
         # Create a first Stakeholder
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
-        a_uid1 = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid1 = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the Stakeholder as involvement
         inv_data1 = [{
             'id': sh_uid,
             'version': 1,
             'role': 6
         }]
-        self.create(
-            'a',
-            get_edit_diff('a', a_uid1, version=1, diff_type=2, data=inv_data1))
+        self.create('a', get_edit_diff(102, a_uid1, version=1, data=inv_data1))
         # Create a second Activity
-        a_uid2 = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid2 = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the Stakeholder as involvement
         inv_data2 = [{
             'id': sh_uid,
             'version': 2,
             'role': 6
         }]
-        self.create(
-            'a',
-            get_edit_diff('a', a_uid2, version=1, diff_type=2, data=inv_data2))
+        self.create('a', get_edit_diff(102, a_uid2, version=1, data=inv_data2))
 
         # A1v2 cannot be reviewed because of SH
         res = self.review('a', a_uid1, version=2)
@@ -338,18 +332,16 @@ class ActivityModerateTests(LmkpTestCase):
         """
         self.login()
         # Create a first Stakeholder
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
-        a_uid1 = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid1 = self.create('a', get_new_diff(101), return_uid=True)
         # Edit the Activity and add the Stakeholder as involvement
         inv_data1 = [{
             'id': sh_uid,
             'version': 1,
             'role': 6
         }]
-        self.create(
-            'a',
-            get_edit_diff('a', a_uid1, version=1, diff_type=2, data=inv_data1))
+        self.create('a', get_edit_diff(102, a_uid1, version=1, data=inv_data1))
         # Create a second Activity, directly with SH 1
         inv_data2 = [{
             'id': sh_uid,
@@ -357,7 +349,7 @@ class ActivityModerateTests(LmkpTestCase):
             'role': 6
         }]
         a_uid2 = self.create(
-            'a', get_new_diff('a', 3, data=inv_data2), return_uid=True)
+            'a', get_new_diff(103, data=inv_data2), return_uid=True)
 
         # A1v2 cannot be reviewed because of SH
         res = self.review('a', a_uid1, version=2)
@@ -398,7 +390,7 @@ class ActivityModerateTests(LmkpTestCase):
     def test_review_first_pending_activity_remove_pending_stakeholder(self):
         self.login()
         # Create a first Stakeholder
-        sh_uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity with the involvement
         inv_data_add = [{
             'id': sh_uid,
@@ -407,7 +399,7 @@ class ActivityModerateTests(LmkpTestCase):
             'op': 'add'
         }]
         a_uid = self.create(
-            'a', get_new_diff('a', 3, data=inv_data_add), return_uid=True)
+            'a', get_new_diff(103, data=inv_data_add), return_uid=True)
         # Edit the Activity and remove the involvement
         inv_data_delete = [{
             'id': sh_uid,
@@ -416,8 +408,7 @@ class ActivityModerateTests(LmkpTestCase):
             'op': 'delete'
         }]
         self.create(
-            'a', get_edit_diff('a', a_uid, version=1, diff_type=2,
-            data=inv_data_delete))
+            'a', get_edit_diff(102, a_uid, version=1, data=inv_data_delete))
 
         # Activity v2 can be reviewed because it does not contain an
         # involvement anymore.

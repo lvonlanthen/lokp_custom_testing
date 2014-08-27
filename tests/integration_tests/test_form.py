@@ -17,7 +17,7 @@ class FormConfigTests(LmkpTestCase):
         works for Activities.
         """
         self.login()
-        uid = self.create('a', get_new_diff('a', 4), return_uid=True)
+        uid = self.create('a', get_new_diff(104), return_uid=True)
         res = self.read_one('a', uid, 'html')
         res.mustcontain('[A] Subcategory 8')
 
@@ -27,6 +27,6 @@ class FormConfigTests(LmkpTestCase):
         works for Stakeholders.
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh', 3), return_uid=True)
+        uid = self.create('sh', get_new_diff(203), return_uid=True)
         res = self.read_one('sh', uid, 'html')
         res.mustcontain('[SH] Subcategory 6')

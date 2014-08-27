@@ -21,7 +21,7 @@ class StakeholderModerateTests(LmkpTestCase):
         New Stakeholders with all mandatory keys can be approved.
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
         status = get_status_from_item_json(res)
@@ -38,7 +38,7 @@ class StakeholderModerateTests(LmkpTestCase):
         New Stakeholders with all mandatory keys can be rejected.
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
         status = get_status_from_item_json(res)
@@ -55,7 +55,7 @@ class StakeholderModerateTests(LmkpTestCase):
         New Stakeholders with missing mandatory keys can be rejected.
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh', 2), return_uid=True)
+        uid = self.create('sh', get_new_diff(202), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
         status = get_status_from_item_json(res)
@@ -72,7 +72,7 @@ class StakeholderModerateTests(LmkpTestCase):
         New Stakeholders with missing mandatory keys can NOT be approved.
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh', 2), return_uid=True)
+        uid = self.create('sh', get_new_diff(202), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
         status = get_status_from_item_json(res)
@@ -94,10 +94,10 @@ class StakeholderModerateTests(LmkpTestCase):
         Edited Stakeholders without an involvement can be approved.
         """
         self.login()
-        uid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
 
-        self.create('sh', get_edit_diff('sh', uid))
+        self.create('sh', get_edit_diff(201, uid))
         self.review('sh', uid, version=2)
 
         # Version 1 is inactive, version 2 is active
@@ -112,7 +112,7 @@ class StakeholderModerateTests(LmkpTestCase):
         from Stakeholder side, thus blocking the review process.
         """
         self.login()
-        shUid = self.create('sh', get_new_diff('sh'), return_uid=True)
+        shUid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', shUid)
         inv_data = [{
             'id': shUid,
@@ -120,10 +120,10 @@ class StakeholderModerateTests(LmkpTestCase):
             'role': 6
         }]
         a_uid = self.create(
-            'a', get_new_diff('a', 3, data=inv_data), return_uid=True)
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
         self.review('a', a_uid)
 
-        self.create('sh', get_edit_diff('sh', shUid, version=2))
+        self.create('sh', get_edit_diff(201, shUid, version=2))
         self.review('sh', shUid, version=3)
 
         # Version 1 is inactive, version 2 is inactive, version 3 is active

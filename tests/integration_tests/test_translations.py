@@ -46,7 +46,7 @@ class TranslationTests(LmkpTestCase):
         Test that the details page displays translated database values.
         """
         self.login()
-        a_uid = self.create('a', get_new_diff('a', 1), return_uid=True)
+        a_uid = self.create('a', get_new_diff(101), return_uid=True)
         res = self.app.get('/activities/html/%s' % a_uid)
         res.mustcontain('[A] Dropdown 1')
         res.mustcontain('[A] Value A1')
