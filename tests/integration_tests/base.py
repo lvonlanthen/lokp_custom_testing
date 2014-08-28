@@ -99,6 +99,13 @@ def get_role_id_from_involvement_json(json, pos=0):
         return None
 
 
+def get_version_from_involvement_json(json, pos=0):
+    try:
+        return json[pos]['version']
+    except:
+        return None
+
+
 def find_key_value_in_taggroups_json(
         taggroups_json, key, value=None, main_tag=False, return_value=False):
     for taggroup in taggroups_json:

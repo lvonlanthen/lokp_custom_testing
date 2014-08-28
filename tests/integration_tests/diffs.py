@@ -24,6 +24,9 @@ def get_new_diff(diff_type, data=None):
                 Point somewhere in Laos.
             105: [A] A complete Activity with special characters and
                 its Point somewhere in Laos.
+            106: [A] A complete Activity with different attributes, one
+                or more involvements and its Point somewhere in Laos.
+                (provided data array needed)
             201: [SH] A complete Stakeholder.
             202: [SH] An incomplete Stakeholder.
             203: [SH] A complete Stakeholder with two values
@@ -256,6 +259,174 @@ def get_new_diff(diff_type, data=None):
                 }
             ]
         }
+    elif diff_type == 106:
+        involvements = []
+        for d in data:
+            op = 'add' if 'op' not in d else d['op']
+            involvements.append({
+                'id': d['id'],
+                'version': d['version'],
+                'role': d['role'],
+                'op': op
+            })
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': u'[A] Value A1',
+                                'key': u'[A] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A1',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[A] Textarea 1',
+                                    'value': "Foo ‰öäüñ Æò' dróżką ສອບ",
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[A] Value D2',
+                                'key': u'[A] Checkbox 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[A] Value D2',
+                                    'key': u'[A] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[A] Value D3',
+                                'key': u'[A] Checkbox 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[A] Value D3',
+                                    'key': u'[A] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 'This is Textfield 1',
+                                'key': u'[A] Textfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 'This is Textfield 1',
+                                    'key': u'[A] Textfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 1.23,
+                                'key': u'[A] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 1.23,
+                                    'key': u'[A] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[A] Integerfield 1',
+                                    'value': 159,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 2.34,
+                                'key': u'[A] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 2.34,
+                                    'key': u'[A] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[A] Integerfield 1',
+                                    'value': 123,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 123.45,
+                                'key': u'[A] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.45,
+                                    'key': u'[A] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[A] Value B11',
+                                'key': u'[A] Dropdown 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[A] Value B11',
+                                    'key': u'[A] Dropdown 2',
+                                    'op': 'add'
+                                }, {
+                                    'value': '2014-08-05',
+                                    'key': u'[A] Datefield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'key': '[A] Integerdropdown 1',
+                                'value': 1
+                            },
+                            'tags': [
+                                {
+                                    'key': '[A] Integerdropdown 1',
+                                    'value': 1,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'key': '[A] Integerdropdown 2',
+                                'value': 2
+                            },
+                            'tags': [
+                                {
+                                    'key': '[A] Integerdropdown 2',
+                                    'value': 2,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1,
+                    'stakeholders': involvements
+                }
+            ]
+        }
     elif diff_type == 201:
         return {
             'stakeholders': [
@@ -443,6 +614,10 @@ def get_edit_diff(diff_type, uid, version=1, data=None):
             107: [A] Edit a Tag (not the MainTag) of an existing
                 Taggroup.
                 (based on type 105 from get_new_diff)
+            108: [A] Remove a Tag from an existing Taggroup
+                (based on type 105 from get_new_diff)
+            109: [A] Different attribute and involvement operations
+                (based on type 106 from get_new_diff, data array needed)
             201: [SH] Add a new Taggroup to a Stakeholder.
                 (based on type 201 from get_new_diff)
         uid (str): The identifier of the Activity or Stakeholder.
@@ -600,6 +775,87 @@ def get_edit_diff(diff_type, uid, version=1, data=None):
                             ]
                         }
                     ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 108:
+        return {
+            'activities': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 1,
+                            'tags': [
+                                {
+                                    'key': '[A] Textarea 1',
+                                    'value': "Foo ‰öäüñ Æò' dróżką ສອບ",
+                                    'op': 'delete'
+                                }
+                            ]
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 109:
+        involvements = []
+        for d in data:
+            op = 'add' if 'op' not in d else d['op']
+            involvements.append({
+                'id': d['id'],
+                'version': d['version'],
+                'role': d['role'],
+                'op': op
+            })
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'tg_id': 1,
+                            'tags': [
+                                {
+                                    'key': '[A] Textarea 1',
+                                    'value': "Foo ‰öäüñ Æò' dróżką ສອບ",
+                                    'op': 'delete'
+                                }
+                            ]
+                        }, {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': '[A] Value D2',
+                                    'key': u'[A] Checkbox 1',
+                                    'op': 'delete'
+                                }
+                            ],
+                            'op': 'delete'
+                        }, {
+                            'tags': [
+                                {
+                                    'value': '[A] Value D4',
+                                    'key': u'[A] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'tags': [
+                                {
+                                    'value': 'This is Textfield 2',
+                                    'key': u'[A] Textfield 2',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'stakeholders': involvements,
                     'version': version,
                     'id': uid
                 }

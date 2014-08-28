@@ -12,6 +12,7 @@ Create:
     ✔ Cannot be created without geometry @done (14-08-27 09:16)
     ✔ Can be created with active Stakeholder @done (14-08-27 09:16)
     ✔ Can be created with pending Stakeholder @done (14-08-27 09:16)
+    ☐ Can be created with combinations of attributes and involvements
     ✔ New Activities are "pending" @done (14-08-27 09:16)
     ✔ New Activities appear in read-many-json service @done (14-08-27 09:16)
     ✔ New Activities have a history view @done (14-08-27 09:16)
@@ -36,7 +37,7 @@ Edit:
       ✔ Edit MainTag of existing Taggroup @done (14-08-27 18:06)
       ✔ Edit Tag of existing Taggroup @done (14-08-27 18:06)
       ✔ Add Tag to existing Taggroup @done (14-08-27 18:06)
-      ☐ Remove Tag of Taggroup
+      ✔ Remove Tag of Taggroup @done (14-08-28 08:10)
       ✔ Make sure geometry is copied @done (14-08-27 18:07)
       ✔ Edit geometry @done (14-08-27 18:07)
       ✔ Add pending Stakeholder @done (14-08-27 18:07)
@@ -44,7 +45,9 @@ Edit:
       ✔ Change role of involvement @done (14-08-27 18:07)
       ✔ Remove pending Stakeholder @done (14-08-27 18:08)
       ✔ Remove active Stakeholder @done (14-08-27 18:08)
+      ✔ Combination of different Involvement and attribute operations @done (14-08-28 09:11)
       ✔ Create and edit with special chars @done (14-08-27 18:08)
+      ✔ Unchanged when attribute of involvement changes @done (14-08-28 10:08)
 
 
 ☐ Add new Taggroup
@@ -60,4 +63,6 @@ Edit:
 ☐ Change role of involvement
 ☐ Remove pending Stakeholder
 ☐ Remove active Stakeholder
+☐ Combination of different Involvement and attribute operations
 ☐ Create and edit with special chars
+☐ Unchanged when attribute of involvement changes

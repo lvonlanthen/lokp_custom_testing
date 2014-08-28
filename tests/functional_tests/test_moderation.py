@@ -47,8 +47,8 @@ def test_approve_activity(testcase):
     # Make sure the Activity is not pending anymore
     testcase.driver.get(link)
     testcase.assertFalse(checkIsPending(testcase))
-    
-    
+
+
 @pytest.mark.functional
 @pytest.mark.moderation
 def test_approve_activity_with_new_involvement(testcase):
@@ -68,7 +68,7 @@ def test_approve_activity_with_new_involvement(testcase):
     testcase.assertIn(TITLE_STAKEHOLDER_MODERATION, testcase.driver.title)
     testcase.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
 
-    # Make sure there is a Success message and a notice that the Activity 
+    # Make sure there is a Success message and a notice that the Activity
     # can now be reviewed.
     getEl(testcase, 'class_name', 'alert-success')
     testcase.assertIn('You had to review this', testcase.driver.page_source)
@@ -85,8 +85,8 @@ def test_approve_activity_with_new_involvement(testcase):
     # Go to Stakeholder and make sure it is not pending anymore
     testcase.driver.find_element_by_link_text(LINK_DEAL_SHOW_INVOLVEMENT).click()
     testcase.assertFalse(checkIsPending(testcase))
-    
-    
+
+
 @pytest.mark.functional
 @pytest.mark.moderation
 def test_edited_stakeholders_with_involvements_can_be_approved(testcase):
@@ -195,4 +195,4 @@ def test_show_warning_prevent_automatic_revision_of_involvements(testcase):
     testcase.assertFalse(checkIsPending(testcase))
     openItemDetailsPage(testcase, 'stakeholders', shUid)
     testcase.assertFalse(checkIsPending(testcase))
-        
+

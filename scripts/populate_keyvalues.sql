@@ -629,10 +629,10 @@ INSERT INTO data.profiles (id, code, polygon) VALUES (5, 'cambodia', '0103000020
 SELECT setval('data.profiles_id_seq', 5, true);
 
 INSERT INTO data.users(id, uuid, username, email, firstname, lastname, privacy, registration_timestamp, is_active, activation_uuid, is_approved, fk_institution, password) VALUES
-  (2, '032f1ef8-8db9-41e9-b18d-170da6ea288e', 'user1', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, true, NULL, '$p5k2$1000$GmVl9UBRbBW4RGolKKrg8g==$6LFMYdpMXsfZckYX4e5pfLp6BVQ='),
-  (3, 'ebf77c29-267a-43d0-a85d-4c1fe8a4b196', 'user2', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, true, NULL, '$p5k2$1000$GmVl9UBRbBW4RGolKKrg8g==$6LFMYdpMXsfZckYX4e5pfLp6BVQ='),
-  (4, '9d124316-d853-41f0-a9c2-dd177d649113', 'user3', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, false, NULL, '$p5k2$1000$GmVl9UBRbBW4RGolKKrg8g==$6LFMYdpMXsfZckYX4e5pfLp6BVQ='),
-  (5, 'c48f2afc-a642-4571-b469-01a7416dc355', 'user4', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', false, 'ff0f0050-bf5e-4361-954b-4b95809d6e32', false, NULL, '$p5k2$1000$GmVl9UBRbBW4RGolKKrg8g==$6LFMYdpMXsfZckYX4e5pfLp6BVQ=')
+  (2, '032f1ef8-8db9-41e9-b18d-170da6ea288e', 'user1', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, true, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4='),
+  (3, 'ebf77c29-267a-43d0-a85d-4c1fe8a4b196', 'user2', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, true, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4='),
+  (4, '9d124316-d853-41f0-a9c2-dd177d649113', 'user3', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, false, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4='),
+  (5, 'c48f2afc-a642-4571-b469-01a7416dc355', 'user4', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', false, 'ff0f0050-bf5e-4361-954b-4b95809d6e32', false, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4=')
 ;
 SELECT setval('data.users_id_seq', 5, true);
 
