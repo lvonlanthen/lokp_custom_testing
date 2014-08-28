@@ -23,8 +23,10 @@ from ...base import (
 @pytest.mark.activities
 class ActivityEditActiveTests(LmkpTestCase):
 
-    def test_active_activity_add_new_taggroup(self):
+    def setUp(self):
         self.login()
+
+    def test_active_activity_add_new_taggroup(self):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(101, uid, version=1))
@@ -44,7 +46,6 @@ class ActivityEditActiveTests(LmkpTestCase):
             main_tag=True))
 
     def test_active_activity_remove_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(103, uid, version=1))
@@ -64,7 +65,6 @@ class ActivityEditActiveTests(LmkpTestCase):
             main_tag=True))
 
     def test_active_activity_edit_maintag_of_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(104, uid, version=1))
@@ -90,7 +90,6 @@ class ActivityEditActiveTests(LmkpTestCase):
             main_tag=True))
 
     def test_active_activity_edit_tag_of_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(105), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(107, uid, version=1))
@@ -112,7 +111,6 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertNotIn('Foo', textarea_value_v2)
 
     def test_active_activity_add_tag_to_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(105, uid, version=1))
@@ -138,7 +136,6 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(len(taggroups_v2[0]['tags']), 2)
 
     def test_active_activity_remove_tag_of_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(105), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(108, uid, version=1))
@@ -156,7 +153,6 @@ class ActivityEditActiveTests(LmkpTestCase):
             taggroups_v2, '[A] Textarea 1'))
 
     def test_active_edit_attributes_copies_geometry(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(101, uid, version=1))
@@ -169,7 +165,6 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(geom_v1, geom_v2)
 
     def test_active_activity_edit_geometry(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(106, uid, version=1))
@@ -185,7 +180,6 @@ class ActivityEditActiveTests(LmkpTestCase):
         """
 
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
@@ -214,7 +208,6 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
 
     def test_active_activity_add_active_stakeholder(self):
-        self.login()
         # Create and review first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)
@@ -244,7 +237,6 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
 
     def test_active_activity_remove_active_stakeholder(self):
-        self.login()
         # Create a first Stakeholder and review it
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid, decision='approve', version=1)
@@ -298,7 +290,6 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
     def test_involvement_attribute_change_does_not_touch_attributes(self):
-        self.login()
         # Create a Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid, decision='approve', version=1)

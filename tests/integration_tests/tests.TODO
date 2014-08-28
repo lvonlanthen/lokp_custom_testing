@@ -72,6 +72,17 @@ Edit:
       ✔ Combination of different attribute operations @done (14-08-28 15:21)
       ✔ Create and edit with special chars @done (14-08-28 12:23)
       ✔ Unchanged when attribute of involvement changes @done (14-08-28 15:32)
+    Active:
+      ✔ Add new Taggroup @done (14-08-28 17:14)
+      ✔ Remove existing Taggroup @done (14-08-28 17:14)
+      ✔ Edit MainTag of existing Taggroup @done (14-08-28 17:14)
+      ✔ Edit Tag of existing Taggroup @done (14-08-28 17:14)
+      ✔ Add Tag to existing Taggroup @done (14-08-28 17:14)
+      ✔ Remove Tag of Taggroup @done (14-08-28 17:14)
+      ✔ Combination of different attribute operations @done (14-08-28 17:14)
+      ✔ Create and edit with special chars @done (14-08-28 17:14)
+      ✔ Unchanged when attribute of involvement changes @done (14-08-28 17:14)
+
 
 ☐ Add new Taggroup
 ☐ Remove existing Taggroup

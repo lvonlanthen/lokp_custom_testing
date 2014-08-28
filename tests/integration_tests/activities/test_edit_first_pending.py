@@ -24,8 +24,10 @@ from ...base import (
 @pytest.mark.activities
 class ActivityEditFirstPendingTests(LmkpTestCase):
 
-    def test_first_pending_activity_add_new_taggroup(self):
+    def setUp(self):
         self.login()
+
+    def test_first_pending_activity_add_new_taggroup(self):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(101, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -44,7 +46,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
             main_tag=True))
 
     def test_first_pending_activity_remove_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(103, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -63,7 +64,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
             main_tag=True))
 
     def test_first_pending_activity_edit_maintag_of_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(104, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -88,7 +88,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
             main_tag=True))
 
     def test_first_pending_activity_edit_tag_of_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(105), return_uid=True)
         self.create('a', get_edit_diff(107, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -109,7 +108,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertNotIn('Foo', textarea_value_v2)
 
     def test_first_pending_activity_add_tag_to_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(105, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -134,7 +132,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(len(taggroups_v2[0]['tags']), 2)
 
     def test_first_pending_activity_remove_tag_of_taggroup(self):
-        self.login()
         uid = self.create('a', get_new_diff(105), return_uid=True)
         self.create('a', get_edit_diff(108, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -151,7 +148,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
             taggroups_v2, '[A] Textarea 1'))
 
     def test_first_pending_edit_attributes_copies_geometry(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(101, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -163,7 +159,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(geom_v1, geom_v2)
 
     def test_first_pending_activity_edit_geometry(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.create('a', get_edit_diff(106, uid, version=1))
         res = self.read_one('a', uid, 'json')
@@ -178,7 +173,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         """
 
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
@@ -206,7 +200,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
 
     def test_first_pending_activity_add_active_stakeholder(self):
-        self.login()
         # Create and review first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)
@@ -235,7 +228,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
 
     def test_first_pending_activity_change_involvement_role(self):
-        self.login()
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         inv_data_add = [{
             'id': sh_uid,
@@ -297,7 +289,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
             get_role_id_from_involvement_json(involvements_sh_v2), 2)
 
     def test_first_pending_activity_remove_pending_stakeholder(self):
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity with the involvement
@@ -343,7 +334,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
     def test_first_pending_activity_remove_active_stakeholder(self):
-        self.login()
         # Create a first Stakeholder and review it
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid, decision='approve', version=1)
@@ -390,7 +380,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
     def test_involvement_attribute_change_does_not_touch_attributes(self):
-        self.login()
         # Create a Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid, decision='approve', version=1)
@@ -428,7 +417,6 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
     def test_combination_of_attribute_and_involvement_edits(self):
-        self.login()
         # Create some Stakeholders
         sh_uid_1 = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid_1, decision='approve', version=1)
