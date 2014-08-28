@@ -45,10 +45,33 @@ Edit:
       ✔ Change role of involvement @done (14-08-27 18:07)
       ✔ Remove pending Stakeholder @done (14-08-27 18:08)
       ✔ Remove active Stakeholder @done (14-08-27 18:08)
+      ✔ Unchanged when attribute of involvement changes @done (14-08-28 10:08)
       ✔ Combination of different Involvement and attribute operations @done (14-08-28 09:11)
       ✔ Create and edit with special chars @done (14-08-27 18:08)
-      ✔ Unchanged when attribute of involvement changes @done (14-08-28 10:08)
-
+    Active:
+      ✔ Add new Taggroup @done (14-08-28 10:45)
+      ✔ Remove existing Taggroup @done (14-08-28 10:44)
+      ✔ Edit MainTag of existing Taggroup @done (14-08-28 10:44)
+      ✔ Edit Tag of existing Taggroup @done (14-08-28 10:44)
+      ✔ Add Tag to existing Taggroup @done (14-08-28 10:44)
+      ✔ Remove Tag of Taggroup @done (14-08-28 10:44)
+      ✔ Make sure geometry is copied @done (14-08-28 10:44)
+      ✔ Edit geometry @done (14-08-28 10:43)
+      ✔ Add pending Stakeholder @done (14-08-28 10:43)
+      ✔ Add active Stakeholder @done (14-08-28 10:42)
+      ✔ Remove active Stakeholder @done (14-08-28 10:39)
+      ✔ Unchanged when attribute of involvement changes @done (14-08-28 10:41)
+  Stakeholders:
+    First pending:
+      ✔ Add new Taggroup @done (14-08-28 11:42)
+      ✔ Remove existing Taggroup @done (14-08-28 11:52)
+      ✔ Edit MainTag of existing Taggroup @done (14-08-28 12:23)
+      ✔ Edit Tag of existing Taggroup @done (14-08-28 12:29)
+      ✔ Add Tag to existing Taggroup @done (14-08-28 13:52)
+      ✔ Remove Tag of Taggroup @done (14-08-28 15:02)
+      ✔ Combination of different attribute operations @done (14-08-28 15:21)
+      ✔ Create and edit with special chars @done (14-08-28 12:23)
+      ✔ Unchanged when attribute of involvement changes @done (14-08-28 15:32)
 
 ☐ Add new Taggroup
 ☐ Remove existing Taggroup

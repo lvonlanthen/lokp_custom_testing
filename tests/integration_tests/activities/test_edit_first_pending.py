@@ -22,8 +22,7 @@ from ...base import (
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
 @pytest.mark.activities
-@pytest.mark.moderation
-class ActivityEditTests(LmkpTestCase):
+class ActivityEditFirstPendingTests(LmkpTestCase):
 
     def test_first_pending_activity_add_new_taggroup(self):
         self.login()

@@ -92,6 +92,16 @@ def get_involvements_from_item_json(json, pos=0):
         return []
 
 
+def get_taggroup_by_main_tag(taggroups_json, key, value=None):
+    for tg in taggroups_json:
+        if key != tg['main_tag']['key']:
+            continue
+        if value and value != tg['main_tag']['value']:
+            continue
+        return tg
+    return None
+
+
 def get_role_id_from_involvement_json(json, pos=0):
     try:
         return json[pos]['role_id']

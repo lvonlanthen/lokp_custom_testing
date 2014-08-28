@@ -32,6 +32,7 @@ def get_new_diff(diff_type, data=None):
             203: [SH] A complete Stakeholder with two values
                 (IntegerDropdown) of Subcategory 8 filled out.
             204: [SH] A complete Stakeholder with special characters.
+            205: [SH] A complete Stakeholder with different attributes.
 
     Kwargs:
         data (list): Additional data needed to create the diff.
@@ -579,6 +580,141 @@ def get_new_diff(diff_type, data=None):
                                     'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
                                     'key': u'[SH] Textfield 1',
                                     'op': 'add'
+                                }, {
+                                    'value': 'Foo text',
+                                    'key': '[SH] Textarea 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    elif diff_type == 205:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': 123.0,
+                                'key': u'[SH] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.0,
+                                    'key': u'[SH] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
+                                'key': u'[SH] Textfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'add'
+                                }, {
+                                    'value': 'Foo text',
+                                    'key': '[SH] Textarea 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[SH] Value D2',
+                                'key': u'[SH] Checkbox 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[SH] Value D2',
+                                    'key': u'[SH] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[SH] Value D3',
+                                'key': u'[SH] Checkbox 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[SH] Value D3',
+                                    'key': u'[SH] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[SH] Value A1',
+                                'key': u'[SH] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[SH] Value A1',
+                                    'key': u'[SH] Dropdown 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 1.23,
+                                'key': u'[SH] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 1.23,
+                                    'key': u'[SH] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[SH] Integerfield 1',
+                                    'value': 159,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 2.34,
+                                'key': u'[SH] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 2.34,
+                                    'key': u'[SH] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[SH] Integerfield 1',
+                                    'value': 123,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[SH] Value B11',
+                                'key': u'[SH] Dropdown 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[SH] Value B11',
+                                    'key': u'[SH] Dropdown 2',
+                                    'op': 'add'
+                                }, {
+                                    'value': '2014-08-05',
+                                    'key': u'[SH] Datefield 1',
+                                    'op': 'add'
                                 }
                             ],
                             'op': 'add'
@@ -620,6 +756,18 @@ def get_edit_diff(diff_type, uid, version=1, data=None):
                 (based on type 106 from get_new_diff, data array needed)
             201: [SH] Add a new Taggroup to a Stakeholder.
                 (based on type 201 from get_new_diff)
+            202: [SH] Remove an existing Taggroup.
+                (based on type 201 from get_new_diff)
+            203: [SH] Edit the MainTag of an existing Taggroup.
+                (based on type 204 from get_new_diff)
+            204: [SH] Edit a Tag of an existing Taggroup.
+                (based on type 204 from get_new_diff)
+            205: [SH] Add a Tag to an existing Taggroup.
+                (based on type 201 from get_new_diff)
+            206: [SH] Remove a Tag from an existing Taggroup
+                (based on type 204 from get_new_diff)
+            207: [SH] Different attribute operations
+                (based on type 205 from get_new_diff)
         uid (str): The identifier of the Activity or Stakeholder.
 
     Kwargs:
@@ -875,6 +1023,169 @@ def get_edit_diff(diff_type, uid, version=1, data=None):
                                 {
                                     'value': u'[SH] Value D1',
                                     'key': u'[SH] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 202:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': 'asdf',
+                                    'key': '[SH] Textfield 1',
+                                    'op': 'delete'
+                                }
+                            ],
+                            'op': 'delete'
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 203:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'delete'
+                                }, {
+                                    'value': 'Bar %&ä£',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'add'
+                                }
+                            ]
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 204:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': 'Foo text',
+                                    'key': '[SH] Textarea 1',
+                                    'op': 'delete'
+                                }, {
+                                    'value': 'Bar text',
+                                    'key': '[SH] Textarea 1',
+                                    'op': 'add'
+                                }
+                            ]
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 205:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': 'Foo',
+                                    'key': '[SH] Textarea 1',
+                                    'op': 'add'
+                                }
+                            ]
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 206:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': 'Foo text',
+                                    'key': '[SH] Textarea 1',
+                                    'op': 'delete'
+                                }
+                            ]
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 207:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'key': '[SH] Textarea 1',
+                                    'value': "Foo ‰öäüñ Æò' dróżką ສອບ",
+                                    'op': 'delete'
+                                }
+                            ]
+                        }, {
+                            'tg_id': 3,
+                            'tags': [
+                                {
+                                    'value': '[SH] Value D2',
+                                    'key': u'[SH] Checkbox 1',
+                                    'op': 'delete'
+                                }
+                            ],
+                            'op': 'delete'
+                        }, {
+                            'tags': [
+                                {
+                                    'value': '[SH] Value D4',
+                                    'key': u'[SH] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'tags': [
+                                {
+                                    'value': '1',
+                                    'key': u'[SH] Integerdropdown 1',
                                     'op': 'add'
                                 }
                             ],
