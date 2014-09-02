@@ -42,3 +42,10 @@ TITLE_STAKEHOLDER_DETAILS = 'Stakeholder Details'
 TITLE_STAKEHOLDER_EDITOR = 'Stakeholder Editor'
 TITLE_STAKEHOLDER_MODERATION = 'Investor Moderation'
 TITLE_USER_ACCOUNT_VIEW = 'User Account'
+
+from pyramid.paster import get_appsettings
+
+
+def get_settings():
+    config_uri = 'integration_tests.ini'
+    return get_appsettings(config_uri)
