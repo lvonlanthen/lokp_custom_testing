@@ -18,7 +18,7 @@ from lmkp.models import meta
 
 # Specify the INI configuration files for the tests to run.
 INTEGRATION_TESTS_INI = 'integration_tests.ini'
-FUNCTIONAL_TESTS_INI = 'functional_tests.ini'
+FUNCTIONAL_TESTS_INI = 'functional_testing.ini'
 
 # Activate the browsers you want to run the functional tests with.
 browsers = {
@@ -95,6 +95,7 @@ def app(request, db_session):
     in the test functions.
     """
     request.cls.app = TestApp(get_app(INTEGRATION_TESTS_INI))
+    request.cls.db_session = db_session
     return request
 
 

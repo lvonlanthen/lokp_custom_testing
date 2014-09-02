@@ -4,7 +4,7 @@
 from .base import create_geometry
 
 
-def get_new_diff(diff_type, data=None):
+def get_new_diff(diff_type, data=[]):
     """
     Returns changeset diff which can be used to create a new Activity or
     a Stakeholder.
@@ -27,6 +27,8 @@ def get_new_diff(diff_type, data=None):
             106: [A] A complete Activity with different attributes, one
                 or more involvements and its Point somewhere in Laos.
                 (provided data array needed)
+            107: [A] A complete Activity with a repeating taggroups and
+                its Point somewhere in Laos.
             201: [SH] A complete Stakeholder.
             202: [SH] An incomplete Stakeholder.
             203: [SH] A complete Stakeholder with two values
@@ -95,6 +97,19 @@ def get_new_diff(diff_type, data=None):
                             'tags': [
                                 {
                                     'value': u'[A] Value D2',
+                                    'key': u'[A] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': u'[A] Value D3',
+                                'key': u'[A] Checkbox 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value D3',
                                     'key': u'[A] Checkbox 1',
                                     'op': 'add'
                                 }
@@ -428,6 +443,78 @@ def get_new_diff(diff_type, data=None):
                 }
             ]
         }
+    elif diff_type == 107:
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': u'[A] Value A1',
+                                'key': u'[A] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A1',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 1.23,
+                                'key': u'[A] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 1.23,
+                                    'key': u'[A] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[A] Integerfield 1',
+                                    'value': 159,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 2.34,
+                                'key': u'[A] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 2.34,
+                                    'key': u'[A] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[A] Integerfield 1',
+                                    'value': 123,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 123.45,
+                                'key': u'[A] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.45,
+                                    'key': u'[A] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
     elif diff_type == 201:
         return {
             'stakeholders': [
@@ -728,7 +815,7 @@ def get_new_diff(diff_type, data=None):
         raise Exception('Invalid item_type: %s' % diff_type)
 
 
-def get_edit_diff(diff_type, uid, version=1, data=None):
+def get_edit_diff(diff_type, uid, version=1, data=[]):
     """
     Returns changeset diff which can be used to edit an Activity or a
     Stakeholder.

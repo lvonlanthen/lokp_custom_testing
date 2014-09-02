@@ -9,7 +9,6 @@ from lmkp.views.views import (
 )
 
 
-@pytest.mark.test
 @pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 class TestViews(LmkpTestCase):
