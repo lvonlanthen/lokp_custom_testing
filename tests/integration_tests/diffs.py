@@ -40,6 +40,11 @@ def get_new_diff(diff_type, data=[]):
                 (IntegerDropdown) of Subcategory 8 filled out.
             204: [SH] A complete Stakeholder with special characters.
             205: [SH] A complete Stakeholder with different attributes.
+            206: [SH] A complete Stakeholder with repeating taggroups.
+            207: [SH] A complete Stakeholder with a (simulated) file
+                upload
+            208: [SH] A complete Stakeholder with two textfields (where
+                translation is identical) filled out.
 
     Kwargs:
         data (list): Additional data needed to create the diff.
@@ -696,6 +701,19 @@ def get_new_diff(diff_type, data=[]):
                                 }
                             ],
                             'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[SH] Value D5',
+                                'key': u'[SH] Checkbox 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[SH] Value D5',
+                                    'key': u'[SH] Checkbox 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
                         }
                     ],
                     'version': 1
@@ -927,6 +945,187 @@ def get_new_diff(diff_type, data=[]):
                                 }, {
                                     'value': '2014-08-05',
                                     'key': u'[SH] Datefield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    elif diff_type == 206:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': 123.0,
+                                'key': u'[SH] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.0,
+                                    'key': u'[SH] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
+                                'key': u'[SH] Textfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 'Foo ‰öäüñ Æò" dróżką ສອບ',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'add'
+                                }, {
+                                    'value': 'Foo text',
+                                    'key': '[SH] Textarea 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 1.23,
+                                'key': u'[SH] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 1.23,
+                                    'key': u'[SH] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[SH] Integerfield 1',
+                                    'value': 159,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 2.34,
+                                'key': u'[SH] Numberfield 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': 2.34,
+                                    'key': u'[SH] Numberfield 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[SH] Integerfield 1',
+                                    'value': 123,
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    elif diff_type == 207:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': 123.0,
+                                'key': u'[SH] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.0,
+                                    'key': u'[SH] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': u'asdf',
+                                'key': u'[SH] Textfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'asdf',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[SH] Value B1',
+                                'key': u'[SH] Dropdown 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[SH] Value B1',
+                                    'key': u'[SH] Dropdown 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[SH] Filefield 1',
+                                    'value': 'filename1.jpg|891f3b35-29d3-4ef2'
+                                    '-93d4-2ca45ff718ea,filename2.pdf|56256744'
+                                    '-cf88-434f-90b7-25db9f0fb0a0',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    elif diff_type == 208:
+        return {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': 123.0,
+                                'key': u'[SH] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.0,
+                                    'key': u'[SH] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': u'First Remark',
+                                'key': u'[SH] Textfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'First Remark',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': u'Second Remark',
+                                'key': u'[SH] Textfield 3'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'Second Remark',
+                                    'key': u'[SH] Textfield 3',
                                     'op': 'add'
                                 }
                             ],

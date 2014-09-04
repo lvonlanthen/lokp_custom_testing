@@ -2,7 +2,6 @@ import pytest
 from mock import Mock, patch
 from pyramid import testing
 
-from lmkp.views import download
 from lmkp.views.views import (
     get_output_format,
 )
@@ -43,13 +42,37 @@ class ActivityDownloadTest(LmkpTestCase):
         testing.tearDown()
 
     def test_download_returns_csv(self):
-        res = self.app.get('/download')
+        res = self.app.get('/activities/csv')
         self.assertEqual(res.status_int, 200)
         self.assertEqual(res.content_type, 'text/csv')
 
-    @patch('lmkp.views.download.to_table')
-    def test_download_calls_to_table(self, mock_to_table):
-        mock_to_table.return_value = ([], [])
-        view = download.DownloadView(self.request)
-        view.downloadAll()
-        mock_to_table.assert_called_once_with(self.request)
+    @patch('lmkp.views.download.to_flat_table')
+    def test_download_calls_to_table(self, mock_to_flat_table):
+        mock_to_flat_table.return_value = ([], [])
+        self.app.get('/activities/csv')
+        mock_to_flat_table.assert_called_once()
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.download
+class StakeholderDownloadTest(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_download_returns_csv(self):
+        res = self.app.get('/stakeholders/csv')
+        self.assertEqual(res.status_int, 200)
+        self.assertEqual(res.content_type, 'text/csv')
+
+    @patch('lmkp.views.download.to_flat_table')
+    def test_download_calls_to_table(self, mock_to_flat_table):
+        mock_to_flat_table.return_value = ([], [])
+        self.app.get('/stakeholders/csv')
+        mock_to_flat_table.assert_called_once()
