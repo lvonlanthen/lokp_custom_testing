@@ -1,6 +1,6 @@
 import pytest
 from pyramid import testing
-from mock import patch
+from mock import patch, Mock
 
 from lmkp.models.database_objects import Activity
 from lmkp.views import download
@@ -26,12 +26,12 @@ class ActivityDownloadToTableTest(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    # @patch('lmkp.views.download.activity_protocol.read_many')
-    # def test_to_table_calls_activity_protocol_read_many(self, mock_read_many):
-    #     download.to_table(self.request)
-    #     mock_read_many.assert_called_once_with(self.request, public=True)
+    @patch('lmkp.views.download.activity_protocol.read_many')
+    def test_to_table_calls_activity_protocol_read_many(self, mock_read_many):
+        download.to_table(self.request)
+        mock_read_many.assert_called_once_with(
+            self.request, public=True, translate=False)
 
-    @pytest.mark.test
     def test_to_table_preserves_order_inside_taggroup(self):
         self.login()
         uid = self.create('a', get_new_diff(105), return_uid=True)
@@ -122,6 +122,21 @@ class ActivityDownloadToTableTest(LmkpTestCase):
         self.assertEqual(
             row[header.index('[A] Numberfield 2_[A] Integerfield 1_2')], '123')
 
+    def test_to_table_files(self):
+        self.login()
+        uid = self.create('a', get_new_diff(109), return_uid=True)
+        self.review('a', uid)
+        request = self.request
+        request.route_url = Mock()
+        request.route_url.return_value = 'file_url'
+        header, rows = download.to_table(self.request)
+        self.assertEqual(len(header), self.header_length)
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(
+            row[header.index('[A] Dropdown 2_[A] Filefield 1_1')],
+            'filename1.jpg (file_url)|filename2.pdf (file_url)')
+
     def test_to_table_different_activities(self):
         self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
@@ -157,6 +172,27 @@ class ActivityDownloadToTableTest(LmkpTestCase):
         self.assertEqual(row[header.index('[SH] Textfield 1_1')], 'asdf')
         self.assertEqual(row[header.index('inv_role_1')], 'Stakeholder Role 6')
         self.assertEqual(row[header.index('inv_id_1')], sh_uid)
+
+    @pytest.mark.test
+    def test_to_table_without_involvements(self):
+        self.login()
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create('a', get_new_diff(103, data=inv), return_uid=True)
+        self.review('a', a_uid)
+        header, rows = download.to_table(self.request, involvements=False)
+        self.assertEqual(len(header), self.header_length)
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(len(row), len(header))
+        self.assertNotIn('[SH] Textfield 1_1', row)
+        self.assertNotIn('inv_role_1', row)
+        self.assertNotIn('inv_id_1', row)
 
     @patch(
         'lmkp.views.form_config.ConfigCategoryList.'
@@ -263,19 +299,15 @@ class ActivityDownloadToTableTest(LmkpTestCase):
         self.assertEqual(
             row[header.index('[SH-T] Textfield 1_1')], 'asdf')
 
-    @pytest.mark.test
     def test_to_table_translation_same_translation(self):
         self.login()
         uid = self.create('a', get_new_diff(108), return_uid=True)
         self.review('a', uid)
         self.request.params = {'_LOCALE_': 'es'}
         header, rows = download.to_table(self.request)
-        print header
-        print rows[0]
         self.assertEqual(len(header), self.header_length)
         # The first occurence remains the same
-        self.assertIn('[A-T] Identical Translation', header)
-        self.assertIn('[A] Textfield 3', header)
+        self.assertEqual(header.count('[A-T] Identical Translation'), 2)
         index_mainkey = header.index('[A-T] Dropdown 1_[A-T] Dropdown 1_1')
         self.assertEqual(
             header.index('[A-T] Dropdown 1_[A-T] Textarea 1_1'),

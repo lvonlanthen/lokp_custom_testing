@@ -32,6 +32,8 @@ def get_new_diff(diff_type, data=[]):
             108: [A] A complete Activity with two textfields (where
                 translation is identical) filled out and its Point
                 somewhere in Laos.
+            109: [A] A complete Activity with a (simulated) file upload
+                and its Point somewhere in Laos.
             201: [SH] A complete Stakeholder.
             202: [SH] An incomplete Stakeholder.
             203: [SH] A complete Stakeholder with two values
@@ -572,6 +574,63 @@ def get_new_diff(diff_type, data=[]):
                                 {
                                     'value': 123.45,
                                     'key': u'[A] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    if diff_type == 109:
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': u'[A] Value A1',
+                                'key': u'[A] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A1',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 123.45,
+                                'key': u'[A] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 123.45,
+                                    'key': u'[A] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': '[A] Value B1',
+                                'key': u'[A] Dropdown 2'
+                            },
+                            'tags': [
+                                {
+                                    'value': '[A] Value B1',
+                                    'key': u'[A] Dropdown 2',
+                                    'op': 'add'
+                                }, {
+                                    'key': '[A] Filefield 1',
+                                    'value': 'filename1.jpg|891f3b35-29d3-4ef2'
+                                    '-93d4-2ca45ff718ea,filename2.pdf|56256744'
+                                    '-cf88-434f-90b7-25db9f0fb0a0',
                                     'op': 'add'
                                 }
                             ],
