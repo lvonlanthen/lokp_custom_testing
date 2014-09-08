@@ -13,7 +13,6 @@ from ..diffs import (
 from ...base import get_settings
 
 
-# @pytest.mark.test
 @pytest.mark.download
 @pytest.mark.usefixtures('app')
 class StakeholderDownloadToTableTest(LmkpTestCase):
@@ -159,6 +158,73 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(len(rows), 3)
         for r in rows:
             self.assertEqual(len(header), len(r))
+
+    def test_to_flat_table_filters_columns(self):
+        self.login()
+        uid_1 = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', uid_1)
+        uid_2 = self.create('sh', get_new_diff(206), return_uid=True)
+        self.review('sh', uid_2)
+        columns = ['[SH] Textfield 1', '[SH] Integerfield 1']
+        header, rows = download.to_flat_table(
+            self.request, 'stakeholders', columns=columns)
+        self.assertEqual(len(header), 6)
+        self.assertIn('[SH] Textfield 1_[SH] Textfield 1', header)
+        self.assertIn('[SH] Numberfield 2_[SH] Integerfield 1_1', header)
+        self.assertIn('[SH] Numberfield 2_[SH] Integerfield 1_2', header)
+        self.assertNotIn('[SH] Numberfield 2', header)
+        self.assertEqual(len(rows), 2)
+        row_uid_1 = rows[1]
+        self.assertEqual(len(row_uid_1), len(header))
+        self.assertEqual(row_uid_1[header.index('id')], uid_1)
+        self.assertEqual(
+            row_uid_1[header.index('[SH] Textfield 1_[SH] Textfield 1')],
+            'asdf')
+        self.assertIsNone(
+            row_uid_1[header.index(
+                '[SH] Numberfield 2_[SH] Integerfield 1_1')])
+        self.assertIsNone(
+            row_uid_1[header.index(
+                '[SH] Numberfield 2_[SH] Integerfield 1_2')])
+        row_uid_2 = rows[0]
+        self.assertEqual(len(row_uid_2), len(header))
+        self.assertEqual(row_uid_2[header.index('id')], uid_2)
+        self.assertIn(
+            'Foo',
+            row_uid_2[header.index('[SH] Textfield 1_[SH] Textfield 1')])
+        self.assertEqual(
+            row_uid_2[header.index(
+                '[SH] Numberfield 2_[SH] Integerfield 1_1')],
+            '123')
+        self.assertEqual(
+            row_uid_2[header.index(
+                '[SH] Numberfield 2_[SH] Integerfield 1_2')],
+            '159')
+
+    def test_to_flat_table_filter_no_columns_shows_all_columns(self):
+        self.login()
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', uid)
+        columns = []
+        header_filtered, rows_filtered = download.to_flat_table(
+            self.request, 'stakeholders', columns=columns)
+        header, rows = download.to_flat_table(
+            self.request, 'stakeholders')
+        self.assertEqual(header_filtered, header)
+        self.assertEqual(rows_filtered, rows)
+
+    def test_to_flat_table_filter_non_existing_columns(self):
+        self.login()
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', uid)
+        columns = ['foo', 'bar']
+        header, rows = download.to_flat_table(
+            self.request, 'stakeholders', columns=columns)
+        self.assertEqual(len(header), 3)
+        self.assertNotIn('[SH] Textfield 1_[SH] Textfield 1', header)
+        row = rows[0]
+        self.assertEqual(len(row), len(header))
+        self.assertEqual(row[header.index('id')], uid)
 
     def test_to_flat_table_with_involvements(self):
         self.login()

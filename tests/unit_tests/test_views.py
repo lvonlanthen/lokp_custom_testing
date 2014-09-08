@@ -42,14 +42,18 @@ class ActivityDownloadTest(LmkpTestCase):
         testing.tearDown()
 
     def test_download_returns_csv(self):
-        res = self.app.get('/activities/csv')
+        res = self.app.post('/activities/download', params={
+            'format': 'csv'
+        })
         self.assertEqual(res.status_int, 200)
         self.assertEqual(res.content_type, 'text/csv')
 
     @patch('lmkp.views.download.to_flat_table')
     def test_download_calls_to_table(self, mock_to_flat_table):
         mock_to_flat_table.return_value = ([], [])
-        self.app.get('/activities/csv')
+        self.app.post('/activities/download', params={
+            'format': 'csv'
+        })
         mock_to_flat_table.assert_called_once()
 
 
@@ -67,12 +71,16 @@ class StakeholderDownloadTest(LmkpTestCase):
         testing.tearDown()
 
     def test_download_returns_csv(self):
-        res = self.app.get('/stakeholders/csv')
+        res = self.app.post('/stakeholders/download', params={
+            'format': 'csv'
+        })
         self.assertEqual(res.status_int, 200)
         self.assertEqual(res.content_type, 'text/csv')
 
     @patch('lmkp.views.download.to_flat_table')
     def test_download_calls_to_table(self, mock_to_flat_table):
         mock_to_flat_table.return_value = ([], [])
-        self.app.get('/stakeholders/csv')
+        self.app.post('/stakeholders/download', params={
+            'format': 'csv'
+        })
         mock_to_flat_table.assert_called_once()

@@ -97,7 +97,7 @@ def test_edited_stakeholders_with_involvements_can_be_approved(testcase):
 
     aUid = doCreateActivity(testcase, createSH=True)
 
-    # Review both Activity (first) and Stakeholder (second)
+    # Review both Activity (second) and Stakeholder (first)
     testcase.driver.get(createUrl('/activities/review/%s' % aUid))
     shLink = testcase.driver.find_element_by_xpath("//a[contains(@href, '/stakeholders/review/')]").get_attribute('href')
     shUid = shLink.split('/')[len(shLink.split('/'))-1]
@@ -106,11 +106,13 @@ def test_edited_stakeholders_with_involvements_can_be_approved(testcase):
     testcase.driver.find_element_by_link_text('Click here to return to the Activity and review it.').click()
     testcase.driver.implicitly_wait(10)
     testcase.driver.find_element_by_xpath("//button[contains(concat(' ', @class, ' '), ' btn-success ') and contains(text(), '%s')]" % BUTTON_APPROVE).click()
-
     # Go to Stakeholder and edit it
     testcase.driver.get(createUrl('/stakeholders/form/%s' % shUid))
     testcase.driver.find_element_by_xpath("//textarea[@name='[SH] Textarea 1']").send_keys('Added input')
     testcase.driver.find_element_by_id('stakeholderformsubmit').click()
+
+    import time
+    time.sleep(1)
 
     # Go to moderation of the Stakeholder, it should be approvable
     testcase.driver.get(createUrl('/stakeholders/review/%s' % shUid))
