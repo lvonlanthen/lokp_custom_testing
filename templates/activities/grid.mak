@@ -91,11 +91,11 @@
                         [
                             request.route_url('activities_read_many', output='html'),
                             request.route_url('activities_bystakeholders', output='html', uids=sh_uids)
-                        ], _('Deals')
+                        ], _('Activities')
                     ], [
                         [
                             request.route_url('stakeholders_byactivities_all', output='html')
-                        ], _('Investors')
+                        ], _('Stakeholders')
                     ]
                 ]
             %>
@@ -109,7 +109,16 @@
                 </li>
             % endfor
 
-            <li class="grid-show-pending"><a href="${request.route_url('changesets_read_latest', output='rss', _query=(('_LOCALE_', get_current_locale(request)),('_PROFILE_', get_current_profile(request))))}"><i class="icon-rss"></i></a></li>
+            <li class="grid-show-pending">
+                <a href="${request.route_url('activities_read_many', output='download')}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}" data-toggle="tooltip" title="${_('Download Activities')}">
+                    <i class="icon-download-alt"></i>
+                </a>
+            </li>
+            <li class="grid-show-pending">
+                <a href="${request.route_url('changesets_read_latest', output='rss', _query=(('_LOCALE_', get_current_locale(request)),('_PROFILE_', get_current_profile(request))))}" data-toggle="tooltip" title="${_('View and subscribe to latest changes')}">
+                    <i class="icon-rss"></i>
+                </a>
+            </li>
 
             % if isModerator:
                 % if 'status=pending' in request.path_qs:
@@ -255,6 +264,14 @@
 ## End of content
 
 <%def name="bottom_tags()">
+    <script type="text/javascript">
+        $(function () {
+            $("a[data-toggle='tooltip']").tooltip({
+                container: 'body',
+                placement: 'bottom'
+            });
+        });
+    </script>
     <script src="${request.static_url('lmkp:static/v2/grid.js')}" type="text/javascript"></script>
     <script src="${request.static_url('lmkp:static/v2/filters.js')}" type="text/javascript"></script>
 </%def>
