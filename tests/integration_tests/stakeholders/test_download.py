@@ -195,11 +195,11 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(
             row_uid_2[header.index(
                 '[SH] Numberfield 2_[SH] Integerfield 1_1')],
-            '123')
+            '159')
         self.assertEqual(
             row_uid_2[header.index(
                 '[SH] Numberfield 2_[SH] Integerfield 1_2')],
-            '159')
+            '123')
 
     def test_to_flat_table_filter_no_columns_shows_all_columns(self):
         self.login()
@@ -262,7 +262,7 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         a_uid = self.create('a', get_new_diff(103, data=inv), return_uid=True)
         self.review('a', a_uid)
         header, rows = download.to_flat_table(
-            self.request, 'stakeholders', involvements=False)
+            self.request, 'stakeholders', involvements='none')
         self.assertEqual(len(header), self.header_length)
         self.assertEqual(len(rows), 1)
         row = rows[0]

@@ -4,6 +4,7 @@ PASSWORD = 'asdfasdf'
 
 # Strings needed during testing as found in the templates
 BUTTON_APPROVE = 'Approve'
+BUTTON_DOWNLOAD = 'Download'
 BUTTON_LOGIN = 'Login'.upper()
 BUTTON_SHOW_ONLY_PENDING = 'Show only pending'.upper()
 BUTTON_USERNAME = USERNAME.upper()
@@ -35,12 +36,14 @@ TEXT_PENDING_VERSION = 'Pending version'.upper()
 TITLE_DEAL_DETAILS = 'Deal Details'
 TITLE_DEAL_EDITOR = 'Deal Editor'
 TITLE_DEAL_MODERATION = 'Deal Moderation'
+TITLE_DEAL_DOWNLOAD = 'Download Activities'
 TITLE_HISTORY_VIEW = 'History'
 TITLE_LOGIN_VIEW = 'Login'
 TITLE_MAP_VIEW = 'Map View'
 TITLE_STAKEHOLDER_DETAILS = 'Stakeholder Details'
 TITLE_STAKEHOLDER_EDITOR = 'Stakeholder Editor'
 TITLE_STAKEHOLDER_MODERATION = 'Investor Moderation'
+TITLE_STAKEHOLDER_DOWNLOAD = 'Download Stakeholders'
 TITLE_USER_ACCOUNT_VIEW = 'User Account'
 
 from pyramid.paster import get_appsettings

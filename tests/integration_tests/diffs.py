@@ -187,12 +187,12 @@ def get_new_diff(diff_type, data=[]):
                     'taggroups': [
                         {
                             'main_tag': {
-                                'value': u'[A] Value A1',
+                                'value': u'[A] Value A2',
                                 'key': u'[A] Dropdown 1'
                             },
                             'tags': [
                                 {
-                                    'value': u'[A] Value A1',
+                                    'value': u'[A] Value A2',
                                     'key': u'[A] Dropdown 1',
                                     'op': 'add'
                                 }

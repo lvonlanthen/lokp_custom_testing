@@ -39,13 +39,15 @@ class LmkpTestCase(TestCase):
         else:
             self.fail('Unknown format: %s' % format)
 
-    def read_many(self, item_type, format):
+    def read_many(self, item_type, format, params={}):
         url = get_base_url_by_item_type(item_type)
+        url_params = [
+            '%s=%s' % (key, value) for key, value in params.iteritems()]
         if format == 'json':
-            res = self.app.get('%s/json' % url)
+            res = self.app.get('%s/json?%s' % (url, '&'.join(url_params)))
             return res.json
         elif format == 'html':
-            res = self.app.get('%s/html' % url)
+            res = self.app.get('%s/html?%s' % (url, '&'.join(url_params)))
             return res
         else:
             self.fail('Unknown format: %s' % format)
