@@ -10,7 +10,6 @@ from pyramid.paster import get_app
 from pyramid.paster import get_appsettings
 from selenium import webdriver
 from sqlalchemy import engine_from_config
-from unittest import TestCase
 from webtest import TestApp
 
 from lmkp.scripts.populate import _populate
@@ -99,22 +98,10 @@ def app(request, db_session):
     return request
 
 
-@pytest.fixture(scope='session',
-                params=browsers.keys())
-def driver(request):
-    if browsers == {}:
-        pytest.skip('No browser activated')
-    browser = browsers[request.param]()
-    browser.set_window_size(1200, 800)
-    # Set initial profile to 'global' (important for IE)
-    from functional_tests.base import BASE_URL
-    browser.get(BASE_URL + '/global')
-    request.addfinalizer(lambda *args: browser.quit())
-    return browser
-
-
-@pytest.fixture
-def testcase(driver):
-    testcase = TestCase('__init__')
-    testcase.driver = driver
-    return testcase
+@pytest.fixture(scope='function')
+def app_functional(request, db_session):
+    request.cls.app = TestApp(get_app(FUNCTIONAL_TESTS_INI))
+    request.cls.db_session = db_session
+    request.cls.driver = webdriver.Firefox()
+    request.addfinalizer(lambda *args: request.cls.driver.quit())
+    return request

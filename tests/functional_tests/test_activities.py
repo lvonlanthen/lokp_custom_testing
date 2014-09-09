@@ -1,20 +1,11 @@
 import time
 import pytest
 
-from .base import (
-    checkIsPending,
-    createUrl,
-    doCreateActivity,
-    doCreateStakeholder,
-    doLogin,
-    getEl,
-    openItemFormPage
-)
+from .base import LmkpFunctionalTestCase
 from ..base import (
     LINK_DEAL_SHOW_INVOLVEMENT,
     LINK_STAKEHOLDER_SHOW_INVOLVEMENT,
     LINK_VIEW_DEAL,
-    TEXT_PENDING_VERSION,
     TITLE_DEAL_DETAILS,
     TITLE_DEAL_EDITOR,
     TITLE_STAKEHOLDER_DETAILS,
@@ -22,133 +13,108 @@ from ..base import (
 )
 
 
+@pytest.mark.usefixtures('app_functional')
 @pytest.mark.functional
 @pytest.mark.activities
-def test_create_activity(testcase):
-    """
-    Test that a new Activity can be created.
-    """
+class CreateActivityTests(LmkpFunctionalTestCase):
 
-    # Count how many Activities there are already
-    doLogin(testcase, createUrl('/activities/html'))
+    def test_create_activities(self):
+        self.login(self.url('/activities/html'))
 
-    try:
-        getEl(testcase, 'tag_name', 'h5')
-        countBefore = 0
-    except:
-        countBefore = testcase.driver.find_element_by_xpath(
-            "//div[contains(@class, 'span4')]/strong")
-        countBefore = int(countBefore.text)
-
-    uid = doCreateActivity(testcase)
-
-    # Count how many Activities there are now
-    testcase.driver.get(createUrl('/activities/html'))
-    countAfter = testcase.driver.find_element_by_xpath(
-        "//div[contains(@class, 'span4')]/strong")
-    countAfter = int(countAfter.text)
-    testcase.assertEqual(countBefore + 1, countAfter)
-
-    # Check that a detail page is available
-    testcase.driver.get(createUrl('/activities/html/%s' % uid))
-    testcase.assertIn(TITLE_DEAL_DETAILS, testcase.driver.title)
-    testcase.assertTrue(checkIsPending(testcase))
-
-
-@pytest.mark.functional
-@pytest.mark.activities
-def test_create_activity_with_new_involvement(testcase):
-    """
-    Test that a new Activity can be created with a new Involvement.
-    """
-
-    # Define some values
-    aType = '[A] Value A1'
-    shName = 'Specific SH'
-
-    # Start the Activity form
-    doCreateActivity(testcase, dd1=aType, noSubmit=True)
-
-    # Add an involvement
-    testcase.driver.find_element_by_id('activityformstep_3').click()
-    testcase.assertIn(TITLE_DEAL_EDITOR, testcase.driver.title)
-    shbtn = testcase.driver.find_elements_by_xpath(
-        '//a[contains(@class, "accordion-toggle collapsed")]')
-    for el in shbtn:
+        # Count how many Activities there are already
         try:
-            el.click()
+            self.el('tag_name', 'h5')
+            count_before = 0
         except:
-            pass
-    time.sleep(1)
-    testcase.driver.find_element_by_name(
-        'createinvolvement_primaryinvestor').click()
-    testcase.assertIn(TITLE_STAKEHOLDER_EDITOR, testcase.driver.title)
+            count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+            count_before = int(count.text)
 
-    # Create and submit a Stakeholder
-    doCreateStakeholder(testcase, tf1=shName)
+        uid = self.create_activity()
 
-    # Make sure we are back in Activity form and submit
-    testcase.assertIn(TITLE_DEAL_EDITOR, testcase.driver.title)
-    testcase.driver.find_element_by_id('activityformsubmit').click()
-    link = testcase.driver.find_element_by_link_text(
-        LINK_VIEW_DEAL).get_attribute('href')
-    testcase.driver.get(link)
-    testcase.assertIn(TITLE_DEAL_DETAILS, testcase.driver.title)
-    pending = testcase.driver.find_element_by_tag_name('h4').text
-    testcase.assertIn(TEXT_PENDING_VERSION, pending)
+        # Count how many Activities there are now
+        self.driver.get(self.url('/activities/html'))
+        count_after = self.el(
+            'xpath', "//div[contains(@class, 'span4')]/strong")
+        self.assertEqual(count_before + 1, int(count_after.text))
 
-    # Make sure the Stakeholder is linked and view it's details
-    testcase.assertIn(shName, testcase.driver.page_source)
-    testcase.driver.find_element_by_link_text(
-        LINK_DEAL_SHOW_INVOLVEMENT).click()
-    testcase.assertIn(TITLE_STAKEHOLDER_DETAILS, testcase.driver.title)
-    pending = testcase.driver.find_element_by_tag_name('h4').text
-    testcase.assertIn(TEXT_PENDING_VERSION, pending)
+        # Check that a detail page is available
+        self.driver.get(self.url('/activities/html/%s' % uid))
+        self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
+        self.assertTrue(self.check_status('pending'))
 
-    # Make sure the Activity is linked
-    testcase.assertIn(aType, testcase.driver.page_source)
-    getEl(testcase, 'link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT)
+    def test_create_activity_with_new_involvement(self):
+        """
+        Test that a new Activity can be created with a new Involvement.
+        """
 
-#    def test_create_activity_with_existing_involvement(self):
-#        """
-#        Test that a new Activity can be created with an existing Stakeholder
-#        """
-#
-#        aUid = doCreateActivity(self, createSH=True)
-#
-#        doReview(driver, 'a', aUid, withInv=True)
+        # Define some values
+        a_values = {'dd1': '[A] Value A1'}
+        sh_values = {'tf1': 'Specific SH'}
 
+        # Start the Activity form
+        self.create_activity(values=a_values, no_submit=True)
 
-@pytest.mark.functional
-@pytest.mark.activities
-def test_edit_activity_with_renamed_key(testcase):
-    """
-    This is a test for a bugfix when an activity could not be edited if
-    it had a key (eg. remark) which was renamed in english.
-    """
+        # Add an involvement
+        self.el('id', 'activityformstep_3').click()
+        self.assertIn(TITLE_DEAL_EDITOR, self.driver.title)
+        inv_button = self.els(
+            'xpath', '//a[contains(@class, "accordion-toggle collapsed")]')
+        for el in inv_button:
+            try:
+                el.click()
+            except:
+                pass
+        time.sleep(1)
+        self.el('name', 'createinvolvement_primaryinvestor').click()
+        self.assertIn(TITLE_STAKEHOLDER_EDITOR, self.driver.title)
 
-    # Create a first activity
-    doLogin(testcase)
-    openItemFormPage(testcase, 'activities', reset=True)
-    testcase.driver.find_element_by_class_name('olMapViewport').click()
-    testcase.driver.find_element_by_xpath(
-        "//select[@name='[A] Dropdown 1']/option[@value='[A] Value A1']").\
-        click()
-    testcase.driver.find_element_by_xpath(
-        "//input[@name='[A] Textfield 1']").send_keys('foo')
-    testcase.driver.find_element_by_id('activityformsubmit').click()
+        # Create and submit a Stakeholder
+        self.create_stakeholder(values=sh_values)
 
-    link = testcase.driver.find_element_by_link_text(
-        LINK_VIEW_DEAL).get_attribute('href')
-    uid = link.split('/')[len(link.split('/'))-1]
+        # Make sure we are back in Activity form and submit
+        self.assertIn(TITLE_DEAL_EDITOR, self.driver.title)
+        self.el('id', 'activityformsubmit').click()
+        link = self.el('link_text', LINK_VIEW_DEAL).get_attribute('href')
+        self.driver.get(link)
+        self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
+        self.check_status('pending')
 
-    # Edit it
-    testcase.driver.get(createUrl('/activities/form/%s' % uid))
-    field = testcase.driver.find_element_by_xpath(
-        "//input[@name='[A] Textfield 1']")
-    field.clear()
-    field.send_keys('bar, not foo')
-    testcase.driver.find_element_by_id('activityformsubmit').click()
+        # Make sure the Stakeholder is linked and view it's details
+        self.assertIn(sh_values['tf1'], self.driver.page_source)
+        self.el('link_text', LINK_DEAL_SHOW_INVOLVEMENT).click()
+        self.assertIn(TITLE_STAKEHOLDER_DETAILS, self.driver.title)
+        self.check_status('pending')
 
-    testcase.driver.find_element_by_link_text(LINK_VIEW_DEAL).click()
-    testcase.assertIn('bar, not foo', testcase.driver.page_source)
+        # Make sure the Activity is linked
+        self.assertIn(a_values['dd1'], self.driver.page_source)
+        self.el('link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT)
+
+    def test_edit_activity_with_renamed_key(self):
+        """
+        This is a test for a bugfix when an activity could not be edited if
+        it had a key (eg. remark) which was renamed in english.
+        """
+
+        # Create a first activity
+        self.login()
+        self.open_form('activities', reset=True)
+        self.el('class_name', 'olMapViewport').click()
+        self.el(
+            'xpath',
+            "//select[@name='[A] Dropdown 1']/option[@value='[A] Value A1']").\
+            click()
+        self.el('xpath', "//input[@name='[A] Textfield 1']").send_keys('foo')
+        self.el('id', 'activityformsubmit').click()
+
+        link = self.el('link_text', LINK_VIEW_DEAL).get_attribute('href')
+        uid = link.split('/')[len(link.split('/')) - 1]
+
+        # Edit it
+        self.driver.get(self.url('/activities/form/%s' % uid))
+        field = self.el('xpath', "//input[@name='[A] Textfield 1']")
+        field.clear()
+        field.send_keys('bar, not foo')
+        self.el('id', 'activityformsubmit').click()
+
+        self.el('link_text', LINK_VIEW_DEAL).click()
+        self.assertIn('bar, not foo', self.driver.page_source)
