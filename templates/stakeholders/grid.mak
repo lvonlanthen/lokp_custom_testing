@@ -37,7 +37,7 @@
             spatialFilterExplanation = _('You are seeing all the Investors involved in Deals within the current profile.')
             spatialFilterLink = None
 
-            if spatialfilter == 'mapextentparam' or spatialfilter == 'mapextentcookie':
+            if spatialfilter == 'map':
                 spatialFilterBasedOn = _('Map Extent')
                 spatialFilterExplanation = _('You are currently only seeing Investors involved in Deals which are visible on the map.')
                 spatialFilterLink = _('Show all the Investors involved in Deals of the profile.')

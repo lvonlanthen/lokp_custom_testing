@@ -37,7 +37,7 @@
             spatialFilterExplanation = _('You are seeing all the Deals within the current profile.')
             spatialFilterLink = None
 
-            if spatialfilter == 'mapextentparam' or spatialfilter == 'mapextentcookie':
+            if spatialfilter == 'map':
                 spatialFilterBasedOn = _('Map Extent')
                 spatialFilterExplanation = _('You are currently only seeing Deals which are visible on the map.')
                 spatialFilterLink = _('Show all Deals of the profile.')
