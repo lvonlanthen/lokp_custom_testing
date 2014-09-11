@@ -1,11 +1,12 @@
 import pytest
-from mock import Mock, patch
+from mock import patch
 from pyramid import testing
 
 from lmkp.views.views import (
+    get_bbox_parameters,
     get_output_format,
     get_page_parameters,
-    get_bbox_parameters,
+    get_status_parameter,
 )
 from ..integration_tests.base import (
     LmkpTestCase,
@@ -113,6 +114,29 @@ class ViewsGetBboxParametersTests(LmkpTestCase):
         self.request.params = {'bbox': 'param'}
         bbox, __ = get_bbox_parameters(self.request)
         self.assertEqual(bbox, 'param')
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsGetStatusParameterTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_status_parameter_returns_status(self):
+        self.request.params = {'status': 'foo'}
+        status = get_status_parameter(self.request)
+        self.assertEqual(status, 'foo')
+
+    def test_get_status_parameter_returns_none_if_not_set(self):
+        status = get_status_parameter(self.request)
+        self.assertIsNone(status)
 
 
 @pytest.mark.usefixtures('app')

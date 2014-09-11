@@ -10,7 +10,7 @@ from pyramid.paster import get_app
 from pyramid.paster import get_appsettings
 from selenium import webdriver
 from sqlalchemy import engine_from_config
-from webtest.app import TestApp
+from webtest import TestApp
 
 from lmkp.scripts.populate import _populate
 from lmkp.models import meta

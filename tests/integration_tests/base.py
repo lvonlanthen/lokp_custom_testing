@@ -18,7 +18,7 @@ class LmkpTestCase(TestCase):
             'password': PASSWORD,
             'form.submitted': 'true'
         }
-        res = self.app.post('/login', params=params)
+        res = self.app.post('/login', params)
         return res.follow()
 
     def create(
