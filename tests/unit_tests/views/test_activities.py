@@ -99,3 +99,41 @@ class ActivityViewReadManyHtmlTests(LmkpTestCase):
         mock_get_status_parameter.return_value = 'foo'
         self.view.read_many()
         mock_get_status_parameter.assert_called_once_with(self.request)
+
+    @patch('lmkp.views.activities.BaseView.get_base_template_values')
+    @patch('lmkp.views.activities.render_to_response')
+    def test_read_many_html_calls_get_base_template_values(
+            self, mock_render_to_response, mock_get_base_template_values):
+        mock_render_to_response.return_value = {}
+        self.view.read_many()
+        mock_get_base_template_values.assert_called_once_with()
+
+    @patch('lmkp.views.activities.BaseView.get_base_template_values')
+    @patch('lmkp.views.activities.get_bbox_parameters')
+    @patch('lmkp.views.activities.render_to_response')
+    @patch('lmkp.views.activities.getTemplatePath')
+    def test_read_many_html_calls_render_to_response(
+            self, mock_get_template_path, mock_render_to_response,
+            mock_get_bbox_parameters, mock_get_base_template_values):
+        mock_render_to_response.return_value = {}
+        mock_get_base_template_values.return_value = {
+            'profile': 'profile',
+            'locale': 'en'
+        }
+        mock_get_template_path.return_value = 'template_path'
+        mock_get_bbox_parameters.return_value = 'map', None
+        self.view.read_many()
+        mock_render_to_response.assert_called_once_with(
+            'template_path',
+            {
+                'profile': 'profile',
+                'statusfilter': None,
+                'spatialfilter': 'map',
+                'pagesize': 10,
+                'currentpage': 1,
+                'locale': 'en',
+                'total': 0,
+                'data': [],
+                'invfilter': None
+            },
+            self.request)

@@ -3,15 +3,54 @@ from mock import patch
 from pyramid import testing
 
 from lmkp.views.views import (
+    BaseView,
     get_bbox_parameters,
     get_output_format,
     get_page_parameters,
     get_status_parameter,
+    get_current_locale,
+    get_current_profile,
 )
-from ..integration_tests.base import (
+from ...integration_tests.base import (
     LmkpTestCase,
 )
-from ..base import get_settings
+from ...base import get_settings
+
+
+@pytest.mark.usefixtrues('app')
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsBaseViewGetBaseTemplateValuesTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = BaseView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_base_template_values_returns_dict(self):
+        res = self.view.get_base_template_values()
+        self.assertIsInstance(res, dict)
+
+    def test_get_base_template_values_returns_values(self):
+        res = self.view.get_base_template_values()
+        self.assertIn('profile', res)
+        self.assertIn('locale', res)
+
+    @patch('lmkp.views.views.get_current_profile')
+    def test_get_base_template_values_calls_get_current_profile(
+            self, mock_get_current_profile):
+        self.view.get_base_template_values()
+        mock_get_current_profile.assert_called_once_with(self.request)
+
+    @patch('lmkp.views.views.get_current_locale')
+    def test_get_base_template_values_calls_get_current_locale(
+            self, mock_get_current_locale):
+        self.view.get_base_template_values()
+        mock_get_current_locale.assert_called_once_with(self.request)
 
 
 @pytest.mark.usefixtures('app')
@@ -141,8 +180,8 @@ class ViewsGetStatusParameterTests(LmkpTestCase):
 
 @pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-@pytest.mark.download
-class ActivityDownloadTest(LmkpTestCase):
+@pytest.mark.profile
+class ViewsGetCurrentProfileTests(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -152,26 +191,31 @@ class ActivityDownloadTest(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def test_download_returns_csv(self):
-        res = self.app.post('/activities/download', params={
-            'format': 'csv'
-        })
-        self.assertEqual(res.status_int, 200)
-        self.assertEqual(res.content_type, 'text/csv')
+    def test_get_current_profile_returns_global_by_default(self):
+        profile = get_current_profile(self.request)
+        self.assertEqual(profile, 'global')
 
-    @patch('lmkp.views.download.to_flat_table')
-    def test_download_calls_to_table(self, mock_to_flat_table):
-        mock_to_flat_table.return_value = ([], [])
-        self.app.post('/activities/download', params={
-            'format': 'csv'
-        })
-        mock_to_flat_table.assert_called_once()
+    def test_get_current_profile_returns_profile_from_params(self):
+        self.request.params = {'_PROFILE_': 'foo'}
+        profile = get_current_profile(self.request)
+        self.assertEqual(profile, 'foo')
+
+    def test_get_current_profile_returns_profile_from_cookies(self):
+        self.request.cookies = {'_PROFILE_': 'foo'}
+        profile = get_current_profile(self.request)
+        self.assertEqual(profile, 'foo')
+
+    def test_get_current_profile_returns_params_before_cookies(self):
+        self.request.cookies = {'_PROFILE_': 'cookie'}
+        self.request.params = {'_PROFILE_': 'param'}
+        profile = get_current_profile(self.request)
+        self.assertEqual(profile, 'param')
 
 
 @pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-@pytest.mark.download
-class StakeholderDownloadTest(LmkpTestCase):
+@pytest.mark.profile
+class ViewsGetCurrentLocaleTests(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -181,17 +225,22 @@ class StakeholderDownloadTest(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def test_download_returns_csv(self):
-        res = self.app.post('/stakeholders/download', params={
-            'format': 'csv'
-        })
-        self.assertEqual(res.status_int, 200)
-        self.assertEqual(res.content_type, 'text/csv')
+    def test_get_current_locale_returns_en_by_default(self):
+        locale = get_current_locale(self.request)
+        self.assertEqual(locale, 'en')
 
-    @patch('lmkp.views.download.to_flat_table')
-    def test_download_calls_to_table(self, mock_to_flat_table):
-        mock_to_flat_table.return_value = ([], [])
-        self.app.post('/stakeholders/download', params={
-            'format': 'csv'
-        })
-        mock_to_flat_table.assert_called_once()
+    def test_get_current_locale_returns_locale_from_params(self):
+        self.request.params = {'_LOCALE_': 'foo'}
+        locale = get_current_locale(self.request)
+        self.assertEqual(locale, 'foo')
+
+    def test_get_current_locale_returns_locale_from_cookies(self):
+        self.request.cookies = {'_LOCALE_': 'foo'}
+        locale = get_current_locale(self.request)
+        self.assertEqual(locale, 'foo')
+
+    def test_get_current_locale_returns_params_before_cookies(self):
+        self.request.cookies = {'_LOCALE_': 'cookie'}
+        self.request.params = {'_LOCALE_': 'param'}
+        locale = get_current_locale(self.request)
+        self.assertEqual(locale, 'param')

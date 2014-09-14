@@ -1,8 +1,10 @@
 <%inherit file="lmkp:customization/testing/templates/base.mak" />
 
 <%
-from lmkp.views.profile import get_current_locale
-from lmkp.views.profile import get_current_profile
+from lmkp.views.views import (
+    get_current_locale,
+    get_current_profile,
+)
 %>
 
 <%def name="title()">${_('Latest approved Changesets')}</%def>
