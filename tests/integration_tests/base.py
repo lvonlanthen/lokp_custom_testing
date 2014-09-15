@@ -65,7 +65,7 @@ class LmkpTestCase(TestCase):
 
     def review_not_possible(self, item_type, reason, response):
         item_type = get_valid_item_type(item_type)
-        if item_type == 'a' and reason == 1:
+        if item_type == 'a':
             # The Activity cannot be reviewed because of the Stakeholder. In
             # this case, the response still returns a valid HTTP status code
             # and redirects to the history page, but flashes an error message
@@ -74,7 +74,7 @@ class LmkpTestCase(TestCase):
             self.assertEqual(200, response.status_int)
             response.mustcontain(
                 FEEDBACK_INVOLVED_STAKEHOLDERS_CANNOT_BE_REVIEWED)
-        elif item_type == 'sh' and reason == 1:
+        elif item_type == 'sh':
             # The Stakeholder cannot be reviewed because it contains
             # involvement changes. As above, a valid HTTP status is returned.
             response = response.follow()

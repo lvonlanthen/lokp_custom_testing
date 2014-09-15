@@ -118,3 +118,23 @@ class CreateActivityTests(LmkpFunctionalTestCase):
 
         self.el('link_text', LINK_VIEW_DEAL).click()
         self.assertIn('bar, not foo', self.driver.page_source)
+
+    def test_involvement_role_handling(self):
+        a_uid = self.create_activity(create_inv=True)
+        self.review('activities', a_uid, with_involvement=True)
+
+        self.open_form('activities', a_uid, reset=True)
+        self.el('id', 'activityformstep_3').click()
+        self.el('id', 'activityformsubmit').click()
+
+        self.el('link_text', LINK_VIEW_DEAL).click()
+
+        self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
+        self.assertTrue(self.check_status('pending'))
+        inv_links = self.els('link_text', LINK_DEAL_SHOW_INVOLVEMENT)
+        self.assertEqual(len(inv_links), 1)
+        inv_links[0].click()
+
+        self.assertIn(TITLE_STAKEHOLDER_DETAILS, self.driver.title)
+        inv_links = self.els('link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT)
+        self.assertEqual(len(inv_links), 1)

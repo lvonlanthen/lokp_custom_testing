@@ -8,6 +8,10 @@ from ..base import (
     get_status_from_item_json,
     LmkpTestCase,
 )
+from ...base import(
+    STATUS_ACTIVE,
+    STATUS_INACTIVE,
+)
 
 
 @pytest.mark.usefixtures('app')
@@ -132,3 +136,43 @@ class StakeholderModerateTests(LmkpTestCase):
         self.assertEqual(res['data'][2]['status_id'], 3)
         self.assertEqual(res['data'][1]['status_id'], 3)
         self.assertEqual(res['data'][0]['status_id'], 2)
+
+    def test_foo(self):
+        self.login()
+        self.login()
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data_1 = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data_1), return_uid=True)
+        self.review('a', a_uid)
+
+        inv_data_2 = [{
+            'id': sh_uid,
+            'version': 2,
+            'role': 6,
+            'op': 'delete'
+        }]
+        self.create('a', get_edit_diff(102, a_uid, version=1, data=inv_data_2))
+
+        # From Stakeholder side, the removal cannot be approved
+        res = self.review('sh', sh_uid, version=3)
+        self.review_not_possible('sh', 2, res)
+        res = self.review('sh', sh_uid, version=3, decision='reject')
+        self.review_not_possible('sh', 2, res)
+
+        self.review('a', a_uid, version=2)
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))

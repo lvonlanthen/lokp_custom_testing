@@ -5,6 +5,7 @@ from unittest import TestCase
 from ..base import (
     BUTTON_APPROVE,
     LINK_VIEW_DEAL,
+    LINK_VIEW_STAKEHOLDER,
     PASSWORD,
     TEXT_PENDING_VERSION,
     TITLE_LOGIN_VIEW,
@@ -136,7 +137,7 @@ class LmkpFunctionalTestCase(TestCase):
                 self.el('name', 'createinvolvement_primaryinvestor').\
                     click()
                 self.create_stakeholder(
-                    values=inv_values, form_present=True)
+                    values=inv_values, form_present=True, return_uid=False)
 
         if 'cat4' in values:
             self.el('id', 'activityformstep_53').click()
@@ -158,7 +159,8 @@ class LmkpFunctionalTestCase(TestCase):
 
         return uid
 
-    def create_stakeholder(self, values={}, form_present=False):
+    def create_stakeholder(
+            self, values={}, form_present=False, return_uid=True):
         """
 
         """
@@ -178,6 +180,13 @@ class LmkpFunctionalTestCase(TestCase):
 
         self.el('id', 'stakeholderformsubmit').click()
         self.driver.implicitly_wait(5)
+
+        if return_uid is True:
+            link = self.el('link_text', LINK_VIEW_STAKEHOLDER)
+            link_href = link.get_attribute('href')
+            uid = link_href.split('/')[len(link_href.split('/')) - 1]
+
+            return uid
 
     def review(self, item_type, uid, reject=False, with_involvement=False):
 

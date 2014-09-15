@@ -4,10 +4,13 @@ import uuid
 from .base import LmkpFunctionalTestCase
 from ..base import (
     BUTTON_APPROVE,
+    BUTTON_DENY,
     FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED,
     FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED_FROM_STAKEHOLDER,
+    FEEDBACK_NO_VERSION,
     LINK_REVIEW,
     LINK_DEAL_SHOW_INVOLVEMENT,
+    LINK_STAKEHOLDER_SHOW_INVOLVEMENT,
     TITLE_DEAL_MODERATION,
     TITLE_STAKEHOLDER_MODERATION,
 )
@@ -46,6 +49,34 @@ class ModerationTests(LmkpFunctionalTestCase):
         # Make sure the Activity is not pending anymore
         self.driver.get(link)
         self.assertFalse(self.check_status('pending'))
+
+    def test_reject_first_activity(self):
+        uid = self.create_activity()
+        self.driver.get(self.url('/activities/review/%s' % uid))
+
+        self.assertIn(TITLE_DEAL_MODERATION, self.driver.title)
+        btn = self.el(
+            'xpath',
+            "//button[contains(concat(' ', @class, ' '), ' btn-warning ') and "
+            "contains(text(), '%s')]" % BUTTON_DENY)
+        btn.click()
+
+        self.el('class_name', 'alert-success')
+        self.find_text(FEEDBACK_NO_VERSION)
+
+    def test_reject_first_stakeholder(self):
+        uid = self.create_stakeholder()
+        self.driver.get(self.url('/stakeholders/review/%s' % uid))
+
+        self.assertIn(TITLE_STAKEHOLDER_MODERATION, self.driver.title)
+        btn = self.el(
+            'xpath',
+            "//button[contains(concat(' ', @class, ' '), ' btn-warning ') and "
+            "contains(text(), '%s')]" % BUTTON_DENY)
+        btn.click()
+
+        self.el('class_name', 'alert-success')
+        self.find_text(FEEDBACK_NO_VERSION)
 
     def test_approve_activity_with_new_involvement(self):
         """
@@ -93,6 +124,41 @@ class ModerationTests(LmkpFunctionalTestCase):
         # Go to Stakeholder and make sure it is not pending anymore
         self.el('link_text', LINK_DEAL_SHOW_INVOLVEMENT).click()
         self.assertFalse(self.check_status('pending'))
+
+    def test_approve_version_with_deleted_involvement(self):
+        a_uid = self.create_activity(create_inv=True)
+        self.review('activities', a_uid, with_involvement=True)
+
+        self.open_details('activities', a_uid)
+        sh_link = self.el(
+            'link_text', LINK_DEAL_SHOW_INVOLVEMENT).get_attribute('href')
+        sh_uid = sh_link.split('/')[len(sh_link.split('/')) - 1]
+
+        self.open_form('activities', a_uid, reset=True)
+        self.el('id', 'activityformstep_3').click()
+        self.el(
+            'xpath',
+            "//a[contains(concat(' ', @class, ' '), ' remove-involvement ')]"
+        ).click()
+        self.el('id', 'activityformsubmit').click()
+
+        # The Stakeholder cannot be reviewed
+        self.driver.get(self.url('/stakeholders/review/%s' % sh_uid))
+        import time
+        time.sleep(10)
+        self.el(
+            'xpath',
+            "//button[contains(concat(' ', @class, ' '), ' disabled ') and "
+            "contains(text(), '%s')]" % BUTTON_APPROVE)
+
+        # The Activity can be reviewed
+        self.review('activities', a_uid)
+
+        self.open_details('activities', a_uid)
+        self.el('link_text', LINK_DEAL_SHOW_INVOLVEMENT, inverse=True)
+
+        self.open_details('stakeholders', sh_uid)
+        self.el('link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT, inverse=True)
 
     def test_edited_stakeholders_with_involvements_can_be_approved(self):
         """
