@@ -29,6 +29,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
 
     def setUp(self):
         self.login()
+        super(StakeholderEditActiveTests, self).setUp()
 
     def test_active_stakeholder_add_new_taggroup(self):
         uid = self.create('sh', get_new_diff(201), return_uid=True)

@@ -1396,6 +1396,10 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                             ],
                             'op': 'delete'
                         }, {
+                            'main_tag': {
+                                'value': '[A] Value D4',
+                                'key': u'[A] Checkbox 1'
+                            },
                             'tags': [
                                 {
                                     'value': '[A] Value D4',
@@ -1405,6 +1409,10 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                             ],
                             'op': 'add'
                         }, {
+                            'main_tag': {
+                                'value': 'This is Textfield 2',
+                                'key': u'[A] Textfield 2'
+                            },
                             'tags': [
                                 {
                                     'value': 'This is Textfield 2',

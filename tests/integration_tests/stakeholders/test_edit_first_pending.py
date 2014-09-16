@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from pyramid import testing
 
 from ..base import (
     find_key_value_in_taggroups_json,
@@ -20,7 +19,6 @@ from ...base import (
     STATUS_EDITED,
     STATUS_PENDING,
 )
-from ...base import get_settings
 
 
 @pytest.mark.usefixtures('app')
@@ -30,9 +28,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
 
     def setUp(self):
         self.login()
-        self.request = testing.DummyRequest()
-        settings = get_settings()
-        self.config = testing.setUp(request=self.request, settings=settings)
+        super(StakeholderEditFirstPendingTests, self).setUp()
 
     def test_first_pending_stakeholder_add_new_taggroup(self):
         uid = self.create('sh', get_new_diff(201), return_uid=True)
@@ -41,8 +37,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v2 = res['data'][0]['taggroups']
         taggroups_v1 = res['data'][1]['taggroups']
         self.assertEqual(len(taggroups_v1), 2)
@@ -61,8 +55,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v2 = res['data'][0]['taggroups']
         taggroups_v1 = res['data'][1]['taggroups']
         self.assertEqual(len(taggroups_v1), 2)
@@ -80,8 +72,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v2 = res['data'][0]['taggroups']
         taggroups_v1 = res['data'][1]['taggroups']
         self.assertEqual(len(taggroups_v1), 2)
@@ -108,8 +98,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v2 = res['data'][0]['taggroups']
         taggroups_v1 = res['data'][1]['taggroups']
         self.assertEqual(len(taggroups_v1), 2)
@@ -130,8 +118,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v2 = res['data'][0]['taggroups']
         taggroups_v1 = res['data'][1]['taggroups']
         self.assertEqual(len(taggroups_v1), 2)
@@ -158,8 +144,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v2 = res['data'][0]['taggroups']
         taggroups_v1 = res['data'][1]['taggroups']
         self.assertEqual(len(taggroups_v1), 2)
@@ -180,8 +164,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v2 = res['data'][0]['taggroups']
         taggroups_v1 = res['data'][1]['taggroups']
         self.assertEqual(len(taggroups_v1), 8)
@@ -223,8 +205,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('sh', res['data'][i])
         inv = get_involvements_from_item_json(res, 0)
         self.assertEqual(len(inv), 1)
         self.assertEqual(get_version_from_involvement_json(inv), 2)
@@ -237,8 +217,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
-        for i in range(2):
-            self.check_item_json('a', res['data'][i])
         inv_v2 = get_involvements_from_item_json(res, 0)
         self.assertEqual(len(inv_v2), 1)
         self.assertEqual(get_version_from_involvement_json(inv_v2), 2)
@@ -268,8 +246,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 2))
-        for i in range(3):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v3 = res['data'][0]['taggroups']
         taggroups_v2 = res['data'][1]['taggroups']
         taggroups_v1 = res['data'][2]['taggroups']
@@ -307,8 +283,6 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 2))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 3))
-        for i in range(4):
-            self.check_item_json('sh', res['data'][i])
         taggroups_v4 = res['data'][0]['taggroups']
         taggroups_v3 = res['data'][1]['taggroups']
         taggroups_v2 = res['data'][2]['taggroups']

@@ -29,12 +29,15 @@ from ..base import (
 @pytest.mark.moderation
 class ActivityTests(LmkpTestCase):
 
+    def setUp(self):
+        self.login()
+        super(ActivityTests, self).setUp()
+
     def test_setup_01(self):
         """
         For the rather complicated setup of this test, have a look at
         "Setup Test 01" in the drive folder.
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
@@ -107,7 +110,6 @@ class ActivityTests(LmkpTestCase):
         For the rather complicated setup of this test, have a look at
         "Setup Test 01" in the drive folder.
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
@@ -210,7 +212,6 @@ class ActivityTests(LmkpTestCase):
         For the rather complicated setup of this test, have a look at
         "Setup Test 02" in the drive folder.
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
@@ -287,7 +288,6 @@ class ActivityTests(LmkpTestCase):
         For the rather complicated setup of this test, have a look at
         "Setup Test 02" in the drive folder.
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid1 = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a second Stakeholder
@@ -365,7 +365,6 @@ class ActivityTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 2)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 2)
         res = self.read_one('sh', sh_uid1, 'json')
-        res = self.read_one('sh', sh_uid2, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))

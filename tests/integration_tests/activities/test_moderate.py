@@ -24,11 +24,14 @@ from ...base import (
 @pytest.mark.moderation
 class ActivityModerateTests(LmkpTestCase):
 
+    def setUp(self):
+        self.login()
+        super(ActivityModerateTests, self).setUp()
+
     def test_new_activities_can_be_approved(self):
         """
         New Activities with all mandatory keys can be approved.
         """
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
@@ -45,7 +48,6 @@ class ActivityModerateTests(LmkpTestCase):
         """
         New Activities with all mandatory keys can be rejected.
         """
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
@@ -62,7 +64,6 @@ class ActivityModerateTests(LmkpTestCase):
         """
         New Activities with missing mandatory keys can be rejected.
         """
-        self.login()
         uid = self.create('a', get_new_diff(102), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
@@ -79,7 +80,6 @@ class ActivityModerateTests(LmkpTestCase):
         """
         New Activities with missing mandatory keys can NOT be approved.
         """
-        self.login()
         uid = self.create('a', get_new_diff(102), return_uid=True)
 
         res = self.read_one('a', uid, 'json')
@@ -102,7 +102,6 @@ class ActivityModerateTests(LmkpTestCase):
         New Activities with an existing (active) Stakeholder can be approved.
         This will implicitly approve the Stakeholder version 2.
         """
-        self.login()
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)
         inv_data = [{
@@ -145,7 +144,6 @@ class ActivityModerateTests(LmkpTestCase):
         directly. It is necessary to review a first version of the Stakeholder
         first.
         """
-        self.login()
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         inv_data = [{
             'id': sh_uid,
@@ -165,7 +163,6 @@ class ActivityModerateTests(LmkpTestCase):
         """
 
         """
-        self.login()
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         inv_data1 = [{
             'id': sh_uid,
@@ -226,7 +223,6 @@ class ActivityModerateTests(LmkpTestCase):
         """
 
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
@@ -267,7 +263,6 @@ class ActivityModerateTests(LmkpTestCase):
         """
 
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
@@ -330,7 +325,6 @@ class ActivityModerateTests(LmkpTestCase):
         """
 
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
@@ -388,7 +382,6 @@ class ActivityModerateTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
     def test_review_first_pending_activity_remove_pending_stakeholder(self):
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity with the involvement

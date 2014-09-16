@@ -25,6 +25,7 @@ class ActivityEditActiveTests(LmkpTestCase):
 
     def setUp(self):
         self.login()
+        super(ActivityEditActiveTests, self).setUp()
 
     def test_active_activity_add_new_taggroup(self):
         uid = self.create('a', get_new_diff(101), return_uid=True)

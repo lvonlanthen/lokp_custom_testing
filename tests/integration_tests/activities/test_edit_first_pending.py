@@ -26,6 +26,7 @@ class ActivityEditFirstPendingTests(LmkpTestCase):
 
     def setUp(self):
         self.login()
+        super(ActivityEditFirstPendingTests, self).setUp()
 
     def test_first_pending_activity_add_new_taggroup(self):
         uid = self.create('a', get_new_diff(101), return_uid=True)

@@ -21,12 +21,14 @@ from ...base import (
 @pytest.mark.moderation
 class ActivityEditTests(LmkpTestCase):
 
-    # @pytest.mark.test
+    def setUp(self):
+        self.login()
+        super(ActivityEditTests, self).setUp()
+
     def test_add_pending_stakeholder_to_multiple_pending_activities(self):
         """
 
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
@@ -74,7 +76,6 @@ class ActivityEditTests(LmkpTestCase):
         """
 
         """
-        self.login()
         # Create a first Stakeholder
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         # Create a first Activity
@@ -116,7 +117,6 @@ class ActivityEditTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
     def test_json_service_shows_new_versions_on_top(self):
-        self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
         # self.review('a', uid)
         self.create('a', get_edit_diff(101, uid, version=1))

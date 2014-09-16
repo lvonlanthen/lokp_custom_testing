@@ -3,7 +3,6 @@ import pytest
 from ..base import (
     find_key_value_in_taggroups_json,
     get_involvements_from_item_json,
-    get_role_id_from_involvement_json,
     get_status_from_item_json,
     get_version_from_involvement_json,
     LmkpTestCase,
@@ -27,8 +26,8 @@ class ActivityEditRecalculateTests(LmkpTestCase):
 
     def setUp(self):
         self.login()
+        super(ActivityEditRecalculateTests, self).setUp()
 
-    # @pytest.mark.test
     def test_blublu(self):
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)

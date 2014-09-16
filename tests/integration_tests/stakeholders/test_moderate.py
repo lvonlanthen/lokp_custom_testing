@@ -14,17 +14,21 @@ from ...base import(
 )
 
 
+@pytest.mark.test2
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
 @pytest.mark.stakeholders
 @pytest.mark.moderation
 class StakeholderModerateTests(LmkpTestCase):
 
+    def setUp(self):
+        self.login()
+        super(StakeholderModerateTests, self).setUp()
+
     def test_new_stakeholders_can_be_approved(self):
         """
         New Stakeholders with all mandatory keys can be approved.
         """
-        self.login()
         uid = self.create('sh', get_new_diff(201), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
@@ -41,7 +45,6 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         New Stakeholders with all mandatory keys can be rejected.
         """
-        self.login()
         uid = self.create('sh', get_new_diff(201), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
@@ -58,7 +61,6 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         New Stakeholders with missing mandatory keys can be rejected.
         """
-        self.login()
         uid = self.create('sh', get_new_diff(202), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
@@ -75,7 +77,6 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         New Stakeholders with missing mandatory keys can NOT be approved.
         """
-        self.login()
         uid = self.create('sh', get_new_diff(202), return_uid=True)
 
         res = self.read_one('sh', uid, 'json')
@@ -97,7 +98,6 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         Edited Stakeholders without an involvement can be approved.
         """
-        self.login()
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
 
@@ -115,7 +115,6 @@ class StakeholderModerateTests(LmkpTestCase):
         Bugfix: Edited Stakeholders with an involvement could not be approved
         from Stakeholder side, thus blocking the review process.
         """
-        self.login()
         shUid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', shUid)
         inv_data = [{
@@ -138,8 +137,6 @@ class StakeholderModerateTests(LmkpTestCase):
         self.assertEqual(res['data'][0]['status_id'], 2)
 
     def test_foo(self):
-        self.login()
-        self.login()
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)
         inv_data_1 = [{

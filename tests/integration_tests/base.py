@@ -1,5 +1,6 @@
 import decimal
 import random
+from pyramid import testing
 from unittest import TestCase
 
 from ..base import (
@@ -7,12 +8,21 @@ from ..base import (
     FEEDBACK_INVOLVED_STAKEHOLDERS_CANNOT_BE_REVIEWED,
     PASSWORD,
     USERNAME,
+    get_settings,
 )
 from lmkp.views.form import checkValidItemjson
 from lmkp.views.form_config import getCategoryList
 
 
 class LmkpTestCase(TestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
 
     def login(self, redirect=None):
         params = {
@@ -35,6 +45,7 @@ class LmkpTestCase(TestCase):
         url = get_base_url_by_item_type(item_type)
         if format == 'json':
             res = self.app.get('%s/json/%s' % (url, uid))
+            self.check_json_response(item_type, res.json)
             return res.json
         elif format == 'html':
             return self.app.get('%s/html/%s' % (url, uid))
@@ -83,6 +94,10 @@ class LmkpTestCase(TestCase):
             self.assertEqual(200, response.status_int)
             response.mustcontain(
                 FEEDBACK_INVOLVED_ACTIVITIES_CANNOT_BE_REVIEWED)
+
+    def check_json_response(self, item_type, json):
+        for i in range(len(json.get('data', []))):
+            self.check_item_json(item_type, json['data'][i])
 
     def check_item_json(self, item_type, item_json):
         item_type = get_valid_item_type(item_type)
