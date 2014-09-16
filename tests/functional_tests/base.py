@@ -169,8 +169,8 @@ class LmkpFunctionalTestCase(TestCase):
             if TITLE_LOGIN_VIEW in self.driver.title:
                 self.login(form_present=True)
 
-        tf1 = values['tf1'] if 'tf1' in values else 'Stakeholder Name'
-        nf1 = values['nf1'] if 'nf1' in values else 234.5
+        tf1 = values.get('tf1', 'Stakeholder Name')
+        nf1 = values.get('nf1', 234.5)
 
         self.el(
             'xpath', "//input[@name='[SH] Textfield 1']").send_keys(tf1)

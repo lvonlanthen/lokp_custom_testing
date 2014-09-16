@@ -144,8 +144,6 @@ class ModerationTests(LmkpFunctionalTestCase):
 
         # The Stakeholder cannot be reviewed
         self.driver.get(self.url('/stakeholders/review/%s' % sh_uid))
-        import time
-        time.sleep(10)
         self.el(
             'xpath',
             "//button[contains(concat(' ', @class, ' '), ' disabled ') and "

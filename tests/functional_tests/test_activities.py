@@ -69,7 +69,8 @@ class CreateActivityTests(LmkpFunctionalTestCase):
         self.assertIn(TITLE_STAKEHOLDER_EDITOR, self.driver.title)
 
         # Create and submit a Stakeholder
-        self.create_stakeholder(values=sh_values)
+        self.create_stakeholder(
+            values=sh_values, form_present=True, return_uid=False)
 
         # Make sure we are back in Activity form and submit
         self.assertIn(TITLE_DEAL_EDITOR, self.driver.title)

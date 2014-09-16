@@ -8,6 +8,8 @@ from ..base import (
     PASSWORD,
     USERNAME,
 )
+from lmkp.views.form import checkValidItemjson
+from lmkp.views.form_config import getCategoryList
 
 
 class LmkpTestCase(TestCase):
@@ -81,6 +83,24 @@ class LmkpTestCase(TestCase):
             self.assertEqual(200, response.status_int)
             response.mustcontain(
                 FEEDBACK_INVOLVED_ACTIVITIES_CANNOT_BE_REVIEWED)
+
+    def check_item_json(self, item_type, item_json):
+        item_type = get_valid_item_type(item_type)
+        if item_type == 'a':
+            try:
+                category_list = self.a_list
+            except AttributeError:
+                self.a_list = getCategoryList(self.request, 'activities')
+                category_list = self.a_list
+        elif item_type == 'sh':
+            try:
+                category_list = self.sh_list
+            except AttributeError:
+                self.sh_list = getCategoryList(self.request, 'stakeholders')
+                category_list = self.sh_list
+        check = checkValidItemjson(category_list, item_json)
+        self.assertEqual(
+            check.get('errorCount', 0), 0, '%s\n%s' % (item_json, check))
 
 
 def get_status_from_item_json(json, pos=0):

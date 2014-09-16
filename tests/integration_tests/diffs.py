@@ -1585,6 +1585,10 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                             ],
                             'op': 'delete'
                         }, {
+                            'main_tag': {
+                                'value': '[SH] Value D4',
+                                'key': u'[SH] Checkbox 1'
+                            },
                             'tags': [
                                 {
                                     'value': '[SH] Value D4',
@@ -1594,6 +1598,10 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                             ],
                             'op': 'add'
                         }, {
+                            'main_tag': {
+                                'value': '1',
+                                'key': u'[SH] Integerdropdown 1'
+                            },
                             'tags': [
                                 {
                                     'value': '1',
