@@ -1,6 +1,10 @@
 import pytest
-from mock import patch
+from mock import patch, Mock
 from pyramid import testing
+from pyramid.httpexceptions import (
+    HTTPForbidden,
+    HTTPNotFound,
+)
 
 from lmkp.views.activities import ActivityView
 from ...integration_tests.base import (
@@ -30,6 +34,32 @@ class ActivityViewReadManyTests(LmkpTestCase):
             'output')
         self.view.read_many()
         mock_get_output_format.assert_called_once_with(self.request)
+
+    def test_read_many_returns_404_if_no_output_format_found(self):
+        self.request.matchdict = {'output': 'foo'}
+        with self.assertRaises(HTTPNotFound):
+            self.view.read_many()
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.activities
+class ActivityViewReadManyPublicTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'json'}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_read_many_public_returns_404_if_no_output_format_found(self):
+        self.request.matchdict = {'output': 'foo'}
+        with self.assertRaises(HTTPNotFound):
+            self.view.read_many_public()
 
 
 @pytest.mark.usefixtures('app')
@@ -68,6 +98,28 @@ class ActivityViewReadManyJsonTests(LmkpTestCase):
 @pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.activities
+class ActivityViewReadManyPublicJsonTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'json'}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.views.activities.ActivityView.read_many')
+    def test_read_many_json_calls_activity_protocol(
+            self, mock_read_many):
+        self.view.read_many_public()
+        mock_read_many.assert_called_once_with(public=True)
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.activities
 class ActivityViewReadManyGeojsonTests(LmkpTestCase):
 
     def setUp(self):
@@ -96,6 +148,27 @@ class ActivityViewReadManyGeojsonTests(LmkpTestCase):
         self.view.read_many()
         mock_render_to_response.assert_called_once_with(
             'json', mock_protocol_read_many_geojson.return_value, self.request)
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.activities
+class ActivityViewReadManyFormTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'form'}
+        self.request.translate = Mock()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_read_many_form_requires_login(self):
+        with self.assertRaises(HTTPForbidden):
+            self.view.read_many()
 
 
 @pytest.mark.usefixtures('app')

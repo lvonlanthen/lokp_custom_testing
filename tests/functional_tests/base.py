@@ -1,6 +1,8 @@
 import time
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
 from unittest import TestCase
+from random import randrange
 
 from ..base import (
     BUTTON_APPROVE,
@@ -112,7 +114,11 @@ class LmkpFunctionalTestCase(TestCase):
         dd1 = values['dd1'] if 'dd1' in values else '[A] Value A1'
         nf1 = values['nf1'] if 'nf1' in values else 123.45
 
-        self.el('class_name', 'olMapViewport').click()
+        map = self.el('class_name', 'olMapViewport')
+        map_click = ActionChains(self.driver).move_to_element_with_offset(
+            map, randrange(map.size.get('width', 10) - 9),
+            randrange(map.size.get('height', 10) - 9)).click()
+        map_click.perform()
         self.el(
             'xpath', "//select[@name='[A] Dropdown 1']/option[@value='%s']"
             % dd1).click()

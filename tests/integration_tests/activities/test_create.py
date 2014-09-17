@@ -13,7 +13,6 @@ from ...base import (
     FEEDBACK_NO_GEOMETRY_PROVIDED,
     FEEDBACK_NOT_VALID_FORMAT,
     STATUS_PENDING,
-    TITLE_HISTORY_VIEW,
 )
 
 
@@ -210,30 +209,3 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(json['total'], 1)
         status = get_status_from_item_json(json)
         self.assertEqual(STATUS_PENDING, status)
-
-    def test_new_activities_appear_in_read_many_json_service(self):
-        """
-        Newly created Activities appear in the JSON service "read many".
-        """
-        self.login()
-
-        json = self.read_many('a', 'json')
-        self.assertEqual(json['data'], [])
-        self.assertEqual(json['total'], 0)
-
-        self.create('a', get_new_diff(101))
-
-        json = self.read_many('a', 'json')
-        self.assertEqual(json['total'], 1)
-
-    def test_history_view(self):
-        """
-        Test that a history view is available for newly created
-        Activities.
-        """
-        self.login()
-        uid = self.create('a', get_new_diff(101), return_uid=True)
-
-        res = self.app.get('/activities/history/html/%s' % uid)
-        self.assertEqual(res.status_int, 200)
-        self.assertIn(TITLE_HISTORY_VIEW, res.body)

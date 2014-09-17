@@ -14,7 +14,6 @@ from ...base import(
 )
 
 
-@pytest.mark.test2
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
 @pytest.mark.stakeholders

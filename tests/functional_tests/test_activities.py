@@ -125,6 +125,9 @@ class CreateActivityTests(LmkpFunctionalTestCase):
         self.review('activities', a_uid, with_involvement=True)
 
         self.open_form('activities', a_uid, reset=True)
+        self.el(
+            'xpath', "//select[@name='[A] Dropdown 1']/option[@value='[A] "
+            "Value A3']").click()
         self.el('id', 'activityformstep_3').click()
         self.el('id', 'activityformsubmit').click()
 

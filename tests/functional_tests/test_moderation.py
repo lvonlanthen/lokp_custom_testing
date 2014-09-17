@@ -116,6 +116,7 @@ class ModerationTests(LmkpFunctionalTestCase):
             'xpath',
             "//button[contains(concat(' ', @class, ' '), ' btn-success ') and "
             "contains(text(), '%s')]" % BUTTON_APPROVE).click()
+        self.driver.implicitly_wait(5)
 
         # Make sure the Activity is not pending anymore
         self.driver.get(self.url('/activities/html/%s' % a_uid))
