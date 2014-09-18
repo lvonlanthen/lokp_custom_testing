@@ -2247,11 +2247,14 @@ tr.pending {
     text-decoration: none;
     color: white;
 }
-.grid-show-pending {
+.grid-tab-right {
     float: right !important;
 }
-.grid-show-pending.active > a {
+.grid-tab-right.active > a {
     cursor: pointer !important;
+}
+.grid-tab-right a:hover {
+    background-color: #EEEEEE !important;
 }
 
 /* About */
@@ -2350,4 +2353,29 @@ tr.deal-history-active {
 #download_overview .accordion-group {
     background-color: #f7f7f9;
     margin-bottom: 10px;
+}
+
+input.search-query:hover, input.search-query:focus {
+    border: 1px solid #A4A4A4;
+    box-shadow: 0 0 3px #D8D8D8 inset;
+    color: #585858 !important;
+}
+
+li.moderator-show-pending-left a {
+    margin-right: 0;
+    border-radius: 4px 0 0;
+}
+
+li.moderator-show-pending-right a {
+    border-radius: 0 4px 0 0;
+    background-color: #DBDB9B;
+}
+
+li.moderator-show-pending-right a:hover {
+    background-color: #A3A708;
+}
+
+li.moderator-show-pending-right.active a:hover {
+    background-color: #DBDB9B;
+    cursor: pointer !important;
 }

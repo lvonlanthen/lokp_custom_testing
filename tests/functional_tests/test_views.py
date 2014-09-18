@@ -5,6 +5,8 @@ from .base import LmkpFunctionalTestCase
 from ..base import (
     FILTER_MAP_EXTENT,
     FILTER_PROFILE,
+    TITLE_GRID_STAKEHOLDERS,
+    TITLE_GRID_ACTIVITIES,
     TITLE_NOTHING_FOUND,
 )
 
@@ -54,3 +56,99 @@ class ViewTests(LmkpFunctionalTestCase):
         self.assertIn(FILTER_MAP_EXTENT, filter.text)
         empty = self.el('tag_name', 'h5')
         self.assertIn(TITLE_NOTHING_FOUND.upper(), empty.text)
+
+    def test_stakeholder_grid(self):
+
+        self.login(self.url('/stakeholders/html'))
+        try:
+            self.el('tag_name', 'tr')
+        except:
+            uid = self.create_stakeholder()
+            self.review('stakeholders', uid)
+        try:
+            self.el('xpath', "//tr[contains(@class, 'pending')]")
+        except:
+            self.create_stakeholder()
+
+        active_grid_tab = self.el(
+            'xpath', "//ul[contains(concat(' ', @class, ' '), ' table_tabs ')]"
+            "/li[contains(concat(' ', @class, ' '), ' active ')]")
+        self.assertEqual(active_grid_tab.text, TITLE_GRID_STAKEHOLDERS)
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_all = int(count.text)
+
+        self.el('class_name', 'moderator-show-pending-right').click()
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_pending = int(count.text)
+
+        self.assertTrue(count_pending < count_all)
+
+        self.el('class_name', 'moderator-show-pending-right').click()
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_all2 = int(count.text)
+
+        self.assertEqual(count_all, count_all2)
+
+        sh_name = self.el('xpath', "//table/tbody/tr[1]/td[3]").text
+
+        self.el('id', 'search').click()
+        self.el('id', 'search-query').send_keys(sh_name)
+        self.el('id', 'search-button').click()
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_search = int(count.text)
+
+        self.assertTrue(count_search <= count_all)
+
+        self.el('class_name', 'filter-variable1')
+
+    def test_activity_grid(self):
+
+        self.login(self.url('/activities/html'))
+        try:
+            self.el('tag_name', 'tr')
+        except:
+            uid = self.create_activity()
+            self.review('activities', uid)
+        try:
+            self.el('xpath', "//tr[contains(@class, 'pending')]")
+        except:
+            self.create_activity()
+
+        active_grid_tab = self.el(
+            'xpath', "//ul[contains(concat(' ', @class, ' '), ' table_tabs ')]"
+            "/li[contains(concat(' ', @class, ' '), ' active ')]")
+        self.assertEqual(active_grid_tab.text, TITLE_GRID_ACTIVITIES)
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_all = int(count.text)
+
+        self.el('class_name', 'moderator-show-pending-right').click()
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_pending = int(count.text)
+
+        self.assertTrue(count_pending < count_all)
+
+        self.el('class_name', 'moderator-show-pending-right').click()
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_all2 = int(count.text)
+
+        self.assertEqual(count_all, count_all2)
+
+        sh_name = self.el('xpath', "//table/tbody/tr[1]/td[3]").text
+
+        self.el('id', 'search').click()
+        self.el('id', 'search-query').send_keys(sh_name)
+        self.el('id', 'search-button').click()
+
+        count = self.el('xpath', "//div[contains(@class, 'span4')]/strong")
+        count_search = int(count.text)
+
+        self.assertTrue(count_search <= count_all)
+
+        self.el('class_name', 'filter-variable1')

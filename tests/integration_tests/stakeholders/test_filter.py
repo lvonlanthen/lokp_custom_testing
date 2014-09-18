@@ -49,6 +49,13 @@ class StakeholderFilterTests(LmkpTestCase):
         self.assertEqual(json['data'][0]['id'], uid)
 
         filter = {
+            'sh__[SH] Textfield 1__ilike': '*sd*'
+        }
+        json = self.read_many('sh', 'json', params=filter)
+        self.assertEqual(json['total'], 1)
+        self.assertEqual(json['data'][0]['id'], uid)
+
+        filter = {
             'sh__[SH] Textfield 1__ilike': '%%foo%'
         }
         json = self.read_many('sh', 'json', params=filter)

@@ -11,11 +11,14 @@
     from lmkp.views.views import (
         get_current_locale,
         get_current_profile,
+        get_default_search_key,
     )
 
     # Get the keys and their translation
     from lmkp.views.config import getGridColumnKeys
     keys = getGridColumnKeys(request, 'stakeholders')
+
+    default_search_translated, default_search_original = get_default_search_key(request, 'sh')
 
     a_uids = ','.join(invfilter) if invfilter is not None else ''
 %>
@@ -84,55 +87,58 @@
 
         ## Tabs
         <ul class="nav nav-tabs table_tabs">
-            <%
-                # The entries of the tabs as arrays with
-                # - url
-                # - name
-                tabs = [
-                    [
-                        [
-                            request.route_url('activities_read_many', output='html')
-                        ], _('Activities')
-                    ], [
-                        [
-                            request.route_url('stakeholders_byactivities_all', output='html'),
-                            request.route_url('stakeholders_byactivities', output='html', uids=a_uids),
-                            request.route_url('stakeholders_read_many', output='html')
-                        ], _('Stakeholders')
-                    ]
-                ]
-            %>
-            % for t in tabs:
-                % if request.current_route_url() in t[0]:
-                    <li class="active">
+            % if request.current_route_url() in [request.route_url('activities_read_many', output='html')]:
+                <li class="active">
+            % else:
+                <li>
+            % endif
+                <a href="${request.route_url('activities_read_many', output='html')}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${_('Activities')}</a>
+            </li>
+            % if request.current_route_url() in [request.route_url('stakeholders_byactivities_all', output='html'), request.route_url('stakeholders_byactivities', output='html', uids=a_uids), request.route_url('stakeholders_read_many', output='html')]:
+                % if is_moderator:
+                    <li class="active moderator-show-pending-left">
                 % else:
-                    <li>
+                    <li class="active">
                 % endif
-                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${t[1]}</a>
-                </li>
-            % endfor
+            % else:
+                <li>
+            % endif
+                <a href="${request.route_url('stakeholders_byactivities_all', output='html')}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${_('Stakeholders')}</a>
+            </li>
 
-            <li class="grid-show-pending">
+            % if is_moderator:
+                % if 'status=pending' in request.path_qs:
+                    <li class="active moderator-show-pending-right">
+                        <a href="${getQueryString(request.current_route_url(), remove=['status'])}" data-toggle="tooltip" title="${_('Show all')}">
+                            <i class="icon-flag"></i>
+                        </a>
+                    </li>
+                % else:
+                    <li class="moderator-show-pending-right">
+                        <a href="${getQueryString(request.current_route_url(), add=[('status', 'pending')])}" data-toggle="tooltip" title="${_('Show only pending')}">
+                            <i class="icon-flag"></i>
+                            </a>
+                    </li>
+                % endif
+            % endif
+
+            <li class="grid-tab-right">
                 <a href="${request.route_url('stakeholders_read_many', output='download')}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}" data-toggle="tooltip" title="${_('Download Stakeholders')}">
                     <i class="icon-download-alt"></i>
                 </a>
             </li>
-            <li class="grid-show-pending">
+            <li class="grid-tab-right">
                 <a href="${request.route_url('changesets_read_latest', output='rss', _query=(('_LOCALE_', get_current_locale(request)),('_PROFILE_', get_current_profile(request))))}" data-toggle="tooltip" title="${_('View and subscribe to latest changes')}">
                     <i class="icon-rss"></i>
                 </a>
             </li>
 
-            % if isModerator:
-                % if 'status=pending' in request.path_qs:
-                    <li class="grid-show-pending active pointer">
-                        <a href="${getQueryString(request.route_url('stakeholders_byactivities_all', output='html'), remove=['status'])}">${_('Show all')}</a>
-                    </li>
-                % else:
-                    <li class="grid-show-pending">
-                        <a href="${getQueryString(request.route_url('stakeholders_read_many', output='html'), add=[('status', 'pending')])}">${_('Show only pending')}</a>
-                    </li>
-                % endif
+            % if default_search_translated:
+                <li class="grid-tab-right">
+                    <a href="javascript:void(0)" id="search" data-toggle="tooltip" title="${_('Search by')} ${default_search_translated}">
+                        <i class="icon-search"></i>
+                    </a>
+                </li>
             % endif
         </ul>
 
@@ -266,6 +272,14 @@
 ## End of content
 
 <%def name="bottom_tags()">
+    <%
+        from lmkp.views.views import (
+            get_default_search_key,
+        )
+
+        default_search_translated, default_search_original = get_default_search_key(request, 'sh')
+    %>
+
     <script type="text/javascript">
         $(function () {
             $("a[data-toggle='tooltip']").tooltip({
@@ -274,6 +288,38 @@
             });
         });
     </script>
+
+    % if default_search_original:
+    <script type="text/javascript">
+        var search_by = '${default_search_original}';
+        var search_itemtype = 'sh';
+        $(function () {
+            $('#search').popover({
+                html: true,
+                trigger: 'click',
+                placement: 'bottom',
+                content: function () {
+                    return [
+                        '<form class="form-search" action="javascript:void(0);">',
+                        '<div class="input-append">',
+                        '<input type="text" id="search-query" class="span2 search-query">',
+                        '<button type="button" id="search-button" class="btn" onclick="search();">',
+                        'Search',
+                        '</button></div></form>'
+                    ].join('');
+                }
+            });
+        });
+        function search() {
+            var term = $('#search-query').val();
+            if (term && search_by) {
+                addNewFilter(search_itemtype, search_by, 'ilike', ['*', term, '*'].join(''));
+            }
+            return false;
+        }
+    </script>
+    % endif
+
     <script src="${request.static_url('lmkp:static/v2/grid.js')}" type="text/javascript"></script>
     <script src="${request.static_url('lmkp:static/v2/filters.js')}" type="text/javascript"></script>
 </%def>

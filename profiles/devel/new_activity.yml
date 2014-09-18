@@ -20,6 +20,7 @@
           involvementoverview: 1
           mapsymbol: 1
           gridcolumn: 1
+          default_search: true
         # [K] Textarea 1
         4: null
       # [TG]

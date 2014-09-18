@@ -257,6 +257,7 @@ class ActivityViewReadManyHtmlTests(LmkpTestCase):
                 'locale': 'en',
                 'total': 0,
                 'data': [],
-                'invfilter': None
+                'invfilter': None,
+                'is_moderator': None
             },
             self.request)
