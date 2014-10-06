@@ -2,9 +2,6 @@ import pytest
 import uuid
 
 from .base import LmkpFunctionalTestCase
-from ..base import (
-    BUTTON_SHOW_ONLY_PENDING,
-)
 
 
 @pytest.mark.usefixtures('app_functional')
@@ -32,7 +29,7 @@ class StakeholderTests(LmkpFunctionalTestCase):
         # button.
         self.driver.get(sh_grid_url)
         self.find_text(sh_name, count=1)
-        self.el('link_text', BUTTON_SHOW_ONLY_PENDING).click()
+        self.el('class_name', 'moderator-show-pending-right').click()
         self.find_text(sh_name, count=1)
 
         # Log out and make sure the pending Stakeholder is not visible and
@@ -40,7 +37,7 @@ class StakeholderTests(LmkpFunctionalTestCase):
         self.logout()
         self.driver.get(sh_grid_url)
         self.find_text(sh_name, count=0)
-        self.el('link_text', BUTTON_SHOW_ONLY_PENDING, inverse=True)
+        self.el('class_name', 'moderator-show-pending-right', inverse=True)
 
         # Change user, log in as "user1" and go to the grid view of
         # stakeholders
@@ -49,7 +46,7 @@ class StakeholderTests(LmkpFunctionalTestCase):
         # Neither the pending Stakeholder nor the "Show only pending" button
         # are visible because user1 is not moderator in the current profile.
         self.find_text(sh_name, count=0)
-        self.el('link_text', BUTTON_SHOW_ONLY_PENDING, inverse=True)
+        self.el('class_name', 'moderator-show-pending-right', inverse=True)
 
         # Change to the Laos profile
         self.change_profile(gui=True, old_profile='global', new_profile='laos')
@@ -59,7 +56,7 @@ class StakeholderTests(LmkpFunctionalTestCase):
         # button.
         self.driver.get(sh_grid_url)
         self.find_text(sh_name, count=1)
-        self.el('link_text', BUTTON_SHOW_ONLY_PENDING).click()
+        self.el('class_name', 'moderator-show-pending-right').click()
         self.find_text(sh_name, count=1)
 
         # In the Activity form when adding an Involvement, the Stakeholder

@@ -1,9 +1,11 @@
 import pytest
+import uuid
 
 from ..integration_tests.base import LmkpTestCase
 from lmkp.utils import (
     validate_bbox,
     validate_item_type,
+    validate_uuid,
 )
 
 
@@ -47,3 +49,21 @@ class ValidateItemTypeTests(LmkpTestCase):
         self.assertEqual(validate_item_type('activities'), 'a')
         self.assertEqual(validate_item_type('a'), 'a')
         self.assertEqual(validate_item_type('stakeholders'), 'sh')
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.utils
+class ValidateUuidTests(LmkpTestCase):
+
+    def test_validate_uuid_handles_invalid_input(self):
+        self.assertFalse(validate_uuid('foo'))
+        self.assertFalse(validate_uuid(None))
+        self.assertFalse(validate_uuid({}))
+        self.assertFalse(validate_uuid('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'))
+        self.assertFalse(validate_uuid('87b9ce04-ad4a-4a8c-84af-8e9643f8701x'))
+        self.assertFalse(validate_uuid('87b9ce04-ad4a-4a8c-84af-8e9643f8701'))
+
+    def test_validate_uuid_handles_valid_input(self):
+        self.assertTrue(validate_uuid(str(uuid.uuid4())))
+        self.assertTrue(validate_uuid('EC856438-08BE-4842-963A-47A7E723543F'))
