@@ -214,7 +214,7 @@ class ViewsGetCurrentProfileTests(LmkpTestCase):
 
 @pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-@pytest.mark.profile
+@pytest.mark.locale
 class ViewsGetCurrentLocaleTests(LmkpTestCase):
 
     def setUp(self):

@@ -3,6 +3,7 @@ import uuid
 
 from ..integration_tests.base import LmkpTestCase
 from lmkp.utils import (
+    handle_query_string,
     validate_bbox,
     validate_item_type,
     validate_uuid,
@@ -69,3 +70,62 @@ class ValidateUuidTests(LmkpTestCase):
         self.assertTrue(validate_uuid('EC856438-08BE-4842-963A-47A7E723543F'))
         self.assertTrue(validate_uuid(
             unicode('87b9ce04-ad4a-4a8c-84af-8e9643f8701a')))
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+class ViewsHandleQueryStringTests(LmkpTestCase):
+
+    def setUp(self):
+        self.url = 'http://www.foo.com/foo'
+        self.url2 = '%s?foo=bar' % self.url
+
+    def test_handle_query_string_returns_url_as_is(self):
+        self.assertEqual(handle_query_string(self.url), self.url)
+        self.assertEqual(handle_query_string(self.url2), self.url2)
+
+    def test_handle_query_string_adds_param(self):
+        add = [('foo', 'bar')]
+        query_string = handle_query_string(self.url, add=add)
+        self.assertEqual(query_string, self.url2)
+
+    def test_handle_query_string_adds_multiple_params(self):
+        add = [('foo', 'bar'), ('blu', 'bla')]
+        query_string = handle_query_string(self.url, add=add)
+        self.assertEqual(query_string, '%s?blu=bla&foo=bar' % self.url)
+
+    def test_handle_query_string_removes_param(self):
+        remove = ['foo']
+        query_string = handle_query_string(self.url2, remove=remove)
+        self.assertEqual(query_string, self.url)
+
+    def test_handle_query_string_removes_multiple_params(self):
+        remove = ['foo', 'blu']
+        url = '%s?blu=bla&foo=bar' % self.url
+        query_string = handle_query_string(url, remove=remove)
+        self.assertEqual(query_string, self.url)
+
+    def test_handle_query_string_adds_and_removes_params(self):
+        add = [('blu', 'bla')]
+        remove = ['foo']
+        query_string = handle_query_string(self.url2, add=add, remove=remove)
+        self.assertEqual(query_string, '%s?blu=bla' % self.url)
+
+    def test_handle_query_string_always_removes_epsg(self):
+        query_string = handle_query_string('%s?epsg=foo' % self.url)
+        self.assertEqual(query_string, self.url)
+
+    def test_handle_query_string_always_removes_page(self):
+        query_string = handle_query_string('%s?page=foo' % self.url)
+        self.assertEqual(query_string, self.url)
+
+    def test_handle_query_string_removes_bbox_if_not_set_to_profile(self):
+        query_string = handle_query_string('%s?bbox=foo' % self.url)
+        self.assertEqual(query_string, self.url)
+        url = '%s?bbox=profile' % self.url
+        self.assertEqual(handle_query_string(url), url)
+
+    def test_handle_query_string_returns_only_query_string(self):
+        query_string = handle_query_string(
+            self.url2, return_value='query_string')
+        self.assertEqual(query_string, '?foo=bar')

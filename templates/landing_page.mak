@@ -1,5 +1,5 @@
 <%
-from lmkp.views.views import getQueryString
+from lmkp.utils import handle_query_string
 from lmkp.views.translation import get_profiles
 from lmkp.views.translation import get_languages
 profiles = sorted(get_profiles(), key=lambda profile: profile[0])
@@ -134,7 +134,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                                     % for l in languages:
                                                     <li class="cursor">
-                                                        <a href="${getQueryString(request.url, add=[('_LOCALE_', l[0])])}">${l[1]}</a>
+                                                        <a href="${handle_query_string(request.url, add=[('_LOCALE_', l[0])])}">${l[1]}</a>
                                                     </li>
                                                     % endfor
                                                 </ul>
@@ -166,7 +166,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                                         % for l in languages:
                                                         <li class="cursor">
-                                                            <a href="${getQueryString(request.url, add=[('_LOCALE_', l[0])])}">${l[1]}</a>
+                                                            <a href="${handle_query_string(request.url, add=[('_LOCALE_', l[0])])}">${l[1]}</a>
                                                         </li>
                                                         % endfor
                                                     </ul>

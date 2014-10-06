@@ -3,7 +3,7 @@
 <%def name="title()">${_('Download Stakeholders')}</%def>
 
 <%
-    from lmkp.views.views import getQueryString
+    from lmkp.utils import handle_query_string
 %>
 
 ## Filter
@@ -13,7 +13,7 @@
     <div class="content no-border">
         <ul class="breadcrumb">
             <li>
-                <a href="${request.route_url('download')}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${_('Download')}</a>
+                <a href="${request.route_url('download')}${handle_query_string(request.url, return_value='query_string', remove=['order_by', 'dir', 'status'])}">${_('Download')}</a>
                 <span class="divider">&raquo;</span>
             </li>
             <li class="active">${_('Download Stakeholders')}</li>

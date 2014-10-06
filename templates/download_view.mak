@@ -3,7 +3,7 @@
 <%def name="title()">${_('Download')}</%def>
 
 <%
-    from lmkp.views.views import getQueryString
+    from lmkp.utils import handle_query_string
 %>
 
 ## Filter
@@ -25,10 +25,10 @@
         <hr class="grey" />
         <div class="row-fluid">
             <div class="span12 text-center">
-                <a class="btn btn-primary margin" href="${request.route_url('activities_read_many', output='download')}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">
+                <a class="btn btn-primary margin" href="${request.route_url('activities_read_many', output='download')}${handle_query_string(request.url, return_value='query_string', remove=['order_by', 'dir', 'status'])}">
                     ${_('Download Activities')}
                 </a>
-                <a class="btn btn-primary margin" href="${request.route_url('stakeholders_read_many', output='download')}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">
+                <a class="btn btn-primary margin" href="${request.route_url('stakeholders_read_many', output='download')}${handle_query_string(request.url, return_value='query_string', remove=['order_by', 'dir', 'status'])}">
                     ${_('Download Stakeholders')}
                 </a>
             </div>
