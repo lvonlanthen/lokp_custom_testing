@@ -120,25 +120,62 @@ class CreateActivityTests(LmkpFunctionalTestCase):
         self.el('link_text', LINK_VIEW_DEAL).click()
         self.assertIn('bar, not foo', self.driver.page_source)
 
-    def test_involvement_role_handling(self):
-        a_uid = self.create_activity(create_inv=True)
-        self.review('activities', a_uid, with_involvement=True)
+    def test_edit_activity_add_involvement(self):
+        a_uid = self.create_activity()
+        self.review('activities', a_uid)
 
         self.open_form('activities', a_uid, reset=True)
         self.el(
             'xpath', "//select[@name='[A] Dropdown 1']/option[@value='[A] "
             "Value A3']").click()
         self.el('id', 'activityformstep_3').click()
-        self.el('id', 'activityformsubmit').click()
+        inv_button = self.els('class_name', 'accordion-toggle')
+        btn = inv_button[0]
+        btn.click()
+        time.sleep(1)
+        self.el('name', 'createinvolvement_primaryinvestor').click()
+        self.create_stakeholder(
+            values={'tf1': 'New Stakeholder'}, form_present=True,
+            return_uid=False)
 
+        # Make sure the Stakeholder was created and added as involvement
+        self.el('class_name', 'alert-success')
+        invs = self.els('name', '[SH] Textfield 1')
+        self.assertEqual(invs[0].get_attribute('value'), 'New Stakeholder')
+
+        # Make sure the other values of the Activity are still there
+        self.el('id', 'activityformstep_1').click()
+        self.assertEqual(
+            self.el('name', '[A] Dropdown 1').get_attribute('value'),
+            '[A] Value A3')
+
+        self.el('id', 'activityformsubmit').click()
         self.el('link_text', LINK_VIEW_DEAL).click()
 
-        self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
-        self.assertTrue(self.check_status('pending'))
+        self.find_text('[A] Value A3')
         inv_links = self.els('link_text', LINK_DEAL_SHOW_INVOLVEMENT)
         self.assertEqual(len(inv_links), 1)
-        inv_links[0].click()
+        self.find_text('New Stakeholder')
 
-        self.assertIn(TITLE_STAKEHOLDER_DETAILS, self.driver.title)
-        inv_links = self.els('link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT)
-        self.assertEqual(len(inv_links), 1)
+    # def test_involvement_role_handling(self):
+    #     a_uid = self.create_activity(create_inv=True)
+    #     self.review('activities', a_uid, with_involvement=True)
+
+    #     self.open_form('activities', a_uid, reset=True)
+    #     self.el(
+    #         'xpath', "//select[@name='[A] Dropdown 1']/option[@value='[A] "
+    #         "Value A3']").click()
+    #     self.el('id', 'activityformstep_3').click()
+    #     self.el('id', 'activityformsubmit').click()
+
+    #     self.el('link_text', LINK_VIEW_DEAL).click()
+
+    #     self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
+    #     self.assertTrue(self.check_status('pending'))
+    #     inv_links = self.els('link_text', LINK_DEAL_SHOW_INVOLVEMENT)
+    #     self.assertEqual(len(inv_links), 1)
+    #     inv_links[0].click()
+
+    #     self.assertIn(TITLE_STAKEHOLDER_DETAILS, self.driver.title)
+    #     inv_links = self.els('link_text', LINK_STAKEHOLDER_SHOW_INVOLVEMENT)
+    #     self.assertEqual(len(inv_links), 1)

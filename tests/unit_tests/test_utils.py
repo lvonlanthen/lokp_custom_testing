@@ -67,3 +67,5 @@ class ValidateUuidTests(LmkpTestCase):
     def test_validate_uuid_handles_valid_input(self):
         self.assertTrue(validate_uuid(str(uuid.uuid4())))
         self.assertTrue(validate_uuid('EC856438-08BE-4842-963A-47A7E723543F'))
+        self.assertTrue(validate_uuid(
+            unicode('87b9ce04-ad4a-4a8c-84af-8e9643f8701a')))
