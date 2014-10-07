@@ -2379,3 +2379,13 @@ li.moderator-show-pending-right.active a:hover {
     background-color: #DBDB9B;
     cursor: pointer !important;
 }
+
+.delete-confirm, .form-button-delete {
+    margin-top: 20px;
+}
+.form-button-delete {
+    background-color: #FA5858 !important;
+}
+.form-button-delete:hover {
+    background-color: red !important;
+}

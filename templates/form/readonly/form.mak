@@ -1,6 +1,7 @@
 <%
     isStakeholder = 'itemType' in cstruct and cstruct['itemType'] == 'stakeholders'
     statusId = cstruct['statusId'] if 'statusId' in cstruct else '2'
+    empty = cstruct['taggroup_count'] == '0'
 
     from pyramid.security import ACLAllowed
     from pyramid.security import has_permission
@@ -64,7 +65,7 @@
     % endif
 </div>
 
-% if not isStakeholder:
+% if not isStakeholder and not empty:
     ## Map container
     <div class="row-fluid">
         <div class="span9 map-not-whole-page">
@@ -73,7 +74,7 @@
                     <div class="form-map-menu pull-right">
                         <button type="button" class="btn btn-mini pull-right form-map-menu-toggle ttip" data-close-text="<i class='icon-remove'></i>" data-toggle="tooltip" title="${_('Turn layers on and off')}"><i class="icon-cog"></i></button>
                         <div class="accordion" id="form-map-menu-content">
-                            
+
                             <!-- This deal -->
                             <div id="thisDealSection" class="map-menu-deals accordion-group">
                                 <h6 class="map-deals">
@@ -88,7 +89,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            
+
                             <!-- All deals -->
                             <div class="map-menu-deals accordion-group">
                                 <h6 class="map-deals">
@@ -117,7 +118,7 @@
                                     </ul>
                                 </div>
                             </div>
-                            
+
                             <!-- Base layers -->
                             <div class="accordion-group">
                                 <h6>
@@ -165,6 +166,12 @@
 % for child in field:
     ${child.render_template(field.widget.readonly_item_template)}
 % endfor
+
+% if empty:
+    <div class="empty-details">
+        ${_('This version does not have any attributes to show.')}
+    </div>
+% endif
 
 <div class="row-fluid">
     <div class="span9 text-right deal-bottom-toolbar">

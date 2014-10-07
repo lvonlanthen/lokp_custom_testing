@@ -1,5 +1,6 @@
 import time
 import pytest
+from selenium.common.exceptions import ElementNotVisibleException
 
 from .base import LmkpFunctionalTestCase
 from ..base import (
@@ -156,6 +157,47 @@ class CreateActivityTests(LmkpFunctionalTestCase):
         inv_links = self.els('link_text', LINK_DEAL_SHOW_INVOLVEMENT)
         self.assertEqual(len(inv_links), 1)
         self.find_text('New Stakeholder')
+
+    def test_delete_activity(self):
+        self.open_form('activities', reset=True)
+        self.el('class_name', 'formdelete', inverse=True)
+        a_uid = self.create_activity()
+        self.review('activities', a_uid)
+
+        self.open_form('activities', uid=a_uid, reset=True)
+
+        # Deselect Dropdown value to make sure the item can be deleted
+        # without mandatory key
+        self.el(
+            'xpath',
+            "//select[@name='[A] Dropdown 1']/option[@value='']").click()
+
+        delete_button = self.el('class_name', 'formdelete')
+
+        confirm_button = self.el('class_name', 'btn-danger')
+        with self.assertRaises(ElementNotVisibleException):
+            confirm_button.click()
+
+        delete_button.click()
+        with self.assertRaises(ElementNotVisibleException):
+            delete_button.click()
+
+        cancel_button = self.el('id', 'delete-confirm-cancel')
+        cancel_button.click()
+
+        with self.assertRaises(ElementNotVisibleException):
+            confirm_button.click()
+
+        delete_button.click()
+        confirm_button.click()
+
+        self.el('link_text', LINK_VIEW_DEAL).click()
+        self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
+        self.assertTrue(self.check_status('pending'))
+
+        self.el('class_name', 'empty-details')
+        self.el('class_name', 'map-form-controls', inverse=True)
+
 
     # def test_involvement_role_handling(self):
     #     a_uid = self.create_activity(create_inv=True)

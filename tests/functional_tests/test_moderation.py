@@ -301,3 +301,15 @@ class ModerationTests(LmkpFunctionalTestCase):
         self.assertFalse(self.check_status('pending'))
         self.open_details('stakeholders', sh_uid)
         self.assertFalse(self.check_status('pending'))
+
+    def test_moderate_deleted_activity(self):
+        a_uid = self.create_activity()
+        self.review('activities', a_uid)
+        self.open_form('activities', uid=a_uid, reset=True)
+        self.el('class_name', 'formdelete').click()
+        self.el('class_name', 'btn-danger').click()
+
+        self.review('activities', a_uid)
+        self.open_details('activities', a_uid)
+        self.check_status('deleted')
+        self.el('class_name', 'empty-details')

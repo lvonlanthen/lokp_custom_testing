@@ -1,6 +1,6 @@
 <%inherit file="lmkp:customization/testing/templates/base.mak" />
 
-<%def name="title()">${_('Deal Details')} ${shortuid}</%def>
+<%def name="title()">${_('Activity Details')} ${shortuid}</%def>
 
 <%def name="head_tags()">
     <link rel="stylesheet" href="/custom/css/details.css"></link>

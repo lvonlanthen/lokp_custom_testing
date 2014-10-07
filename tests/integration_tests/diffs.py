@@ -1166,6 +1166,8 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                 (based on type 105 from get_new_diff)
             109: [A] Different attribute and involvement operations
                 (based on type 106 from get_new_diff, data array needed)
+            110: [A] Delete an Activity
+                (based on type 101 from get_new_diff)
             201: [SH] Add a new Taggroup to a Stakeholder.
                 (based on type 201 from get_new_diff)
             202: [SH] Remove an existing Taggroup.
@@ -1424,6 +1426,38 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                         }
                     ],
                     'stakeholders': involvements,
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+    elif diff_type == 110:
+        return {
+            'activities': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 1,
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A1',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'delete'
+                                }
+                            ],
+                            'op': 'delete'
+                        }, {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': 123.45,
+                                    'key': u'[A] Numberfield 1',
+                                    'op': 'delete'
+                                }
+                            ],
+                            'op': 'delete'
+                        }
+                    ],
                     'version': version,
                     'id': uid
                 }

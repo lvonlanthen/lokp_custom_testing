@@ -50,6 +50,8 @@
                 <li
                     % if button.name == 'submit':
                         style="background-color:gray;"
+                    % elif button.name == 'delete':
+                        class="form-button-delete"
                     % endif
                     >
                     <button
@@ -69,6 +71,11 @@
                 % endif
             </ul>
         % endfor
+        <div class="delete-confirm alert alert-error hide">
+            <p>${_('Are you sure you want to delete this Stakeholder?')}</p>
+            <button name="delete" class="btn btn-danger">${_('Delete')}</button>
+            <button id="delete-confirm-cancel" class="btn">${_('Cancel')}</button>
+        </div>
     </div>
 
     % for child in field.children:

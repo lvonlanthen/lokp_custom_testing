@@ -12,6 +12,7 @@ from ..diffs import (
 from ...base import (
     FEEDBACK_MANDATORY_KEYS_MISSING,
     STATUS_ACTIVE,
+    STATUS_DELETED,
     STATUS_EDITED,
     STATUS_INACTIVE,
     STATUS_PENDING,
@@ -429,3 +430,14 @@ class ActivityModerateTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 0)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
+
+    def test_review_deleted_activity(self):
+        a_uid = self.create('a', get_new_diff(101), return_uid=True)
+        self.review('a', a_uid)
+        self.create('a', get_edit_diff(110, a_uid))
+        self.review('a', a_uid, version=2)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))

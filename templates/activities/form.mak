@@ -23,22 +23,31 @@
 
 <div class="container deal-edit-content">
     <div class="content no-border">
-        
+
         ## Session messages
         <%include file="lmkp:templates/parts/sessionmessage.mak"/>
-        
+
         ${form | n}
     </div>
 </div>
 
 <%def name="bottom_tags()">
     <script type="text/javascript">
-        
+
         var identifier = '${uid}';
         var version = ${version};
-        
+
         if (deform) {
             deform.load();
         }
+
+        $('button.formdelete').click(function() {
+            toggleConfirmDelete();
+            return false;
+        });
+        $('#delete-confirm-cancel').click(function() {
+            toggleConfirmDelete();
+            return false;
+        });
     </script>
 </%def>

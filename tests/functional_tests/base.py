@@ -9,6 +9,7 @@ from ..base import (
     LINK_VIEW_DEAL,
     LINK_VIEW_STAKEHOLDER,
     PASSWORD,
+    TEXT_INACTIVE_VERSION,
     TEXT_PENDING_VERSION,
     TITLE_LOGIN_VIEW,
     USERNAME,
@@ -261,6 +262,14 @@ class LmkpFunctionalTestCase(TestCase):
             try:
                 pending = self.driver.find_element_by_tag_name('h4')
                 if TEXT_PENDING_VERSION not in pending.text:
+                    return False
+            except NoSuchElementException:
+                return False
+            return True
+        if status == 'deleted':
+            try:
+                note = self.driver.find_element_by_tag_name('h4')
+                if TEXT_INACTIVE_VERSION not in note.text:
                     return False
             except NoSuchElementException:
                 return False
