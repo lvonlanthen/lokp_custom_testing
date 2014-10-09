@@ -127,3 +127,12 @@
         # [K] 3: Textfield 3
         3:
           maintag: true
+    # [C-THG] Subcategory 9
+    12:
+      order: 2
+      # [TG]
+      1:
+        order: 1
+        # [K] 25: InputToken 1
+        25:
+          maintag: true

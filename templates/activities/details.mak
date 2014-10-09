@@ -11,7 +11,7 @@
         ${form | n}
         %if site_key is not None:
             <div class="row-fluid">
-                <div id="comments-div" class="span9 comments-div">
+                <div id="comments-div" class="comments-div">
                     ${_('Loading comments ...')}
                 </div>
             </div>

@@ -42,22 +42,25 @@ ${field.end_mapping()}
                         ${_('Search the database to find an existing Stakeholder. Start typing (at least 4 characters) to search a Stakeholder and select it.')}
                     </p>
 
-                    <div class="input-prepend">
+                    <div class="input-prepend span10">
                       <span class="add-on"><i class="icon-search"></i></span>
                       <input class="span12" id="searchinvinput-${field.oid}" type="text" placeholder="${_('Search a Stakeholder')}"/>
                     </div>
 
-                    <hr class="grey"/>
+                    <div class="row-fluid">
 
-                    <p>
-                        ${_('Nothing found? Maybe the Stakeholder is not yet in the database. You can create a new Stakeholder.')}
-                    </p>
-                    <button id="create_involvement"
-                            class="btn btn-small btn-primary"
-                            value="createinvolvement"
-                            name="createinvolvement_${field.name}">
-                        <i class="icon-pencil"></i>&nbsp;&nbsp;${_('Create a new Stakeholder')}
-                    </button>
+                        <hr class="grey"/>
+
+                        <p>
+                            ${_('Nothing found? Maybe the Stakeholder is not yet in the database. You can create a new Stakeholder.')}
+                        </p>
+                        <button id="create_involvement"
+                                class="btn btn-small btn-primary"
+                                value="createinvolvement"
+                                name="createinvolvement_${field.name}">
+                            <i class="icon-pencil"></i>&nbsp;&nbsp;${_('Create a new Stakeholder')}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

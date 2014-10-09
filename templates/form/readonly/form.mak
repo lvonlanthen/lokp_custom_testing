@@ -19,29 +19,27 @@
 
 % if statusId != '2':
     <div class="row-fluid">
-        <div class="span9">
-            <div class="alert alert-block">
-                % if statusId == '1':
-                    ## Pending
-                    <h4>${_('Pending Version')}</h4>
-                    <p>${_('You are seeing a pending version which needs to be reviewed before it is publicly visible.')}</p>
-                % elif statusId == '3':
-                    ## Inactive
-                    <h4>${_('Inactive Version')}</h4>
-                    <p>${_('You are seeing an inactive version which is not active anymore.')}</p>
-                % else:
-                    ## All the rest (deleted, rejected, edited).
-                    ## TODO: Should there be a separate messages for these statuses?
-                    <h4>${_('Not an active Version')}</h4>
-                    <p>${_('You are seeing a version which is not active.')}</p>
-                % endif
-            </div>
+        <div class="span12 alert alert-block">
+            % if statusId == '1':
+                ## Pending
+                <h4>${_('Pending Version')}</h4>
+                <p>${_('You are seeing a pending version which needs to be reviewed before it is publicly visible.')}</p>
+            % elif statusId == '3':
+                ## Inactive
+                <h4>${_('Inactive Version')}</h4>
+                <p>${_('You are seeing an inactive version which is not active anymore.')}</p>
+            % else:
+                ## All the rest (deleted, rejected, edited).
+                ## TODO: Should there be a separate messages for these statuses?
+                <h4>${_('Not an active Version')}</h4>
+                <p>${_('You are seeing a version which is not active.')}</p>
+            % endif
         </div>
     </div>
 % endif
 
 <div class="row-fluid">
-    <div class="span9 text-right">
+    <div class="span12 text-right">
         ${editToolbar()}
     </div>
 </div>
@@ -59,7 +57,7 @@
 </div>
 <div class="row-fluid">
     % if 'id' in cstruct:
-        <div class="span9">
+        <div class="span12">
             <p class="id">${cstruct['id']}</p>
         </div>
     % endif
@@ -68,7 +66,7 @@
 % if not isStakeholder and not empty:
     ## Map container
     <div class="row-fluid">
-        <div class="span9 map-not-whole-page">
+        <div class="span12 map-not-whole-page">
             <div id="googleMapNotFull">
                 <div class="map-form-controls">
                     <div class="form-map-menu pull-right">
@@ -174,7 +172,7 @@
 % endif
 
 <div class="row-fluid">
-    <div class="span9 text-right deal-bottom-toolbar">
+    <div class="span12 text-right deal-bottom-toolbar">
         ${editToolbar()}
     </div>
 </div>

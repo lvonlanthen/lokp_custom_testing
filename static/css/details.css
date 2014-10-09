@@ -7,25 +7,15 @@ Custom CSS fixes for the details pages, both Activities and Stakeholders.
 p.deal-detail {
     font-weight: normal;
 }
-.row-fluid [class*="span"]:first-child {
-    margin-left: 10px;
-}
-.row-fluid [class*="span"] {
-    margin-left: 10px;
-}
 .row-fluid [class*="span"]:first-child [class*="span"]:first-child h5 {
     color: #A3A708;
     font-weight: bold;
-}
-.row-fluid [class*="span"] h5 {
-    font-weight: normal;
 }
 .row-fluid.thmgtitle .span9.grid-area {
     border-top: 0;
 }
 .row-fluid.thmgtitle>.span9.grid-area {
     border-top: 1px solid gray;
-    
 }
 div.row-fluid.thmgtitle div.grid-area div.row-fluid:first-child div.span5 h5 {
     font-weight: normal !important;
@@ -34,4 +24,14 @@ div.row-fluid.thmgtitle div.grid-area div.row-fluid:first-child div.span5 h5 {
 .row-fluid.thmgtitle>.span9.grid-area>h5.green {
     margin-left: 10px;
     font-weight: bold;
+}
+div.taggroup-details .row-fluid:not(:first-child) h5 {
+    font-weight: normal;
+}
+div.thmg-title div.taggroup-details {
+    border-top: 0 none;
+    padding-top: 0;
+}
+div.thmg-title div.taggroup-details h5 {
+    font-weight: normal;
 }
