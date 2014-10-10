@@ -2,7 +2,6 @@ import pytest
 
 from ..base import (
     LmkpTestCase,
-    find_key_value_in_taggroups_json,
     get_status_from_item_json,
     get_involvements_from_item_json,
 )
@@ -11,7 +10,6 @@ from ..diffs import (
     get_edit_diff,
 )
 from ...base import (
-    STATUS_ACTIVE,
     STATUS_EDITED,
     STATUS_PENDING,
 )
@@ -129,52 +127,3 @@ class ActivityEditTests(LmkpTestCase):
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
         self.assertEqual(res['data'][0]['version'], 2)
         self.assertEqual(res['data'][1]['version'], 1)
-
-    def test_active_activities_can_be_deleted_with_form(self):
-        uid = self.create('a', get_new_diff(101), return_uid=True)
-        self.review('a', uid)
-        self.app.post(str('/activities/form/%s' % uid), {
-            '__formid__': 'activityform',
-            'id': uid,
-            'version': 1,
-            'delete': 'true'
-        })
-
-        res = self.read_one('a', uid, 'json')
-        self.assertEqual(res['total'], 2)
-        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
-        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
-        v1_taggroups = res['data'][1]['taggroups']
-        v2_taggroups = res['data'][0]['taggroups']
-        self.assertEqual(len(v1_taggroups), 2)
-        self.assertTrue(find_key_value_in_taggroups_json(
-            v1_taggroups, '[A] Dropdown 1'))
-        self.assertTrue(find_key_value_in_taggroups_json(
-            v1_taggroups, '[A] Numberfield 1'))
-        self.assertEqual(len(v2_taggroups), 0)
-        self.assertFalse(find_key_value_in_taggroups_json(
-            v2_taggroups, '[A] Dropdown 1'))
-        self.assertFalse(find_key_value_in_taggroups_json(
-            v2_taggroups, '[A] Numberfield 1'))
-
-    def test_active_activities_can_be_deleted(self):
-        uid = self.create('a', get_new_diff(101), return_uid=True)
-        self.review('a', uid)
-        self.create('a', get_edit_diff(110, uid))
-
-        res = self.read_one('a', uid, 'json')
-        self.assertEqual(res['total'], 2)
-        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
-        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
-        v1_taggroups = res['data'][1]['taggroups']
-        v2_taggroups = res['data'][0]['taggroups']
-        self.assertEqual(len(v1_taggroups), 2)
-        self.assertTrue(find_key_value_in_taggroups_json(
-            v1_taggroups, '[A] Dropdown 1'))
-        self.assertTrue(find_key_value_in_taggroups_json(
-            v1_taggroups, '[A] Numberfield 1'))
-        self.assertEqual(len(v2_taggroups), 0)
-        self.assertFalse(find_key_value_in_taggroups_json(
-            v2_taggroups, '[A] Dropdown 1'))
-        self.assertFalse(find_key_value_in_taggroups_json(
-            v2_taggroups, '[A] Numberfield 1'))

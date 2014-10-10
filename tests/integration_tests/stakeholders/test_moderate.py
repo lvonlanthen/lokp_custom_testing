@@ -5,11 +5,13 @@ from ..diffs import (
     get_new_diff,
 )
 from ..base import (
+    get_involvements_from_item_json,
     get_status_from_item_json,
     LmkpTestCase,
 )
 from ...base import(
     STATUS_ACTIVE,
+    STATUS_DELETED,
     STATUS_INACTIVE,
 )
 
@@ -172,3 +174,89 @@ class StakeholderModerateTests(LmkpTestCase):
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))
+
+    def test_deleted_stakeholder_with_involvement_can_be_approved(self):
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        inv_data = [{
+            'id': a_uid,
+            'version': 1,
+            'role': 6,
+            'op': 'delete'
+        }]
+        self.create('sh', get_edit_diff(208, sh_uid, version=2, data=inv_data))
+
+        self.app.post(str('/stakeholders/review'), {
+            'identifier': sh_uid,
+            'version': 3,
+            'review_decision': 'approve'
+        })
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))
+        v1_inv = get_involvements_from_item_json(res, 2)
+        v2_inv = get_involvements_from_item_json(res, 1)
+        v3_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 0)
+        self.assertEqual(len(v2_inv), 1)
+        self.assertEqual(len(v3_inv), 0)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+        v1_inv = get_involvements_from_item_json(res, 1)
+        v2_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 1)
+        self.assertEqual(len(v2_inv), 0)
+
+    def test_deleted_stakeholder_with_involvement_can_be_rejected(self):
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        inv_data = [{
+            'id': a_uid,
+            'version': 1,
+            'role': 6,
+            'op': 'delete'
+        }]
+        self.create('sh', get_edit_diff(208, sh_uid, version=2, data=inv_data))
+
+        self.app.post(str('/stakeholders/review'), {
+            'identifier': sh_uid,
+            'version': 3,
+            'review_decision': 'reject'
+        })
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+        v1_inv = get_involvements_from_item_json(res, 1)
+        v2_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 0)
+        self.assertEqual(len(v2_inv), 1)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 1)
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
+        v1_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 1)

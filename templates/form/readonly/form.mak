@@ -11,10 +11,16 @@
         routeName = 'stakeholders_read_one'
         historyRouteName = 'stakeholders_read_one_history'
         editLinkText = _('Edit this Investor')
+        deleteLinkText = _('Delete this Stakeholder')
+        deleteConfirmText = _('Are you sure you want to delete this Stakeholder?')
+        form_id = 'stakeholderform'
     else:
         routeName = 'activities_read_one'
         historyRouteName = 'activities_read_one_history'
         editLinkText = _('Edit this Deal')
+        deleteLinkText = _('Delete this Activity')
+        deleteConfirmText = _('Are you sure you want to delete this Activity?')
+        form_id = 'activityform'
 %>
 
 % if statusId != '2':
@@ -38,11 +44,7 @@
     </div>
 % endif
 
-<div class="row-fluid">
-    <div class="span12 text-right">
-        ${editToolbar()}
-    </div>
-</div>
+${editToolbar('top')}
 
 <div class="row-fluid">
     <div class="span12">
@@ -171,24 +173,41 @@
     </div>
 % endif
 
-<div class="row-fluid">
-    <div class="span12 text-right deal-bottom-toolbar">
-        ${editToolbar()}
-    </div>
-</div>
+${editToolbar('bottom')}
 
-<%def name="editToolbar()">
-<a href="${request.route_url(historyRouteName, output='html', uid=cstruct['id'])}">
-    <i class="icon-time"></i>&nbsp;${_('History')}
-</a>
+<%def name="editToolbar(position)">
+<div class="row-fluid">
+  <div class="span12 text-right deal-${position}-toolbar">
+    <ul class="inline item-toolbar">
+      <li>
+        <a href="${request.route_url(historyRouteName, output='html', uid=cstruct['id'])}"><i class="icon-time"></i><span class="link-with-icon">${_('History')}</span></a>
+      </li>
+      % if request.user and 'id' in cstruct and not empty:
+        <li>
+          <a href="${request.route_url(routeName, output='form', uid=cstruct['id'], _query=(('v', cstruct['version']),))}"><i class="icon-pencil"></i><span class="link-with-icon">${editLinkText}</span></a>
+        </li>
+        <li>
+          <a href="javascript:void(0);" data-toggle="collapse" data-target="#delete-${form_id}-${position}"><i class="icon-trash"></i><span class="link-with-icon">${deleteLinkText}</span></a>
+        </li>
+      % endif
+      % if request.user and isModerator and statusId == '1':
+        <li>
+          <a href="${request.route_url(routeName, output='review', uid=cstruct['id'])}"><i class="icon-check"></i><span class="link-with-icon">${_('Review')}</span></a>
+        </li>
+      % endif
+    </ul>
+  </div>
+</div>
 % if request.user and 'id' in cstruct:
-    &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='form', uid=cstruct['id'], _query=(('v', cstruct['version']),))}">
-        <i class="icon-pencil"></i>&nbsp;${editLinkText}
-    </a>
-    % if isModerator and statusId == '1':
-        &nbsp;|&nbsp;<a href="${request.route_url(routeName, output='review', uid=cstruct['id'])}">
-            <i class="icon-check"></i>&nbsp;${_('Review')}
-        </a>
-    % endif
+  <div id="delete-${form_id}-${position}" class="collapse">
+    <form id="${form_id}-${position}" class="delete-confirm alert alert-error" action="${request.route_url(routeName, output='form', uid=cstruct['id'])}" method="POST">
+      <input type="hidden" name="__formid__" value="${form_id}"/>
+      <input type="hidden" name="id" value="${cstruct['id']}"/>
+      <input type="hidden" name="version" value="${cstruct['version']}"/>
+      <p>${deleteConfirmText}</p>
+      <button name="delete" class="btn btn-small btn-danger">${_('Delete')}</button>
+      <button onclick="javascript:console.log($('#delete-${form_id}-${position}')); $('#delete-${form_id}-${position}').collapse('hide'); return false;" class="btn btn-small delete-confirm-cancel">${_('Cancel')}</button>
+    </form>
+  </div>
 % endif
 </%def>

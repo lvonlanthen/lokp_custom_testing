@@ -3,6 +3,10 @@
 <%def name="title()">${_('Deal Moderation')}</%def>
 
 <%def name="topOfForm()">
+
+    ## Session messages
+    <%include file="lmkp:templates/parts/sessionmessage.mak"/>
+
     <h3>${_('Deal Moderation')}</h3>
     <p class="id">${identifier}</p>
     <div class="row-fluid">

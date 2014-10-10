@@ -53,8 +53,6 @@
                         <li
                             % if button.name == 'submit':
                                 style="background-color:gray;"
-                            % elif button.name == 'delete':
-                                class="form-button-delete"
                             % endif
                             >
                             <button
@@ -74,11 +72,6 @@
                         % endif
                     </ul>
                 % endfor
-                <div class="delete-confirm alert alert-error hide">
-                    <p>${_('Are you sure you want to delete this Activity?')}</p>
-                    <button name="delete" class="btn btn-small btn-danger">${_('Delete')}</button>
-                    <button id="delete-confirm-cancel" class="btn btn-small">${_('Cancel')}</button>
-                </div>
             </div>
         </div>
     </div>

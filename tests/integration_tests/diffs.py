@@ -1166,7 +1166,7 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                 (based on type 105 from get_new_diff)
             109: [A] Different attribute and involvement operations
                 (based on type 106 from get_new_diff, data array needed)
-            110: [A] Delete an Activity
+            110: [A] Delete an Activity, optionally with involvements
                 (based on type 101 from get_new_diff)
             201: [SH] Add a new Taggroup to a Stakeholder.
                 (based on type 201 from get_new_diff)
@@ -1182,6 +1182,8 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                 (based on type 204 from get_new_diff)
             207: [SH] Different attribute operations
                 (based on type 205 from get_new_diff)
+            208: [SH] Delete a Stakeholder
+                (based on type 201 from get_new_diff)
         uid (str): The identifier of the Activity or Stakeholder.
 
     Kwargs:
@@ -1432,7 +1434,16 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
             ]
         }
     elif diff_type == 110:
-        return {
+        involvements = []
+        for d in data:
+            op = 'add' if 'op' not in d else d['op']
+            involvements.append({
+                'id': d['id'],
+                'version': d['version'],
+                'role': d['role'],
+                'op': op
+            })
+        diff = {
             'activities': [
                 {
                     'taggroups': [
@@ -1463,6 +1474,9 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                 }
             ]
         }
+        if len(involvements) > 0:
+            diff['activities'][0]['stakeholders'] = involvements
+        return diff
     elif diff_type == 201:
         return {
             'stakeholders': [
@@ -1659,5 +1673,49 @@ def get_edit_diff(diff_type, uid, version=1, data=[]):
                 }
             ]
         }
+    elif diff_type == 208:
+        involvements = []
+        for d in data:
+            op = 'add' if 'op' not in d else d['op']
+            involvements.append({
+                'id': d['id'],
+                'version': d['version'],
+                'role': d['role'],
+                'op': op
+            })
+        diff = {
+            'stakeholders': [
+                {
+                    'taggroups': [
+                        {
+                            'tg_id': 1,
+                            'tags': [
+                                {
+                                    'value': 123.0,
+                                    'key': u'[SH] Numberfield 1',
+                                    'op': 'delete'
+                                }
+                            ],
+                            'op': 'delete'
+                        }, {
+                            'tg_id': 2,
+                            'tags': [
+                                {
+                                    'value': u'asdf',
+                                    'key': u'[SH] Textfield 1',
+                                    'op': 'delete'
+                                }
+                            ],
+                            'op': 'delete'
+                        }
+                    ],
+                    'version': version,
+                    'id': uid
+                }
+            ]
+        }
+        if len(involvements) > 0:
+            diff['stakeholders'][0]['activities'] = involvements
+        return diff
     else:
         raise Exception('Invalid diff_type: %s' % diff_type)

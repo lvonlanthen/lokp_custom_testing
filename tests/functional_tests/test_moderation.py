@@ -8,8 +8,10 @@ from ..base import (
     FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED,
     FEEDBACK_INVOLVEMENTS_CANNOT_BE_REVIEWED_FROM_STAKEHOLDER,
     FEEDBACK_NO_VERSION,
-    LINK_REVIEW,
     LINK_DEAL_SHOW_INVOLVEMENT,
+    LINK_DELETE_ACTIVITY,
+    LINK_DELETE_STAKEHOLDER,
+    LINK_REVIEW,
     LINK_STAKEHOLDER_SHOW_INVOLVEMENT,
     TITLE_DEAL_MODERATION,
     TITLE_STAKEHOLDER_MODERATION,
@@ -102,16 +104,12 @@ class ModerationTests(LmkpFunctionalTestCase):
             "//button[contains(concat(' ', @class, ' '), ' btn-success ') and "
             "contains(text(), '%s')]" % BUTTON_APPROVE).click()
 
-        # Make sure there is a Success message and a notice that the Activity
-        # can now be reviewed.
+        # Make sure there is a Success message and the user was being routed
+        # back to the Activity moderation directly
         self.el('class_name', 'alert-success')
-        self.assertIn('You had to review this', self.driver.page_source)
-        self.el(
-            'link_text',
-            'Click here to return to the Activity and review it.').click()
+        self.assertIn(TITLE_DEAL_MODERATION, self.driver.title)
 
         # Make sure the Activity can now be reviewed.
-        self.assertIn(TITLE_DEAL_MODERATION, self.driver.title)
         self.el(
             'xpath',
             "//button[contains(concat(' ', @class, ' '), ' btn-success ') and "
@@ -180,10 +178,6 @@ class ModerationTests(LmkpFunctionalTestCase):
             'xpath',
             "//button[contains(concat(' ', @class, ' '), ' btn-success ') and "
             "contains(text(), '%s')]" % BUTTON_APPROVE).click()
-        self.el(
-            'link_text',
-            'Click here to return to the Activity and review it.').click()
-        self.driver.implicitly_wait(5)
         self.el(
             'xpath',
             "//button[contains(concat(' ', @class, ' '), ' btn-success ') and "
@@ -303,13 +297,25 @@ class ModerationTests(LmkpFunctionalTestCase):
         self.assertFalse(self.check_status('pending'))
 
     def test_moderate_deleted_activity(self):
-        a_uid = self.create_activity()
-        self.review('activities', a_uid)
-        self.open_form('activities', uid=a_uid, reset=True)
-        self.el('class_name', 'formdelete').click()
+        uid = self.create_activity()
+        self.review('activities', uid)
+        self.open_details('activities', uid)
+        self.el('link_text', LINK_DELETE_ACTIVITY).click()
         self.el('class_name', 'btn-danger').click()
 
-        self.review('activities', a_uid)
-        self.open_details('activities', a_uid)
+        self.review('activities', uid)
+        self.open_details('activities', uid)
+        self.check_status('deleted')
+        self.el('class_name', 'empty-details')
+
+    def test_moderate_deleted_stakeholder(self):
+        uid = self.create_stakeholder()
+        self.review('stakeholders', uid)
+        self.open_details('stakeholders', uid)
+        self.el('link_text', LINK_DELETE_STAKEHOLDER).click()
+        self.el('class_name', 'btn-danger').click()
+
+        self.review('stakeholders', uid)
+        self.open_details('stakeholders', uid)
         self.check_status('deleted')
         self.el('class_name', 'empty-details')

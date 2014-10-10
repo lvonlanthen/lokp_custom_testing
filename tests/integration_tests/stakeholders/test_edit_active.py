@@ -18,6 +18,7 @@ from ..diffs import (
 from ...base import (
     STATUS_ACTIVE,
     STATUS_EDITED,
+    STATUS_INACTIVE,
     STATUS_PENDING,
 )
 
@@ -193,7 +194,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.assertTrue(find_key_value_in_taggroups_json(
             taggroups_v2, '[SH] Integerdropdown 1', value='1'))
 
-    def test_involvement_attribute_change_does_not_uouch_attributes(self):
+    def test_involvement_attribute_change_does_not_touch_attributes(self):
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         inv_data = [{
             'id': sh_uid,
@@ -231,3 +232,155 @@ class StakeholderEditActiveTests(LmkpTestCase):
         inv_v1 = get_involvements_from_item_json(res, 1)
         self.assertEqual(len(inv_v1), 1)
         self.assertEqual(get_version_from_involvement_json(inv_v1), 2)
+
+    def test_active_stakeholders_can_be_deleted_with_form(self):
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', uid)
+        self.app.post(str('/stakeholders/form/%s' % uid), {
+            '__formid__': 'stakeholderform',
+            'id': uid,
+            'version': 1,
+            'delete': 'true'
+        })
+
+        res = self.read_one('sh', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        v1_taggroups = res['data'][1]['taggroups']
+        v2_taggroups = res['data'][0]['taggroups']
+        self.assertEqual(len(v1_taggroups), 2)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v1_taggroups, '[SH] Textfield 1'))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v1_taggroups, '[SH] Numberfield 1'))
+        self.assertEqual(len(v2_taggroups), 0)
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Textfield 1'))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Numberfield 1'))
+
+    def test_stakeholders_with_involvements_can_be_deleted_with_form(self):
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        self.app.post(str('/stakeholders/form/%s' % sh_uid), {
+            '__formid__': 'stakeholderform',
+            'id': sh_uid,
+            'version': 2,
+            'delete': 'true'
+        })
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))
+        v2_taggroups = res['data'][1]['taggroups']
+        v3_taggroups = res['data'][0]['taggroups']
+        self.assertEqual(len(v2_taggroups), 2)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Textfield 1'))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Numberfield 1'))
+        self.assertEqual(len(v3_taggroups), 0)
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[SH] Textfield 1'))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[SH] Numberfield 1'))
+        v1_inv = get_involvements_from_item_json(res, 2)
+        v2_inv = get_involvements_from_item_json(res, 1)
+        v3_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 0)
+        self.assertEqual(len(v2_inv), 1)
+        self.assertEqual(len(v3_inv), 0)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        v1_inv = get_involvements_from_item_json(res, 1)
+        v2_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 1)
+        self.assertEqual(len(v2_inv), 0)
+
+    def test_active_stakeholders_can_be_deleted(self):
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', uid)
+        self.create('sh', get_edit_diff(208, uid))
+
+        res = self.read_one('sh', uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        v1_taggroups = res['data'][1]['taggroups']
+        v2_taggroups = res['data'][0]['taggroups']
+        self.assertEqual(len(v1_taggroups), 2)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v1_taggroups, '[SH] Textfield 1'))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v1_taggroups, '[SH] Numberfield 1'))
+        self.assertEqual(len(v2_taggroups), 0)
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Textfield 1'))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Numberfield 1'))
+
+    def test_active_stakeholders_with_involvements_can_be_deleted(self):
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        inv_data = [{
+            'id': a_uid,
+            'version': 1,
+            'role': 6,
+            'op': 'delete'
+        }]
+        self.create('sh', get_edit_diff(208, sh_uid, version=2, data=inv_data))
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))
+        v2_taggroups = res['data'][1]['taggroups']
+        v3_taggroups = res['data'][0]['taggroups']
+        self.assertEqual(len(v2_taggroups), 2)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Textfield 1'))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[SH] Numberfield 1'))
+        self.assertEqual(len(v3_taggroups), 0)
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[SH] Textfield 1'))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[SH] Numberfield 1'))
+        v1_inv = get_involvements_from_item_json(res, 2)
+        v2_inv = get_involvements_from_item_json(res, 1)
+        v3_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 0)
+        self.assertEqual(len(v2_inv), 1)
+        self.assertEqual(len(v3_inv), 0)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        v1_inv = get_involvements_from_item_json(res, 1)
+        v2_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 1)
+        self.assertEqual(len(v2_inv), 0)

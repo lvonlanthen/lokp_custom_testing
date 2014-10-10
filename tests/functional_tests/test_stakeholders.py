@@ -1,7 +1,13 @@
+import time
 import pytest
 import uuid
+from selenium.common.exceptions import ElementNotVisibleException
 
 from .base import LmkpFunctionalTestCase
+from ..base import (
+    LINK_VIEW_STAKEHOLDER,
+    TITLE_STAKEHOLDER_DETAILS,
+)
 
 
 @pytest.mark.usefixtures('app_functional')
@@ -69,3 +75,47 @@ class StakeholderTests(LmkpFunctionalTestCase):
 
         sh_field = self.el('name', '[SH] Textfield 1')
         self.assertEqual(sh_field.get_attribute('value'), sh_name)
+
+    def test_delete_stakeholder(self):
+
+        # Open the details of an existing Stakeholder
+        uid, name = self.get_existing_item('stakeholders')
+        self.open_details('stakeholders', uid)
+
+        # Get the buttons
+        delete_button = self.el('link_text', 'Delete this Stakeholder')
+        confirm_button = self.el('class_name', 'btn-danger')
+
+        # Confirm delete cannot be clicked
+        with self.assertRaises(ElementNotVisibleException):
+            confirm_button.click()
+
+        # Clicking the button to delete triggers the confirm panel
+        delete_button.click()
+        time.sleep(0.5)
+        delete_button.click()
+        time.sleep(0.5)
+        with self.assertRaises(ElementNotVisibleException):
+            confirm_button.click()
+
+        # Clicking the cancel button triggers the confirm panel
+        delete_button.click()
+        time.sleep(0.5)
+        cancel_button = self.el('class_name', 'delete-confirm-cancel')
+        cancel_button.click()
+        with self.assertRaises(ElementNotVisibleException):
+            confirm_button.click()
+
+        # Delete and check it succeeds
+        delete_button.click()
+        confirm_button.click()
+
+        self.el('link_text', LINK_VIEW_STAKEHOLDER).click()
+        self.assertIn(TITLE_STAKEHOLDER_DETAILS, self.driver.title)
+
+        # The Stakeholder is pending, has no attributes
+        self.assertTrue(self.check_status('pending'))
+        self.el('class_name', 'empty-details')
+
+        # The delete button cannot be clicked again.
+        self.el('link_text', 'Delete this Stakeholder', inverse=True)

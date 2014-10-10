@@ -28,14 +28,6 @@
         if (window.deform) {
             deform.load();
         }
-        $('button.formdelete').click(function() {
-            toggleConfirmDelete();
-            return false;
-        });
-        $('#delete-confirm-cancel').click(function() {
-            toggleConfirmDelete();
-            return false;
-        });
 
         $(document).ready(function () {
             $('#menu-affix').affix();

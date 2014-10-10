@@ -2358,17 +2358,11 @@ li.moderator-show-pending-right.active a:hover {
     cursor: pointer !important;
 }
 
-.delete-confirm, .form-button-delete {
-    margin-top: 20px;
-}
 .form-button-delete {
     background-color: #FA5858 !important;
 }
 .form-button-delete:hover {
     background-color: red !important;
-}
-.delete-confirm button {
-	margin-top: 5px;
 }
 
 /* Form */
@@ -2388,4 +2382,17 @@ li.moderator-show-pending-right.active a:hover {
 	border-top: 0 none;
 	margin-top: 0;
 	padding-top: 0;
+}
+
+a:hover i, a:focus i {
+	text-decoration: none;
+}
+.link-with-icon {
+	margin-left: 5px;
+}
+.item-toolbar li:not(:first-child) {
+	border-left: 1px solid #808080;
+}
+.item-toolbar i {
+	margin-left: 5px;
 }

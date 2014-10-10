@@ -1,8 +1,8 @@
+import random
 import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 from unittest import TestCase
-from random import randrange
 
 from ..base import (
     BUTTON_APPROVE,
@@ -18,7 +18,7 @@ from ..base import (
 
 class LmkpFunctionalTestCase(TestCase):
 
-    BASE_URL = 'http://localhost:6543'
+    BASE_URL = 'http://localhost:6544'
 
     def login(
             self, redirect=None, form_present=False, username=None,
@@ -117,8 +117,8 @@ class LmkpFunctionalTestCase(TestCase):
 
         map = self.el('class_name', 'olMapViewport')
         map_click = ActionChains(self.driver).move_to_element_with_offset(
-            map, randrange(map.size.get('width', 10) - 9),
-            randrange(map.size.get('height', 10) - 9)).click()
+            map, random.randrange(map.size.get('width', 10) - 9),
+            random.randrange(map.size.get('height', 10) - 9)).click()
         map_click.perform()
         self.el(
             'xpath', "//select[@name='[A] Dropdown 1']/option[@value='%s']"
@@ -209,9 +209,6 @@ class LmkpFunctionalTestCase(TestCase):
                 'xpath',
                 "//button[contains(concat(' ', @class, ' '), ' btn-success ') "
                 "and contains(text(), '%s')]" % BUTTON_APPROVE).click()
-            self.el(
-                'link_text',
-                'Click here to return to the Activity and review it.').click()
 
         if not reject:
             self.el(
@@ -236,6 +233,35 @@ class LmkpFunctionalTestCase(TestCase):
     def open_details(self, item_type, uid):
         self.check_item_type(item_type)
         self.driver.get(self.url('/%s/html/%s' % (item_type, uid)))
+
+    def get_existing_item(self, item_type, grid_present=False):
+        def get_item(lines):
+            r = list(range(1, lines))
+            random.shuffle(r)
+            for i in r:
+                value_1 = self.el(
+                    'xpath', "//table/tbody/tr[%s]/td[3]" % i).text
+                if value_1 == 'Unknown':
+                    continue
+                uid_href = self.el(
+                    'xpath', "//table/tbody/tr[%s]/td[1]/a" % i).get_attribute(
+                        'href')
+                uid = uid_href.split('/')[len(uid_href.split('/')) - 1]
+                return uid, value_1
+            return None, None
+        self.check_item_type(item_type)
+        if grid_present is False:
+            self.login(self.url('/%s/html' % item_type))
+        try:
+            self.el('tag_name', 'tr')
+        except:
+            if item_type == 'activities':
+                self.create_activity()
+            else:
+                self.create_stakeholder()
+            self.login(self.url('/%s/html' % item_type))
+        lines = len(self.els('tag_name', 'tr'))
+        return get_item(lines)
 
     def change_profile(
             self, new_profile, old_profile=None, gui=False, redirect=None):

@@ -159,44 +159,49 @@ class CreateActivityTests(LmkpFunctionalTestCase):
         self.find_text('New Stakeholder')
 
     def test_delete_activity(self):
-        self.open_form('activities', reset=True)
-        self.el('class_name', 'formdelete', inverse=True)
-        a_uid = self.create_activity()
-        self.review('activities', a_uid)
 
-        self.open_form('activities', uid=a_uid, reset=True)
+        # Open the details of an existing Activity
+        uid, name = self.get_existing_item('activities')
+        self.open_details('activities', uid)
 
-        # Deselect Dropdown value to make sure the item can be deleted
-        # without mandatory key
-        self.el(
-            'xpath',
-            "//select[@name='[A] Dropdown 1']/option[@value='']").click()
-
-        delete_button = self.el('class_name', 'formdelete')
-
+        # Get the buttons
+        delete_button = self.el('link_text', 'Delete this Activity')
         confirm_button = self.el('class_name', 'btn-danger')
+
+        # Confirm delete cannot be clicked
         with self.assertRaises(ElementNotVisibleException):
             confirm_button.click()
 
+        # Clicking the button to delete triggers the confirm panel
         delete_button.click()
-        with self.assertRaises(ElementNotVisibleException):
-            delete_button.click()
-
-        cancel_button = self.el('id', 'delete-confirm-cancel')
-        cancel_button.click()
-
+        time.sleep(0.5)
+        delete_button.click()
+        time.sleep(0.5)
         with self.assertRaises(ElementNotVisibleException):
             confirm_button.click()
 
+        # Clicking the cancel button triggers the confirm panel
+        delete_button.click()
+        time.sleep(0.5)
+        cancel_button = self.el('class_name', 'delete-confirm-cancel')
+        cancel_button.click()
+        with self.assertRaises(ElementNotVisibleException):
+            confirm_button.click()
+
+        # Delete and check it succeeds
         delete_button.click()
         confirm_button.click()
 
         self.el('link_text', LINK_VIEW_DEAL).click()
         self.assertIn(TITLE_DEAL_DETAILS, self.driver.title)
-        self.assertTrue(self.check_status('pending'))
 
+        # The Activity is pending, has no map and no attributes
+        self.assertTrue(self.check_status('pending'))
         self.el('class_name', 'empty-details')
         self.el('class_name', 'map-form-controls', inverse=True)
+
+        # The delete button cannot be clicked again.
+        self.el('link_text', 'Delete this Activity', inverse=True)
 
 
     # def test_involvement_role_handling(self):

@@ -140,7 +140,7 @@ class ViewTests(LmkpFunctionalTestCase):
 
         self.assertEqual(count_all, count_all2)
 
-        sh_name = self.el('xpath', "//table/tbody/tr[1]/td[3]").text
+        __, sh_name = self.get_existing_item('stakeholders', grid_present=True)
 
         self.el('id', 'search').click()
         self.el('id', 'search-query').send_keys(sh_name)
