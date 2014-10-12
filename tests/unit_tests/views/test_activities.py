@@ -45,6 +45,41 @@ class ActivityViewReadManyTests(LmkpTestCase):
 @pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.activities
+class ActivityViewReadOneTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'json', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.views.activities.get_output_format')
+    def test_read_one_calls_output_format(self, mock_get_output_format):
+        mock_get_output_format.return_value = self.request.matchdict.get(
+            'output')
+        self.view.read_one()
+        mock_get_output_format.assert_called_once_with(self.request)
+
+    def test_read_one_returns_404_if_no_output_format_found(self):
+        self.request.matchdict = {'output': 'foo'}
+        with self.assertRaises(HTTPNotFound):
+            self.view.read_one()
+
+    @patch('lmkp.views.activities.validate_uuid')
+    def test_read_one_calls_validate_uuid(self, mock_validate_uuid):
+        mock_validate_uuid.return_value = True
+        self.view.read_one()
+        mock_validate_uuid.assert_called_once_with(
+            self.request.matchdict['uid'])
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.activities
 class ActivityViewReadManyPublicTests(LmkpTestCase):
 
     def setUp(self):
@@ -129,6 +164,50 @@ class ActivityViewReadManyJsonTests(LmkpTestCase):
         self.view.read_many()
         mock_render_to_response.assert_called_once_with(
             'json', mock_protocol_read_many.return_value, self.request)
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.activities
+class ActivityViewReadOneJsonTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'json', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.views.activities.activity_protocol.read_one')
+    def test_read_one_json_calls_activity_protocol(
+            self, mock_protocol_read_one):
+        mock_protocol_read_one.return_value = []
+        self.view.read_one()
+        mock_protocol_read_one.assert_called_once_with(
+            self.request, uid=self.request.matchdict['uid'], public=False,
+            translate=True)
+
+    @patch('lmkp.views.activities.render_to_response')
+    @patch('lmkp.views.activities.activity_protocol.read_one')
+    def test_read_one_json_calls_render_to_response(
+            self, mock_protocol_read_one, mock_render_to_response):
+        mock_protocol_read_one.return_value = []
+        self.view.read_one()
+        mock_render_to_response.assert_called_once_with(
+            'json', mock_protocol_read_one.return_value, self.request)
+
+    @patch('lmkp.views.activities.activity_protocol.read_one')
+    def test_read_one_json_calls_activity_protocol_translated(
+            self, mock_protocol_read_one):
+        mock_protocol_read_one.return_value = []
+        self.request.params = {'translate': 'false'}
+        self.view.read_one()
+        mock_protocol_read_one.assert_called_once_with(
+            self.request, uid=self.request.matchdict['uid'], public=False,
+            translate=False)
 
 
 @pytest.mark.usefixtures('app')

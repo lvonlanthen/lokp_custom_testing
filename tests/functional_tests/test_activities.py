@@ -185,6 +185,7 @@ class CreateActivityTests(LmkpFunctionalTestCase):
         time.sleep(0.5)
         cancel_button = self.el('class_name', 'delete-confirm-cancel')
         cancel_button.click()
+        time.sleep(0.5)
         with self.assertRaises(ElementNotVisibleException):
             confirm_button.click()
 
