@@ -906,10 +906,8 @@ textarea.input-style,
 	font-size: 0.85em;
 }
 
-.input-description {
-	float: left;
-	padding-top: 2px;
-	width: 20px;
+.input-helptext {
+	margin-right: 0 !important;
 }
 
 .input-description-with-icon {
@@ -1918,7 +1916,7 @@ div.grid-area div.row-fluid div.span5 h5.moderate-metadata {
     color: #585858 !important;
     outline: medium none;
     height: 16px;
-    margin-right: 10px;
+    margin-right: 8px;
 }
 .fileNameField input:focus {
     border: 1px solid #A4A4A4;
@@ -1959,7 +1957,9 @@ div.grid-area div.row-fluid div.span5 h5.moderate-metadata {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: -10px;
+}
+.truncate-input {
+	margin-top: 5px;
 }
 
 /* Map / Map Form */
