@@ -28,7 +28,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
         <meta charset="utf-8">
         <meta name="content-language" content="${selectedlanguage[0]}" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>${_('Land Observatory')}</title>
+        <title>${_('LOKP')}</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
 
@@ -112,15 +112,15 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                             <div class="row-fluid hidden-phone">
                                 <div class="span3 text-right">
                                     % if mode == 'demo':
-                                        <img src="/custom/img/logo_demo.png" class="lo_logo" alt="${_('Land Observatory')}" />
+                                        <img src="/custom/img/logo_demo.png" class="lo_logo" alt="${_('LOKP')}" />
                                     % else:
-                                        <img src="/custom/img/logo.png" class="lo_logo" alt="${_('Land Observatory')}" />
+                                        <img src="/custom/img/logo.png" class="lo_logo" alt="${_('LOKP')}" />
                                     % endif
                                 </div>
 
                                 <div class="span6 landing-introduction">
                                     <p>
-                                        <strong>${_('The Land Observatory')} </strong>${_('is a pilot project by some partners of the')} <a href="http://www.landmatrix.org">${_('Land Matrix')}</a>, ${_('designed to provide greater context and deeper insight on land deals, from a more local perspective.')}
+                                        <strong>${_('The LOKP')} </strong>${_('is a pilot project by some partners of the')} <a href="http://www.landmatrix.org">${_('Land Matrix')}</a>, ${_('designed to provide greater context and deeper insight on land deals, from a more local perspective.')}
                                     </p>
                                 </div>
                                 <div class="user">
@@ -151,7 +151,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                 </div>
                                 <div class="span6 landing-introduction">
                                     <p>
-                                        <strong>${_('The Land Observatory')} </strong>${_('is a pilot project by some partners of the')} <a href="http://www.landmatrix.org">${_('Land Matrix')}</a>, ${_('designed to provide greater context and deeper insight on land deals, from a more local perspective.')}
+                                        <strong>${_('The LOKP')} </strong>${_('is a pilot project by some partners of the')} <a href="http://www.landmatrix.org">${_('Land Matrix')}</a>, ${_('designed to provide greater context and deeper insight on land deals, from a more local perspective.')}
                                     </p>
                                 </div>
                                 <div class="span3">
@@ -193,7 +193,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                             % if mode == 'demo':
                             <div class="row-fluid">
                                 <div clsas="span10 offset1">
-                                    <p>${_('Welcome to the')} <strong>${_('Demonstration Version')}</strong> ${_('of the')} <a href="http://www.landobservatory.org">${_('Land Observatory')}</a>. ${_('This demo version is for learning and experimentation purposes, so first-time users can get a feel for the Observatory and its functions.')}</p>
+                                    <p>${_('Welcome to the')} <strong>${_('Demonstration Version')}</strong> ${_('of the')} <a href="http://www.landobservatory.org">${_('LOKP')}</a>. ${_('This demo version is for learning and experimentation purposes, so first-time users can get a feel for the Observatory and its functions.')}</p>
                                     <div class="start">
                                         <div class="btn-group">
                                             <a href="/global" class="btn btn-start">${_('Enter')}</a>

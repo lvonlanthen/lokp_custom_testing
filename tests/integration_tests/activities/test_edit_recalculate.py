@@ -259,3 +259,85 @@ class ActivityEditRecalculateTests(LmkpTestCase):
         self.assertTrue(find_key_value_in_taggroups_json(
             taggroups_v4, '[A] Dropdown 1', value='[A] Value A2',
             main_tag=True))
+
+    def test_recalculated_activities_can_be_deleted_with_form(self):
+        uid = self.create('a', get_new_diff(101), return_uid=True)
+        self.review('a', uid)
+        self.create('a', get_edit_diff(101, uid, version=1))
+        self.app.post(str('/activities/form/%s' % uid), {
+            '__formid__': 'activityform',
+            'id': uid,
+            'version': 2,
+            'delete': 'true'
+        })
+
+        res = self.read_one('a', uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 2))
+        v2_taggroups = res['data'][1]['taggroups']
+        v3_taggroups = res['data'][0]['taggroups']
+        self.assertEqual(len(v2_taggroups), 3)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[A] Dropdown 1'))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[A] Numberfield 1'))
+        self.assertEqual(len(v3_taggroups), 0)
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[A] Dropdown 1'))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[A] Numberfield 1'))
+
+    def test_activities_with_involvements_can_be_deleted_with_form(self):
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        self.create('a', get_edit_diff(101, a_uid, version=1))
+        self.app.post(str('/activities/form/%s' % a_uid), {
+            '__formid__': 'activityform',
+            'id': a_uid,
+            'version': 2,
+            'delete': 'true'
+        })
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 2))
+        v2_taggroups = res['data'][1]['taggroups']
+        v3_taggroups = res['data'][0]['taggroups']
+        self.assertEqual(len(v2_taggroups), 3)
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[A] Dropdown 1'))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            v2_taggroups, '[A] Numberfield 1'))
+        self.assertEqual(len(v3_taggroups), 0)
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[A] Dropdown 1'))
+        self.assertFalse(find_key_value_in_taggroups_json(
+            v3_taggroups, '[A] Numberfield 1'))
+        v2_inv = get_involvements_from_item_json(res, 1)
+        v3_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v2_inv), 1)
+        self.assertEqual(len(v3_inv), 0)
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))
+        v1_inv = get_involvements_from_item_json(res, 2)
+        v2_inv = get_involvements_from_item_json(res, 1)
+        v3_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 0)
+        self.assertEqual(len(v2_inv), 1)
+        self.assertEqual(len(v3_inv), 0)

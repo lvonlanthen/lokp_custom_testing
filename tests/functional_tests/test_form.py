@@ -91,7 +91,7 @@ class FormTests(LmkpFunctionalTestCase):
             sh_names = []
             els = self.els('xpath', "//table/tbody/tr/td[3]")
             for el in els:
-                if el.text not in sh_names:
+                if el.text not in sh_names and el.text != 'Unknown':
                     sh_names.append(el.text)
 
             if len(sh_names) < 3:

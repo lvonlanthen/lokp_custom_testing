@@ -431,7 +431,7 @@ class ActivityModerateTests(LmkpTestCase):
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 2)), 0)
 
-    def test_review_deleted_activity(self):
+    def test_review_deleted_active_activity(self):
         a_uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', a_uid)
         self.create('a', get_edit_diff(110, a_uid))
@@ -441,3 +441,78 @@ class ActivityModerateTests(LmkpTestCase):
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+
+    def test_review_deleted_pending_activity(self):
+        a_uid = self.create('a', get_new_diff(101), return_uid=True)
+        self.create('a', get_edit_diff(110, a_uid))
+        self.review('a', a_uid, version=2)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+
+    def test_review_deleted_active_activity_with_involvement(self):
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 2,
+            'role': 6,
+            'op': 'delete'
+        }]
+        self.create('a', get_edit_diff(110, a_uid, data=inv_data))
+        self.review('a', a_uid, version=2)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
+        v3_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v3_inv), 0)
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))
+
+    def test_review_deleted_pending_activity_with_involvement(self):
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 2,
+            'role': 6,
+            'op': 'delete'
+        }]
+        self.create('a', get_edit_diff(110, a_uid, data=inv_data))
+        self.review('a', a_uid, version=2)
+
+        res = self.read_one('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+
+        res = self.read_one('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 0))
+        v3_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v3_inv), 0)
+        self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 2))

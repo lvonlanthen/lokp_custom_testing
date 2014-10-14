@@ -48,6 +48,6 @@ class LoginTests(LmkpTestCase):
         res = res.follow()
 
         self.assertEqual(res.status_int, 200)
-        res.mustcontain('Land Observatory')
+        res.mustcontain('LOKP')
         self.assertNotIn(b'Login', res.body)
         res.mustcontain(USERNAME)

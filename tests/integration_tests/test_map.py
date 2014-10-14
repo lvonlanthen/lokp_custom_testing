@@ -15,7 +15,7 @@ class MapTests(LmkpTestCase):
         """
         res = self.app.get('/map')
         self.assertEqual(res.status_int, 200)
-        self.assertIn(b'Land Observatory', res.body)
+        self.assertIn(b'LOKP', res.body)
 
     def test_map_page_login_link_is_available(self):
         """

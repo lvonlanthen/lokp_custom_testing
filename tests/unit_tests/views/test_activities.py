@@ -513,12 +513,13 @@ class ActivityViewReadManyByStakeholdersHtmlTests(LmkpTestCase):
         self.view.by_stakeholders()
         mock_get_base_template_values.assert_called_once_with()
 
+    @patch('lmkp.views.activities.handle_query_string')
     @patch('lmkp.views.activities.BaseView.get_base_template_values')
     @patch('lmkp.views.activities.render_to_response')
     @patch('lmkp.views.activities.get_customized_template_path')
     def test_read_by_stakeholders_html_calls_render_to_response(
             self, get_customized_template_path, mock_render_to_response,
-            mock_get_base_template_values):
+            mock_get_base_template_values, mock_handle_query_string):
         mock_render_to_response.return_value = {}
         mock_get_base_template_values.return_value = {
             'profile': 'profile',
@@ -531,6 +532,8 @@ class ActivityViewReadManyByStakeholdersHtmlTests(LmkpTestCase):
             {
                 'profile': 'profile',
                 'spatialfilter': None,
+                'statusfilter': None,
+                'handle_query_string': mock_handle_query_string,
                 'pagesize': 10,
                 'currentpage': 1,
                 'locale': 'en',

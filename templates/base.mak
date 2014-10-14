@@ -36,9 +36,9 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
         <title>
             <%
                 try:
-                    context.write("%s - %s" % (self.title(), _("Land Observatory")))
+                    context.write("%s - %s" % (self.title(), _("LOKP")))
                 except AttributeError:
-                    context.write(_("Land Observatory"))
+                    context.write(_("LOKP"))
             %>
         </title>
         <meta name="description" content="" />
@@ -92,9 +92,9 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                         <div class="logo">
                             <a href="${request.route_url('profile_global')}">
                                 % if mode == 'demo':
-                                    <img src="/custom/img/logo_demo.png" alt="${_('Land Observatory')}" />
+                                    <img src="/custom/img/logo_demo.png" alt="${_('LOKP')}" />
                                 % else:
-                                    <img src="/custom/img/logo.png" alt="${_('Land Observatory')}" />
+                                    <img src="/custom/img/logo.png" alt="${_('LOKP')}" />
                                 % endif
                             </a>
                         </div>
