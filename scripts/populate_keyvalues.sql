@@ -91,7 +91,7 @@ SELECT setval('data.categories_id_seq', 56, true);
 
 INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, description, validator) VALUES
   (1, NULL, NULL, '[A] Textfield 1', 'String', NULL, NULL, NULL),
-  (2, NULL, NULL, '[A] Textfield 2', 'String', NULL, NULL, NULL),
+  (2, NULL, NULL, '[A] Textfield 2', 'String', 'ha 1', NULL, NULL),
   (3, NULL, NULL, '[A] Textfield 3', 'String', NULL, NULL, NULL),
   (4, NULL, NULL, '[A] Textarea 1', 'Text', NULL, NULL, NULL),
   (5, NULL, NULL, '[A] Textarea 2', 'Text', NULL, NULL, NULL),
@@ -121,7 +121,7 @@ INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, descript
   (29, NULL, NULL, '[A] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, '[1,5]'),
   (30, NULL, NULL, '[A] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, '[1,5]'),
   (31, 1, 1, '[A] Textfield 1_', NULL, NULL, NULL, NULL),
-  (32, 2, 1, '[A] Textfield 2', NULL, NULL, NULL, NULL),
+  (32, 2, 1, '[A] Textfield 2', NULL, 'ha 2', NULL, NULL),
   (33, 3, 1, '[A] Textfield 3', NULL, NULL, NULL, NULL),
   (34, 4, 1, '[A] Textarea 1', NULL, NULL, NULL, NULL),
   (35, 5, 1, '[A] Textarea 2', NULL, NULL, NULL, NULL),
