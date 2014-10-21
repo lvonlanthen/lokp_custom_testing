@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pytest
 
 from ..base import (
@@ -90,3 +93,28 @@ class ActivityFilterTests(LmkpTestCase):
         self.assertNotIn(uid_1, uids)
         self.assertIn(uid_2, uids)
         self.assertNotIn(uid_3, uids)
+
+    def test_activities_special_chars_in_filter(self):
+        filter = {
+            'a__[A] Dropdown 1__ilike': 'üäö'
+        }
+        json = self.read_many('a', 'json', params=filter)
+        self.assertEqual(json['total'], 0)
+        html = self.read_many('a', 'html', params=filter)
+        self.assertEqual(html.status_int, 200)
+
+        filter = {
+            'a__éèà__ilike': 'foo'
+        }
+        json = self.read_many('a', 'json', params=filter)
+        self.assertEqual(json['total'], 0)
+        html = self.read_many('a', 'html', params=filter)
+        self.assertEqual(html.status_int, 200)
+
+        filter = {
+            'a__éèà__ilike': 'üäö'
+        }
+        json = self.read_many('a', 'json', params=filter)
+        self.assertEqual(json['total'], 0)
+        html = self.read_many('a', 'html', params=filter)
+        self.assertEqual(html.status_int, 200)

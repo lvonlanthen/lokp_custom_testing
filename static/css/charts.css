@@ -1,0 +1,42 @@
+#loadingRow {
+    margin-bottom: 5px;
+    background: url(/custom/img/ajax-loader.gif) no-repeat center center;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+.bar {
+    fill: #A3A708;
+}
+.bar:hover {
+    fill: #DBDB9B;
+}
+
+.valueShape {
+    fill: #A3A708;
+    stroke: darkGrey;
+}
+
+.valueText {
+    fill: white;
+}
+
+ul.chartNav li a {
+    color: #333333;
+}
+ul.chartNav li a:hover {
+    background-color: #DBDB9B;
+}
+ul.chartNav li.active a {
+    background-color: #A3A708;
+    color: #white;
+}
+ul.chartNav li.active a:hover {
+    background-color: #A3A708;
+}
+.btn-bar-sort {
+  float: right !important;
+}
