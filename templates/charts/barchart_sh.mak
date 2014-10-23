@@ -2,7 +2,7 @@
 
 <%inherit file="lmkp:customization/testing/templates/base.mak" />
 
-<%def name="title()">${_("Charts")}</%def>
+<%def name="title()">${_("[LOKP Stakeholder] bar charts")}</%def>
 
 <%def name="head_tags()">
   <link rel="stylesheet" href="/custom/css/charts.css"></link>
@@ -10,6 +10,11 @@
 
 <div class="container">
   <div class="content no-border">
+    <div class="row-fluid">
+      <a href="${request.route_url('charts_overview')}">
+        <i class="icon-th"></i><span class="link-with-icon">${_("Back to charts overview")}</span>
+      </a>
+    </div>
     <div class="row-fluid">
       <div class="pull-right">
         <ul class="nav nav-pills chartNav" id="group-by-pills">
@@ -42,24 +47,23 @@
   <script src="${request.static_url('lmkp:static/lib/d3/d3.v3.min.js')}" type="text/javascript"></script>
   <script type="text/javascript">
 
-    var group_activities_by = "${_('Group deals by:')}";
+    var group_activities_by = "${_('Group [LOKP Stakeholders] by:')}";
     var show_attribute = "${_('Show attribute:')}";
     var chart_data = {
-      'item': 'Activity',
+      'item': 'Stakeholder',
       'attributes': {
-        'Activity': 'count',
-        '[A] Numberfield 1': 'sum'
+        'Stakeholder': 'count',
+        '[SH] Numberfield 1': 'sum'
       },
       'translate': {
         'keys': [
-          ['[A] Dropdown 1'],
-          ['[A] Dropdown 2']
+          ['[SH] Dropdown 1'],
         ]
       },
     };
     var attribute_names = [
       "${_('Sum of Numberfield 1')}",
-      "${_('[LOKP Activity]')}"
+      "${_('[LOKP Stakeholders]')}"
     ];
 
     var group_key = "${attr}";

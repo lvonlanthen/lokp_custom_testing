@@ -43,3 +43,12 @@ ul.chartNav li.active a:hover {
 .btn-bar-sort {
   float: right !important;
 }
+
+.chart-gallery p {
+    margin: 1em 0 2em;
+}
+
+.chart-gallery a.thumbnail:hover, .chart-gallery a.thumbnail:focus {
+    border-color: #808080;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
