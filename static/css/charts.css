@@ -52,3 +52,48 @@ ul.chartNav li.active a:hover {
     border-color: #808080;
     box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
+
+.groups {
+    cursor: pointer;
+}
+.groups rect {
+    fill-opacity: 0.8;
+}
+.groups rect:hover, .groups rect.active {
+    fill-opacity: 1;
+}
+
+.legend-entry text {
+    cursor: pointer;
+    fill: #686868;
+}
+.legend-entry rect {
+    cursor: pointer;
+    stroke: #909090;
+    fill-opacity: 0.8;
+}
+.legend-entry.active text, .legend-entry text:hover, #legend-title {
+    visibility: visible !important;
+    fill: #000;
+}
+#legend-container.active {
+    visibility: visible !important;
+}
+.legend-entry.active rect, .legend-entry rect:hover {
+    stroke: #000;
+    fill-opacity: 1;
+}
+#legend-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+#legend-container {
+    fill: white;
+    fill-opacity: 0.7;
+    stroke: #909090;
+    visibility: hidden;
+}
+
+#legend.legend-small text {
+    visibility: hidden;
+}
