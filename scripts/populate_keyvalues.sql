@@ -155,7 +155,7 @@ INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, descript
   (63, 3, 3, '[A-T] Identical Translation', NULL, NULL, NULL, NULL),
   (64, 4, 3, '[A-T] Textarea 1', NULL, NULL, NULL, NULL),
   (65, 5, 3, '[A-T] Textarea 2', NULL, NULL, NULL, NULL),
-  (66, 6, 3, '[A-T] Textarea 3', NULL, NULL, NULL, NULL),
+  (66, 6, 3, '[A-T] éèäö', NULL, NULL, NULL, NULL),
   (67, 7, 3, '[A-T] Dropdown 1', NULL, NULL, NULL, NULL),
   (68, 8, 3, '[A-T] Dropdown 2', NULL, NULL, NULL, NULL),
   (69, 9, 3, '[A-T] Dropdown 3', NULL, NULL, NULL, NULL),

@@ -112,8 +112,14 @@ class ActivityFilterTests(LmkpTestCase):
         self.assertEqual(html.status_int, 200)
 
         filter = {
-            'a__éèà__ilike': 'üäö'
+            'a__[A] Textarea 3__ilike': 'üäö'
         }
+        json = self.read_many('a', 'json', params=filter)
+        self.assertEqual(json['total'], 0)
+        html = self.read_many('a', 'html', params=filter)
+        self.assertEqual(html.status_int, 200)
+
+        filter.update({'_LOCALE_': 'es'})
         json = self.read_many('a', 'json', params=filter)
         self.assertEqual(json['total'], 0)
         html = self.read_many('a', 'html', params=filter)
