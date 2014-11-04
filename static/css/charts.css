@@ -1,4 +1,4 @@
-#loadingRow {
+#loadingRow, #loading-div {
     margin-bottom: 5px;
     background: url(/custom/img/ajax-loader.gif) no-repeat center center;
 }
@@ -96,4 +96,44 @@ ul.chartNav li.active a:hover {
 
 #legend.legend-small text {
     visibility: hidden;
+}
+
+
+/**
+ * Map Chart
+ */
+#map {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.map-background {
+  fill: none;
+  pointer-events: all;
+}
+
+#countries {
+  fill: #cde;
+  stroke: #fff;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+#countries path.active {
+  fill: darkGrey !important;
+  cursor: pointer;
+}
+
+#countries-list {
+    margin-top: 3px;
+    padding-left: 10px;
+    border-left: 1px solid silver;
+}
+
+.countries-list-entry {
+  cursor: pointer;
+}
+.countries-list-entry.active {
+  font-weight: bold;
 }
