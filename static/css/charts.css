@@ -98,6 +98,10 @@ ul.chartNav li.active a:hover {
     visibility: hidden;
 }
 
+.chart-top-menu {
+  margin-bottom: 10px;
+}
+
 
 /**
  * Map Chart
@@ -108,13 +112,16 @@ ul.chartNav li.active a:hover {
   margin-bottom: 10px;
 }
 
-.map-background {
+#map-loading rect {
+  fill: #fff;
+  fill-opacity: 0.6;
+}
+#map-loading.hidden {
   fill: none;
-  pointer-events: all;
 }
 
 #countries {
-  fill: #cde;
+  fill: #cde; /* Also used in mapchart.js */
   stroke: #fff;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -126,9 +133,9 @@ ul.chartNav li.active a:hover {
 }
 
 #countries-list {
-    margin-top: 3px;
-    padding-left: 10px;
-    border-left: 1px solid silver;
+  margin-top: 3px;
+  padding-left: 10px;
+  border-left: 1px solid silver;
 }
 
 .countries-list-entry {
@@ -136,4 +143,16 @@ ul.chartNav li.active a:hover {
 }
 .countries-list-entry.active {
   font-weight: bold;
+}
+.countries-list-entry .pull-right {
+  margin-right: 10px;
+}
+
+.map-profile-select {
+  float: left;
+  line-height: 30px;
+  margin-right: 5px;
+}
+#profile-selector, .btn-country-selector {
+  text-transform: uppercase;
 }

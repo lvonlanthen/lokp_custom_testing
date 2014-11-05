@@ -1,7 +1,7 @@
 import pytest
 
 from .base import (
-    LmkpTestCase
+    LmkpTestCase,
 )
 from .diffs import (
     get_new_diff,
@@ -9,6 +9,7 @@ from .diffs import (
 from lmkp.views.evaluation import EvaluationView
 
 
+@pytest.mark.evaluation
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
 class EvaluationTests(LmkpTestCase):
@@ -214,3 +215,99 @@ class EvaluationTests(LmkpTestCase):
         self.assertEqual(g1_1.get('key'), '[A] Dropdown 1')
         self.assertEqual(g1_1.get('default'), '[A-T] Dropdown 1')
         self.assertEqual(g1_1.get('es'), '[A-T] Dropdown 1')
+
+
+@pytest.mark.evaluation
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+class EvaluationTestsWithInvolvement(LmkpTestCase):
+
+    def setUp(self):
+        self.data1 = {
+            'item': 'Stakeholder',
+            'attributes': {
+                'Stakeholder': 'count'
+            },
+            'group_by': ['[SH] Numberfield 1'],
+            # 'filter': {
+            #     'involvements': [
+            #         ['musthave', True]
+            #     ]
+            # }
+        }
+        self.data2 = {
+            'item': 'Activity',
+            'attributes': {
+                'Activity': 'count',
+                '[A] Numberfield 1': 'sum'
+            },
+            'translate': {
+                'keys': [
+                    ['[A] Dropdown 1']
+                ]
+            },
+            'group_by': ['[A] Dropdown 1'],
+            'locales': ['es']
+        }
+        self.data3 = {
+            'item': 'Activity',
+            'attributes': {
+                'Activity': 'count',
+                '[A] Numberfield 1': 'sum'
+            },
+            'translate': {
+                'keys': [
+                    ['[A] Dropdown 1', '[A] Dropdown 2'],
+                    ['[A] Textfield 1']
+                ]
+            },
+            'group_by': ['[A] Dropdown 1', '[A] Dropdown 2']
+        }
+        self.login()
+        super(EvaluationTestsWithInvolvement, self).setUp()
+        self.view = EvaluationView(self.request)
+
+        self.sh_uids = []
+        for sh in [201, 201, 206, 203]:
+            uid = self.create('sh', get_new_diff(sh), return_uid=True)
+            self.review('sh', uid)
+            self.sh_uids.append(uid)
+        self.sh_uids.append(
+            self.create('sh', get_new_diff(202), return_uid=True))
+
+        self.a_uids = []
+        for a in [
+            (103, [(0, 1)]),
+            (103, [(0, 2)]),
+            (106, [(2, 1)]),
+            (106, [(1, 1)]),
+            (104, [])
+        ]:
+            inv_data = []
+            try:
+                for i in a[1]:
+                    inv_data.append({
+                        'id': self.sh_uids[i[0]],
+                        'version': i[1],
+                        'role': 6
+                    })
+            except:
+                pass
+            uid = self.create(
+                'a', get_new_diff(a[0], data=inv_data), return_uid=True)
+            self.review('a', uid)
+            self.a_uids.append(uid)
+        self.a_uids.append(
+            self.create('a', get_new_diff(102), return_uid=True))
+
+    def test_check_basic_format(self):
+        res = self.view.evaluation(data=self.data3)
+        self.assertTrue(res.get('success'))
+        self.assertIn('data', res)
+        self.assertIn('translate', res)
+
+    def test_only_stakeholders_with_invs_appear_by_default(self):
+        res = self.view.evaluation(data=self.data1)
+        self.assertEqual(len(res.get('data')), 1)
+        d1 = res.get('data')[0]
+        self.assertEqual(d1.get('values')[0].get('value'), 3)

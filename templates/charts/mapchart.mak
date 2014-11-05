@@ -8,8 +8,29 @@
 
 <div class="container">
   <div class="content no-border">
+    <div class="row-fluid chart-top-menu">
+      <a href="${request.route_url('charts_overview')}">
+        <i class="icon-th"></i><span class="link-with-icon">${_("Back to charts overview")}</span>
+      </a>
+      % if len(profiles) > 0:
+        <div class="pull-right">
+          <div class="map-profile-select">${_("Profile")}:</div>
+          <div class="btn-group">
+            <button class="btn btn-country-selector">${profile}</button>
+            <button class="btn btn_favorite_right dropdown-toggle" data-toggle="dropdown">
+              <i class="icon-caret-down"></i>
+            </button>
+            <ul class="dropdown-menu" id="profile-selector">
+              % for p in profiles:
+                <li><a href="javascript:void(0);" data-profile="${p[1]}">${p[0]}</a></li>
+              % endfor
+            </ul>
+          </div>
+        </div>
+      % endif
+    </div>
     <div class="row-fluid visible-phone">
-      <h2 class="chart-title"></h2>
+      <h2 class="chart-title"><!-- Placeholder --></h2>
     </div>
     <div id="map" class="row-fluid">
       <div id="loading-div">
@@ -21,13 +42,13 @@
         <div id="country-details"></div>
         <div id="helptext" class="hide">
           <h2 class="chart-title"></h2>
-          <p>${_('The colors represent the number of [LOKP Stakeholders] from this country. The darker the color, the more [LOKP Stakeholders].')}</p>
+          <p>${_('The map shows the country of origin of [LOKP Stakeholders] involved in [LOKP Activities] from the selected profile.')}</p>
+          <p>${_('The colors represent the number of [LOKP Stakeholders] from a certain country. The darker the color, the more [LOKP Stakeholders].')}</p>
           <p>${_('Move your mouse over a country in the list or on the map to show the details.')}</p>
         </div>
       </div>
       <div class="span6">
-        <ul id="countries-list">
-        </ul>
+        <ul id="countries-list"><!-- Placeholder --></ul>
       </div>
     </div>
   </div>
@@ -54,18 +75,15 @@
         'keys': [['Country of origin']]
       }
     };
+    var data_url = '${request.route_url("evaluation")}';
+    var map_url = '${request.static_url("lmkp:static/v2/charts/world.topo.json")}';
 
-    d3.xhr('${request.route_url("evaluation")}')
-      .header('Content-Type', 'application/json')
-      .post(
-        JSON.stringify(chartData), function (error, rawData) {
-          var data = JSON.parse(rawData.responseText);
-          if (!data['success']) {
-            return console.warn(data['msg']);
-          }
-          updateContent(data);
-          visualize(data.data);
-        }
-      );
+    drawMap();
+    loadMapData();
+
+    $('#profile-selector>li>a').click(function() {
+      $('.btn-country-selector').text($(this).text());
+      changeProfile($(this).data('profile'));
+    });
   </script>
 </%def>
