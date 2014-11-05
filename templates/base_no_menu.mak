@@ -128,8 +128,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                       <li>
                                           <div class="dropdown">
                                               <a class="dropdown-toggle blacktemp" data-toggle="dropdown" href="#">
-                                                  ${selectedlanguage[1]}
-                                                  <b class="caret"></b>
+                                                  <span class="link-icon-right">${selectedlanguage[1]}</span><b class="caret"></b>
                                               </a>
                                               <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                                   % for l in languages:

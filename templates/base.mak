@@ -98,66 +98,64 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                 % endif
                             </a>
                         </div>
-                        <div class="top_menu">
-                            <ul class="top-menu">
-                                <%
-                                    # The entries of the top menus as arrays
-                                    # with
-                                    # - an array of urls (the first one being used for the link)
-                                    # - icon (li class)
-                                    # - name
-                                    topmenu = [
+                        <ul class="top-menu">
+                            <%
+                                # The entries of the top menus as arrays
+                                # with
+                                # - an array of urls (the first one being used for the link)
+                                # - icon (li class)
+                                # - name
+                                topmenu = [
+                                    [
+                                        [request.route_url('map_view')],
+                                        'icon-map-marker',
+                                        _('Map')
+                                    ], [
                                         [
-                                            [request.route_url('map_view')],
-                                            'icon-map-marker',
-                                            _('Map')
-                                        ], [
-                                            [
-                                                request.route_url('grid_view'),
-                                                request.route_url('activities_read_many', output='html'),
-                                                request.route_url('stakeholders_read_many', output='html'),
-                                                request.route_url('stakeholders_byactivities_all', output='html')
-                                            ],
-                                            'icon-align-justify',
-                                            _('Grid')
-                                        ], [
-                                            [
-                                                request.route_url('charts_view'),
-                                                request.route_url('charts_overview')
-                                            ],
-                                            'icon-bar-chart',
-                                            _('Charts')
-                                        ]
+                                            request.route_url('grid_view'),
+                                            request.route_url('activities_read_many', output='html'),
+                                            request.route_url('stakeholders_read_many', output='html'),
+                                            request.route_url('stakeholders_byactivities_all', output='html')
+                                        ],
+                                        'icon-align-justify',
+                                        _('Grid')
+                                    ], [
+                                        [
+                                            request.route_url('charts_view'),
+                                            request.route_url('charts_overview')
+                                        ],
+                                        'icon-bar-chart',
+                                        _('Charts')
                                     ]
-                                %>
+                                ]
+                            %>
 
-                                % for t in topmenu:
-                                    <li
-                                        % if request.current_route_url() in t[0]:
-                                            class="active grid"
-                                        % endif
-                                        >
-                                        <a href="${t[0][0]}${handle_query_string(request.url, return_value='query_string', remove=['bbox', 'order_by', 'dir', 'status'])}">
-                                            <i class="${t[1]}"></i>&nbsp;&nbsp;${t[2]}
-                                        </a>
-                                    </li>
-                                % endfor
+                            % for t in topmenu:
+                                <li
+                                    % if request.current_route_url() in t[0]:
+                                        class="active grid"
+                                    % endif
+                                    >
+                                    <a href="${t[0][0]}${handle_query_string(request.url, return_value='query_string', remove=['bbox', 'order_by', 'dir', 'status'])}">
+                                        <i class="${t[1]}"></i><span class="hidden-verysmall">&nbsp;&nbsp;${t[2]}</span>
+                                    </a>
+                                </li>
+                            % endfor
 
-                                ## If the user is logged in, show link to add a new deal
-                                % if request.user:
-                                    <li
-                                        % if request.current_route_url() == request.route_url('activities_read_many', output='form'):
-                                            class="active grid"
-                                        % endif
-                                        >
-                                        <a href="${request.route_url('activities_read_many', output='form')}" >
-                                            <i class="icon-pencil"></i>
-                                            ${_('New Deal')}
-                                        </a>
-                                    </li>
-                                % endif
-                            </ul>
-                        </div>
+                            ## If the user is logged in, show link to add a new deal
+                            % if request.user:
+                                <li
+                                    % if request.current_route_url() == request.route_url('activities_read_many', output='form'):
+                                        class="active grid"
+                                    % endif
+                                    >
+                                    <a href="${request.route_url('activities_read_many', output='form')}" >
+                                        <i class="icon-pencil"></i>
+                                        <span class="hidden-verysmall">${_('New Deal')}</span>
+                                    </a>
+                                </li>
+                            % endif
+                        </ul>
                         <div class="user">
                             <ul class="nav nav-pills">
                                 % if request.user is None:
@@ -191,8 +189,7 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                 <li>
                                     <div class="dropdown">
                                         <a class="dropdown-toggle blacktemp" data-toggle="dropdown" href="#">
-                                            ${selectedlanguage[1]}
-                                            <b class="caret"></b>
+                                            <span class="link-icon-right">${selectedlanguage[1]}</span><b class="caret"></b>
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                             % for l in languages:
