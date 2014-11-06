@@ -6,6 +6,7 @@
     from pyramid.security import ACLAllowed
     from pyramid.security import has_permission
     isModerator = isinstance(has_permission('moderate', request.context, request), ACLAllowed)
+    _ = request.translate
 
     if isStakeholder:
         routeName = 'stakeholders_read_one'

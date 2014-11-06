@@ -26,11 +26,6 @@
 <!-- content -->
 <div class="container">
 
-    <div class="show-investors visible-phone">
-        <i class="icon-info-sign"></i>
-        <p>${_('Show investors by click on a specific row.')}</p>
-    </div>
-
     <div class="content">
 
         ## Spatial Filter
@@ -140,7 +135,7 @@
         </ul>
 
         ## Table
-        <div class="table_wrapper">
+        <div class="table_wrapper item-grid-wrapper">
 
             % if len(data) == 0:
 
@@ -153,16 +148,9 @@
 
             % else:
 
-                ## "Tooltip" when clicking a table row
-                <div class="show-investors-wrapper hidden hidden-phone">
-                    <div class="show-investors">
-                        <a href="#">${_('Show investors for this deal')}</a>
-                    </div>
-                </div>
-
                 <table
                     class="table table-hover table-self table-bordered"
-                    id="activitygrid">
+                    id="itemgrid">
                     <thead>
                         ## The table headers
                         <tr>
@@ -285,6 +273,7 @@
                 placement: 'bottom'
             });
         });
+        var link_involvement_text = '${_("Show [LOKP Stakeholders] for this [LOKP Activities]")}';
     </script>
 
     % if default_search_original:

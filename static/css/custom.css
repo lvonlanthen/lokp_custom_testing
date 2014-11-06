@@ -632,13 +632,9 @@ span.arrow {
 	padding: 10px;
 }
 
-
-
-table.table-self {
-	width: 870px;
+div.item-grid-wrapper {
+	padding-right: 130px;
 }
-
-
 
 .table-self tbody tr:hover > td,
  .table-self tbody tr:hover > th,
@@ -728,31 +724,6 @@ table.table-self {
 	background-size: 12px 12px;
 	padding-left: 7px;
 }
-
-.show-investors-wrapper {
-	background: url("../img/arrow-left-green.png") no-repeat left center;
-	width: 150px;
-	float: right;
-	margin: 0 auto;
-	margin-top: 165px;
-}
-
-.show-investors {
-	float: right;
-	background-color: #A3A708;
-	color: white;
-	width: 120px;
-	height: 30px;
-	padding: 10px;
-	border-radius: 4px;
-	line-height: 1.2em;
-	text-decoration: underline;
-	text-transform: uppercase;
-	font-weight: 700;
-	font-size: 0.9em;
-	cursor: pointer;
-}
-
 
 .grid-area {
 	border-top: 1px solid gray;
@@ -1510,10 +1481,6 @@ background-color: #CB820E;
 		width: 209%;
 	}
 
-	table.table-self {
-		width: auto;
-	}
-
 }
 
 
@@ -1612,21 +1579,10 @@ background-color: #CB820E;
 		width: 202%;
 	}
 
-	.show-investors-wrapper {
-		margin-top: 168px;
-		font-size: 0.7em;
-		width: 120px;
+	div.item-grid-wrapper {
+		padding-right: 10px;
 	}
-
-	.show-investors {
-		width: 90px;
-		padding-bottom: 2px;
-		line-height: 1.4em;
-	}
-
-
- }
-
+}
 
 
 @media (max-width: 767px) {
@@ -1728,28 +1684,9 @@ background-color: #CB820E;
 		width: 100% !important;
 	}
 
-	.show-investors {
-		position: relative;
-		top: 8px;
-		right: 8px;
-		width: 242px;
-		text-decoration: none;
-		cursor: auto;
-		padding: 5px 10px 2px 15px;
-		height: 22px;
-		font-size: 0.6em;
-	}
-
 	.icon-info-sign {
 		font-size: 2em;
 	}
-
-	.show-investors p{
-		float: right;
-		padding: 4px 0 0 10px;
-		margin: 0;
-	}
-
 
 }
 
@@ -2192,6 +2129,12 @@ h3.form-below-toolbar {
 #form-map-menu-content .icon-chevron-right {
     float: none;
 }
+#map-menu-button-container {
+	width: 160px;
+}
+#map-menu-button {
+	cursor: pointer;
+}
 
 /* Filter */
 .filter_area_openclose {
@@ -2248,15 +2191,22 @@ h3.form-below-toolbar {
 tr.pending {
     background-color: #fcf8e3;
 }
-.show-investors {
-    height: auto;
+#itemgrid .tooltip.right .tooltip-arrow {
+	border-right-color: #A3A708;
+}
+#itemgrid .tooltip.top .tooltip-arrow {
+	border-top-color: #A3A708;
+}
+#itemgrid .tooltip-inner {
+	background-color: #A3A708;
+	max-width: 100px;
+    width: 100px;
+}
+#itemgrid .tooltip-inner a {
+	color: white;
 }
 .desc.active {
     background: url("/custom/img/to-top-black.png") no-repeat scroll right top transparent;
-}
-.show-investors a {
-    text-decoration: none;
-    color: white;
 }
 .grid-tab-right {
     float: right !important;
