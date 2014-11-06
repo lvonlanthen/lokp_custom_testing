@@ -20,8 +20,9 @@
                 <li><a href="#q4">${_('Who can submit information on a land deal?')}</a></li>
                 <li><a href="#q5">${_('How do I submit information on a land deal?')}</a></li>
                 <li><a href="#q6">${_('Can I submit information on a land deal even if I am in a different country?')}</a></li>
-                <li><a href="#q7">${_('Will this application display polygons and land areas?')}</a></li>
-                <li><a href="#q8">${_('Do you protect my privacy?')}</a></li>
+                <li><a href="#q7">${_('What about polygons and land areas?')}</a></li>
+                <li><a href="#q8">${_('How can I download data?')}</a></li>
+                <li><a href="#q9">${_('Do you protect my privacy?')}</a></li>
             </ul>
         <hr class="grey" />
 
@@ -58,11 +59,15 @@
         <p>${_('Yes, but it will be reviewed and approved by moderators. At the moment, we ask that your account is connected to a particular country.')}</p>
         <hr class="grey" />
 
-        <a name="q7"></a><p class="lead">${_('Will this application display polygons and land areas?')}</p>
-        <p>${_('Yes, these functions are in development and should be ready soon, as well as data downloads.')}</p>
+        <a name="q7"></a><p class="lead">${_('What about polygons and land areas?')}</p>
+        <p>${_('You can view polygons and land areas on the map by activating the appropriate layers in the map legend. To add new polygons or edit the shape of existing areas, we wrote a plugin for QGIS which you can use.')} <a href="http://lokp.readthedocs.org/en/latest/qgis.html" target="_blank">${_('Please refer to the documentation of the QGIS plugin for more information.')}</a></p>
         <hr class="grey" />
-        
-        <a name="q8"></a><p class="lead">${_('Do you protect my privacy?')}</p>
+
+        <a name="q8"></a><p class="lead">${_('How can I download data?')}</p>
+        <p>${_('The download functionality is currently under development and should be ready soon.')}</p>
+        <hr class="grey" />
+
+        <a name="q9"></a><p class="lead">${_('Do you protect my privacy?')}</p>
         <p>${_('All defaults are set to safeguard user privacy. To comment, you need not give any personal information, although providing it may enhance your credibility. To log-in and submit data, all you need to provide is an email address. Currently, metadata about your submissions is stored on the servers of the Centre for Development and Environment - University of Bern and are only kept for reference: your personal information will not be shared with others or re-used for any purposes except for possible verification of submitted information.')}</p>
         <hr class="grey" />
 

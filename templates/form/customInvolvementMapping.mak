@@ -28,35 +28,40 @@ ${field.end_mapping()}
     </a>
 </p>
 
-<div class="accordion add-involvement" id="accordion-${field.oid}">
-    <div class="accordion-group">
-        <div class="accordion-heading">
-            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-${field.oid}" href="#accordion-content-${field.oid}">
-                <i class="icon-plus"></i> ${_('Select a Stakeholder')}
-            </a>
-        </div>
-        <div id="accordion-content-${field.oid}" class="accordion-body collapse">
-            <div class="accordion-inner">
-                <p>
-                    ${_('Search the database to find an existing Stakeholder. Start typing (at least 4 characters) to search a Stakeholder and select it.')}
-                </p>
+<div>
+    <div class="accordion add-involvement" id="accordion-${field.oid}">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion-${field.oid}" href="#accordion-content-${field.oid}">
+                    <i class="icon-plus"></i> ${_('Select a Stakeholder')}
+                </a>
+            </div>
+            <div id="accordion-content-${field.oid}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <p>
+                        ${_('Search the database to find an existing Stakeholder. Start typing (at least 4 characters) to search a Stakeholder and select it.')}
+                    </p>
 
-                <div class="input-prepend">
-                  <span class="add-on"><i class="icon-search"></i></span>
-                  <input class="span12" id="searchinvinput-${field.oid}" type="text" placeholder="${_('Search a Stakeholder')}">
+                    <div class="input-prepend span10">
+                      <span class="add-on"><i class="icon-search"></i></span>
+                      <input class="span12" id="searchinvinput-${field.oid}" type="text" placeholder="${_('Search a Stakeholder')}"/>
+                    </div>
+
+                    <div class="row-fluid">
+
+                        <hr class="grey"/>
+
+                        <p>
+                            ${_('Nothing found? Maybe the Stakeholder is not yet in the database. You can create a new Stakeholder.')}
+                        </p>
+                        <button id="create_involvement"
+                                class="btn btn-small btn-primary"
+                                value="createinvolvement"
+                                name="createinvolvement_${field.name}">
+                            <i class="icon-pencil"></i>&nbsp;&nbsp;${_('Create a new Stakeholder')}
+                        </button>
+                    </div>
                 </div>
-
-                <hr class="grey"/>
-
-                <p>
-                    ${_('Nothing found? Maybe the Stakeholder is not yet in the database. You can create a new Stakeholder.')}
-                </p>
-                    <button id="create_involvement"
-                            class="btn btn-small btn-primary"
-                            value="createinvolvement"
-                            name="createinvolvement_${field.name}">
-                        <i class="icon-pencil"></i>&nbsp;&nbsp;${_('Create a new Stakeholder')}
-                    </button>
             </div>
         </div>
     </div>
@@ -64,8 +69,9 @@ ${field.end_mapping()}
 
 <%
     import json
-    from lmkp.views.views import getOverviewKeys
+    from lmkp.views.views import getOverviewKeys, getOverviewRawKeys
     aKeys, shKeys = getOverviewKeys(request)
+    aRawKeys, shRawKeys = getOverviewRawKeys(request)
 %>
 
 <script type="text/javascript">
@@ -76,12 +82,13 @@ ${field.end_mapping()}
     var searchPrefix = 'sh';
     var queryUrl = "${request.route_url('stakeholders_read_many', output='json')}";
     var shKeys = ${json.dumps(shKeys) | n};
+    var shRawKeys = ${json.dumps(shRawKeys) | n};
 
     deform.addCallback(
         'searchinvinput-${field.oid}',
         function(oid) {
             createSearch(oid, tForUnknown, tForToomanyresults, tForNothingfound,
-                queryUrl, searchPrefix, shKeys);
+                queryUrl, searchPrefix, shKeys, shRawKeys);
         }
     );
 </script>

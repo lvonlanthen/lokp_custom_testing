@@ -7,11 +7,15 @@
 <%
     import urllib
     import datetime
-    from lmkp.views.views import getQueryString
+    from lmkp.views.views import (
+        get_default_search_key,
+    )
 
     # Get the keys and their translation
     from lmkp.views.config import getGridColumnKeys
     keys = getGridColumnKeys(request, 'activities')
+
+    default_search_translated, default_search_original = get_default_search_key(request, 'a')
 
     sh_uids = ','.join(invfilter) if invfilter is not None else ''
 %>
@@ -22,11 +26,6 @@
 <!-- content -->
 <div class="container">
 
-    <div class="show-investors visible-phone">
-        <i class="icon-info-sign"></i>
-        <p>${_('Show investors by click on a specific row.')}</p>
-    </div>
-
     <div class="content">
 
         ## Spatial Filter
@@ -35,7 +34,7 @@
             spatialFilterExplanation = _('You are seeing all the Deals within the current profile.')
             spatialFilterLink = None
 
-            if spatialfilter == 'mapextentparam' or spatialfilter == 'mapextentcookie':
+            if spatialfilter == 'map':
                 spatialFilterBasedOn = _('Map Extent')
                 spatialFilterExplanation = _('You are currently only seeing Deals which are visible on the map.')
                 spatialFilterLink = _('Show all Deals of the profile.')
@@ -52,7 +51,7 @@
                 % endif
             ${spatialFilterExplanation}
             % if spatialFilterLink:
-                <br/><a href="${getQueryString(request.url, add=[('bbox', 'profile')])}">${spatialFilterLink}</a>
+                <br/><a href="${handle_query_string(request.url, add=[('bbox', 'profile')])}">${spatialFilterLink}</a>
             % endif
         </div>
         % endif
@@ -69,7 +68,7 @@
             ${_('is involved.')}<br/><a href="${request.route_url('activities_read_many', output='html')}">${_('Remove this filter and show all Deals')}</a>.
         </div>
         % endif
-        
+
         ## Status Filter
         % if statusfilter:
         <div class="alert alert-info">
@@ -80,47 +79,63 @@
 
         ## Tabs
         <ul class="nav nav-tabs table_tabs">
-            <%
-                # The entries of the tabs as arrays with
-                # - url
-                # - name
-                tabs = [
-                    [
-                        [
-                            request.route_url('activities_read_many', output='html'),
-                            request.route_url('activities_bystakeholders', output='html', uids=sh_uids)
-                        ], _('Deals')
-                    ], [
-                        [
-                            request.route_url('stakeholders_byactivities_all', output='html')
-                        ], _('Investors')
-                    ]
-                ]
-            %>
-            % for t in tabs:
-                % if request.current_route_url() in t[0]:
+            % if request.current_route_url() in [request.route_url('activities_read_many', output='html'), request.route_url('activities_bystakeholders', output='html', uids=sh_uids)]:
+                % if is_moderator:
+                    <li class="active moderator-show-pending-left">
+                % else:
                     <li class="active">
-                % else:
-                    <li>
                 % endif
-                    <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['order_by', 'dir', 'status'])}">${t[1]}</a>
-                </li>
-            % endfor
-            % if isModerator:
+            % else:
+                <li>
+            % endif
+                <a href="${request.route_url('activities_read_many', output='html')}${handle_query_string(request.url, return_value='query_string', remove=['order_by', 'dir', 'status'])}">${_('Activities')}</a>
+            </li>
+            % if is_moderator:
                 % if 'status=pending' in request.path_qs:
-                    <li class="grid-show-pending active pointer">
-                        <a href="${getQueryString(request.url, remove=['status'])}">${_('Show all')}</a>
+                    <li class="active moderator-show-pending-right">
+                        <a href="${handle_query_string(request.current_route_url(), remove=['status'])}" data-toggle="tooltip" title="${_('Show all')}">
+                            <i class="icon-flag"></i>
+                        </a>
                     </li>
                 % else:
-                    <li class="grid-show-pending">
-                        <a href="${getQueryString(request.url, add=[('status', 'pending')])}">${_('Show only pending')}</a>
+                    <li class="moderator-show-pending-right">
+                        <a href="${handle_query_string(request.current_route_url(), add=[('status', 'pending')])}" data-toggle="tooltip" title="${_('Show only pending')}">
+                            <i class="icon-flag"></i>
+                            </a>
                     </li>
                 % endif
+            % endif
+
+            % if request.current_route_url() in [request.route_url('stakeholders_byactivities_all', output='html')]:
+                <li class="active">
+            % else:
+                <li>
+            % endif
+                <a href="${request.route_url('stakeholders_byactivities_all', output='html')}${handle_query_string(request.url, return_value='query_string', remove=['order_by', 'dir', 'status'])}">${_('Stakeholders')}</a>
+            </li>
+
+            <li class="grid-tab-right">
+                <a href="${request.route_url('activities_read_many', output='download')}${handle_query_string(request.url, return_value='query_string', remove=['order_by', 'dir', 'status'])}" data-toggle="tooltip" title="${_('Download Activities')}">
+                    <i class="icon-download-alt"></i>
+                </a>
+            </li>
+            <li class="grid-tab-right">
+                <a href="${request.route_url('changesets_read_latest', output='rss', _query=(('_LOCALE_', locale),('_PROFILE_', profile)))}" data-toggle="tooltip" title="${_('View and subscribe to latest changes')}">
+                    <i class="icon-rss"></i>
+                </a>
+            </li>
+
+            % if default_search_translated:
+                <li class="grid-tab-right">
+                    <a href="javascript:void(0)" id="search" data-toggle="tooltip" title="${_('Search by')} ${default_search_translated}">
+                        <i class="icon-search"></i>
+                    </a>
+                </li>
             % endif
         </ul>
 
         ## Table
-        <div class="table_wrapper">
+        <div class="table_wrapper item-grid-wrapper">
 
             % if len(data) == 0:
 
@@ -133,30 +148,23 @@
 
             % else:
 
-                ## "Tooltip" when clicking a table row
-                <div class="show-investors-wrapper hidden hidden-phone">
-                    <div class="show-investors">
-                        <a href="#">${_('Show investors for this deal')}</a>
-                    </div>
-                </div>
-
                 <table
                     class="table table-hover table-self table-bordered"
-                    id="activitygrid">
+                    id="itemgrid">
                     <thead>
                         ## The table headers
                         <tr>
                             <th>${_('Deal ID')}</th>
                             <th>
                                 ${_('Last Change')}
-                                <a href="${getQueryString(request.url, add=[('order_by', 'timestamp'), ('dir', 'asc')])}">
+                                <a href="${handle_query_string(request.url, add=[('order_by', 'timestamp'), ('dir', 'asc')])}">
                                     <div class="desc
                                          % if 'order_by=timestamp' in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
                                             active
                                          % endif
                                          ">&nbsp;</div>
                                 </a>
-                                <a href="${getQueryString(request.url, add=[('order_by', 'timestamp'), ('dir', 'desc')])}">
+                                <a href="${handle_query_string(request.url, add=[('order_by', 'timestamp'), ('dir', 'desc')])}">
                                 <div class="asc
                                      % if ('order_by=timestamp' in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs) or 'order_by=' not in request.path_qs:
                                         active
@@ -166,14 +174,14 @@
                             </th>
                             % for k in keys:
                                 <th>${k[1]}
-                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
+                                    <a href="${handle_query_string(request.url, add=[('order_by', k[0]), ('dir', 'asc')])}">
                                         <div class="desc
                                              % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('asc') in request.path_qs:
                                                 active
                                              % endif
                                              ">&nbsp;</div>
                                     </a>
-                                    <a href="${getQueryString(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
+                                    <a href="${handle_query_string(request.url, add=[('order_by', k[0]), ('dir', 'desc')])}">
                                     <div class="asc
                                          % if 'order_by=%s' % urllib.quote_plus(k[0]) in request.path_qs and 'dir=%s' % urllib.quote_plus('desc') in request.path_qs:
                                             active
@@ -196,7 +204,7 @@
                                     pending = True
 
                                 id = d['id'] if 'id' in d else _('Unknown')
-                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M') 
+                                timestamp = (datetime.datetime.strptime(d['timestamp'], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M')
                                     if 'timestamp' in d else _('Unknown'))
                                 values = []
                                 translatedkeys = []
@@ -250,6 +258,55 @@
 ## End of content
 
 <%def name="bottom_tags()">
+    <%
+        from lmkp.views.views import (
+            get_default_search_key,
+        )
+
+        default_search_translated, default_search_original = get_default_search_key(request, 'a')
+    %>
+
+    <script type="text/javascript">
+        $(function () {
+            $("a[data-toggle='tooltip']").tooltip({
+                container: 'body',
+                placement: 'bottom'
+            });
+        });
+        var link_involvement_text = '${_("Show [LOKP Stakeholders] for this [LOKP Activities]")}';
+    </script>
+
+    % if default_search_original:
+    <script type="text/javascript">
+        var search_by = '${default_search_original}';
+        var search_itemtype = 'a';
+        $(function () {
+            $('#search').popover({
+                html: true,
+                trigger: 'click',
+                placement: 'bottom',
+                content: function () {
+                    return [
+                        '<form class="form-search" action="javascript:void(0);">',
+                        '<div class="input-append">',
+                        '<input type="text" id="search-query" class="span2 search-query">',
+                        '<button type="button" id="search-button" class="btn" onclick="search();">',
+                        'Search',
+                        '</button></div></form>'
+                    ].join('');
+                }
+            });
+        });
+        function search() {
+            var term = $('#search-query').val();
+            if (term && search_by) {
+                addNewFilter(search_itemtype, search_by, 'ilike', ['*', term, '*'].join(''));
+            }
+            return false;
+        }
+    </script>
+    % endif
+
     <script src="${request.static_url('lmkp:static/v2/grid.js')}" type="text/javascript"></script>
     <script src="${request.static_url('lmkp:static/v2/filters.js')}" type="text/javascript"></script>
 </%def>

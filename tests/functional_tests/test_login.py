@@ -1,45 +1,43 @@
 import pytest
-from selenium import webdriver
-from unittest import TestCase
 
-from .base import *
+from .base import LmkpFunctionalTestCase
+from ..base import(
+    BUTTON_LOGIN,
+    BUTTON_USERNAME,
+    PASSWORD,
+    TITLE_MAP_VIEW,
+    USERNAME,
+)
 
 
+@pytest.mark.usefixtures('app_functional')
 @pytest.mark.functional
 @pytest.mark.login
-class LoginTests(TestCase):
-    
-    def setUp(self):
-        self.driver = webdriver.Firefox()
-
-    def tearDown(self):
-        self.driver.quit()
-
+class LoginTests(LmkpFunctionalTestCase):
 
     def test_login(self):
         """
         Tests the login
         """
-        
+
         # Make sure the user is not logged in. On Map View, the login link
         # should appear but no username.
-        self.driver.get(createUrl('/map'))
+        self.driver.get(self.url('/logout'))
         self.assertIn(TITLE_MAP_VIEW, self.driver.title)
-        self.assertFalse(checkElExists(self.driver, 'link_text', BUTTON_USERNAME))
-        self.assertTrue(checkElExists(self.driver, 'link_text', BUTTON_LOGIN))
-        
+        self.el('link_text', BUTTON_USERNAME, inverse=True)
+        self.el('link_text', BUTTON_LOGIN)
+
         # Login
-        self.driver.get(createUrl('/login'))
-        loginfield = self.driver.find_element_by_name('login')
+        self.driver.get(self.url('/login'))
+        loginfield = self.el('name', 'login')
         loginfield.send_keys(USERNAME)
-        passwordfield = self.driver.find_element_by_name('password')
+        passwordfield = self.el('name', 'password')
         passwordfield.send_keys(PASSWORD)
-        btn = self.driver.find_element_by_name('form.submitted')
+        btn = self.el('name', 'form.submitted')
         btn.click()
-        
+
         # Check that the user is now logged in. We should be back on the Map
         # View, with the username showing instead of the login link.
         self.assertIn(TITLE_MAP_VIEW, self.driver.title)
-        self.assertTrue(checkElExists(self.driver, 'link_text', BUTTON_USERNAME))
-        self.assertFalse(checkElExists(self.driver, 'link_text', BUTTON_LOGIN))
-    
+        self.el('link_text', BUTTON_USERNAME)
+        self.el('link_text', BUTTON_LOGIN, inverse=True)

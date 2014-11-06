@@ -68,70 +68,78 @@ geomTaggroups = form_geomtaggroups(request)
 
 <!-- map menu -->
 <div class="map-menu">
-    <form class="navbar-search" action="">
-        <input name="q" id="search" class="search-query" placeholder="${_('search location')}" />
-        <input value="Search" id="search-submit" />
-    </form><br/>
-    
-    <!-- Deals -->
-    <div class="map-menu-deals">
-        <h6 class="map-deals">
-            <i class="icon-chevron-down"></i>
-            ${_('Deals')}
+    <div id="map-menu-button-container">
+        <h6 id="map-menu-button">
+            <i class="icon-chevron-up"></i>
+            ${_("Map options")}
         </h6>
-        <div class="map-deals-content">
-            <ul>
-                <li>
-                    <div class="checkbox-modified-small">
-                        <input class="input-top" type="checkbox" id="activityLayerToggle" checked="checked">
-                        <label for="activityLayerToggle"></label>
-                    </div>
-                    
-                    <div id="map-deals-symbolization" class="dropdown context-layers-description">
-                        ${_('Loading ...')}
-                    </div>
-                    <ul id="map-points-list">
-                        <!-- Placeholder for map points -->
-                    </ul>
-                </li>
-            </ul>
-            <ul id="map-areas-list">
-                <!-- Placeholder for area entries -->
-            </ul>
-        </div>
     </div>
+    <div id="map-menu-container" class="hide">
+        <form class="navbar-search" action="">
+            <input name="q" id="search" class="search-query" placeholder="${_('search location')}" />
+            <input value="Search" id="search-submit" />
+        </form><br/>
 
-    <!-- Base layers -->
-    <div class="map-menu-base-layers">
-        <h6 class="base-layers">
-            <i class="icon-chevron-right"></i>
-            ${_('Base layers')}
-        </h6>
-        <div class="base-layers-content">
-            <ul>
-                <li>
-                    <label class="radio inline"><input type="radio" class="baseMapOptions" name="baseMapOptions" id="streetMapOption" value="streetMap" checked />${_('Street Map')}</label>
-                </li>
-                <li>
-                    <label class="radio inline"><input type="radio" class="baseMapOptions" name="baseMapOptions" id="satelliteMapOption" value="satelliteMap" />${_('Satellite Imagery')}</label>
-                </li>
-                <li>
-                    <label class="radio inline"><input type="radio" class="baseMapOptions" name="baseMapOptions" id="terrainMapOption" value="terrainMap" />${_('Terrain Map')}</label>
-                </li>
-            </ul>
+        <!-- Activities -->
+        <div class="map-menu-deals">
+            <h6 class="map-deals">
+                <i class="icon-chevron-down"></i>
+                ${_('[LOKP Activities]')}
+            </h6>
+            <div class="map-deals-content">
+                <ul>
+                    <li>
+                        <div class="checkbox-modified-small">
+                            <input class="input-top" type="checkbox" id="activityLayerToggle" checked="checked">
+                            <label for="activityLayerToggle"></label>
+                        </div>
+
+                        <div id="map-deals-symbolization" class="dropdown context-layers-description">
+                            ${_('Loading ...')}
+                        </div>
+                        <ul id="map-points-list">
+                            <!-- Placeholder for map points -->
+                        </ul>
+                    </li>
+                </ul>
+                <ul id="map-areas-list">
+                    <!-- Placeholder for area entries -->
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <!-- Context layers -->
-    <div class="map-menu-context-layers">
-        <h6 class="context-layers">
-            <i class="icon-chevron-right"></i>
-            ${_('Context layers')}
-        </h6>
-        <div class="context-layers-content">
-            <ul id="context-layers-list">
-                <!--  Placeholder for context layers entries -->
-            </ul>
+        <!-- Base layers -->
+        <div class="map-menu-base-layers">
+            <h6 class="base-layers">
+                <i class="icon-chevron-right"></i>
+                ${_('Base layers')}
+            </h6>
+            <div class="base-layers-content">
+                <ul>
+                    <li>
+                        <label class="radio inline"><input type="radio" class="baseMapOptions" name="baseMapOptions" id="streetMapOption" value="streetMap" checked />${_('Street Map')}</label>
+                    </li>
+                    <li>
+                        <label class="radio inline"><input type="radio" class="baseMapOptions" name="baseMapOptions" id="satelliteMapOption" value="satelliteMap" />${_('Satellite Imagery')}</label>
+                    </li>
+                    <li>
+                        <label class="radio inline"><input type="radio" class="baseMapOptions" name="baseMapOptions" id="terrainMapOption" value="terrainMap" />${_('Terrain Map')}</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Context layers -->
+        <div class="map-menu-context-layers">
+            <h6 class="context-layers">
+                <i class="icon-chevron-right"></i>
+                ${_('Context layers')}
+            </h6>
+            <div class="context-layers-content">
+                <ul id="context-layers-list">
+                    <!--  Placeholder for context layers entries -->
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -153,7 +161,7 @@ geomTaggroups = form_geomtaggroups(request)
 
 <%def name="bottom_tags()">
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
-<script src="${request.static_url('lmkp:static/lib/OpenLayers-2.12/OpenLayers.js')}" type="text/javascript"></script>
+<script src="${request.static_url('lmkp:static/build/openlayers/OpenLayers.mapview.min.js')}" type="text/javascript"></script>
 <script type="text/javascript" src="${request.route_url('context_layers')}"></script>
 <script src="${request.static_url('lmkp:static/v2/maps/main.js')}" type="text/javascript"></script>
 <script src="${request.static_url('lmkp:static/v2/maps/base.js')}" type="text/javascript"></script>

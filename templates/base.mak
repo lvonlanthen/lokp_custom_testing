@@ -1,5 +1,5 @@
 <%
-from lmkp.views.views import getQueryString
+from lmkp.utils import handle_query_string
 from lmkp.views.translation import get_languages
 from lmkp.views.translation import get_profiles
 languages = get_languages()
@@ -32,13 +32,13 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="content-language" content="${selectedlanguage[0]}" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <link rel="icon" type="image/ico" href="/favicon.ico"/>
+        <link rel="icon" type="image/ico" href="/custom/img/favicon.ico"/>
         <title>
             <%
                 try:
-                    context.write("%s - %s" % (self.title(), _("Land Observatory")))
+                    context.write("%s - %s" % (self.title(), _("LOKP")))
                 except AttributeError:
-                    context.write(_("Land Observatory"))
+                    context.write(_("LOKP"))
             %>
         </title>
         <meta name="description" content="" />
@@ -90,74 +90,72 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                 <div class="navbar header_self">
                     <div class="container">
                         <div class="logo">
-                            <a href="${request.route_url('map_view')}">
+                            <a href="${request.route_url('profile_global')}">
                                 % if mode == 'demo':
-                                    <img src="/custom/img/logo_demo.png" alt="${_('Land Observatory')}" />
+                                    <img src="/custom/img/logo_demo.png" alt="${_('LOKP')}" />
                                 % else:
-                                    <img src="/custom/img/logo.png" alt="${_('Land Observatory')}" />
+                                    <img src="/custom/img/logo.png" alt="${_('LOKP')}" />
                                 % endif
                             </a>
                         </div>
-                        <div class="top_menu">
-                            <ul class="top-menu">
-                                <%
-                                    # The entries of the top menus as arrays
-                                    # with
-                                    # - an array of urls (the first one being used for the link)
-                                    # - icon (li class)
-                                    # - name
-                                    topmenu = [
+                        <ul class="top-menu">
+                            <%
+                                # The entries of the top menus as arrays
+                                # with
+                                # - an array of urls (the first one being used for the link)
+                                # - icon (li class)
+                                # - name
+                                topmenu = [
+                                    [
+                                        [request.route_url('map_view')],
+                                        'icon-map-marker',
+                                        _('Map')
+                                    ], [
                                         [
-                                            [request.route_url('map_view')],
-                                            'icon-map-marker',
-                                            _('Map')
-                                        ], [
-                                            [
-                                                request.route_url('grid_view'),
-                                                request.route_url('activities_read_many', output='html'),
-                                                request.route_url('stakeholders_read_many', output='html'),
-                                                request.route_url('stakeholders_byactivities_all', output='html')
-                                            ],
-                                            'icon-align-justify',
-                                            _('Grid')
-                                        ], [
-                                            [
-                                                request.route_url('charts_view'),
-                                                request.route_url('charts_overview')
-                                            ],
-                                            'icon-bar-chart',
-                                            _('Charts')
-                                        ]
+                                            request.route_url('grid_view'),
+                                            request.route_url('activities_read_many', output='html'),
+                                            request.route_url('stakeholders_read_many', output='html'),
+                                            request.route_url('stakeholders_byactivities_all', output='html')
+                                        ],
+                                        'icon-align-justify',
+                                        _('Grid')
+                                    ], [
+                                        [
+                                            request.route_url('charts_view'),
+                                            request.route_url('charts_overview')
+                                        ],
+                                        'icon-bar-chart',
+                                        _('Charts')
                                     ]
-                                %>
+                                ]
+                            %>
 
-                                % for t in topmenu:
-                                    <li
-                                        % if request.current_route_url() in t[0]:
-                                            class="active grid"
-                                        % endif
-                                        >
-                                        <a href="${t[0][0]}${getQueryString(request.url, ret='queryString', remove=['bbox', 'order_by', 'dir', 'status'])}">
-                                            <i class="${t[1]}"></i>&nbsp;&nbsp;${t[2]}
-                                        </a>
-                                    </li>
-                                % endfor
+                            % for t in topmenu:
+                                <li
+                                    % if request.current_route_url() in t[0]:
+                                        class="active grid"
+                                    % endif
+                                    >
+                                    <a href="${t[0][0]}${handle_query_string(request.url, return_value='query_string', remove=['bbox', 'order_by', 'dir', 'status'])}">
+                                        <i class="${t[1]}"></i><span class="hidden-verysmall">&nbsp;&nbsp;${t[2]}</span>
+                                    </a>
+                                </li>
+                            % endfor
 
-                                ## If the user is logged in, show link to add a new deal
-                                % if request.user:
-                                    <li
-                                        % if request.current_route_url() == request.route_url('activities_read_many', output='form'):
-                                            class="active grid"
-                                        % endif
-                                        >
-                                        <a href="${request.route_url('activities_read_many', output='form')}" >
-                                            <i class="icon-pencil"></i>
-                                            ${_('New Deal')}
-                                        </a>
-                                    </li>
-                                % endif
-                            </ul>
-                        </div>
+                            ## If the user is logged in, show link to add a new deal
+                            % if request.user:
+                                <li
+                                    % if request.current_route_url() == request.route_url('activities_read_many', output='form'):
+                                        class="active grid"
+                                    % endif
+                                    >
+                                    <a href="${request.route_url('activities_read_many', output='form')}" >
+                                        <i class="icon-pencil"></i>
+                                        <span class="hidden-verysmall">${_('New Deal')}</span>
+                                    </a>
+                                </li>
+                            % endif
+                        </ul>
                         <div class="user">
                             <ul class="nav nav-pills">
                                 % if request.user is None:
@@ -191,13 +189,12 @@ if 'lmkp.use_piwik_analytics' in request.registry.settings:
                                 <li>
                                     <div class="dropdown">
                                         <a class="dropdown-toggle blacktemp" data-toggle="dropdown" href="#">
-                                            ${selectedlanguage[1]}
-                                            <b class="caret"></b>
+                                            <span class="link-icon-right">${selectedlanguage[1]}</span><b class="caret"></b>
                                         </a>
                                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                             % for l in languages:
                                                 <li class="cursor">
-                                                    <a href="${getQueryString(request.url, add=[('_LOCALE_', l[0])])}">${l[1]}</a>
+                                                    <a href="${handle_query_string(request.url, add=[('_LOCALE_', l[0])])}">${l[1]}</a>
                                                 </li>
                                             % endfor
                                         </ul>

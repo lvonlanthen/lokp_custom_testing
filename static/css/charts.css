@@ -1,0 +1,158 @@
+#loadingRow, #loading-div {
+    margin-bottom: 5px;
+    background: url(/custom/img/ajax-loader.gif) no-repeat center center;
+}
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+.axis text, .bar {
+    cursor: pointer;
+}
+.bar {
+    fill: #A3A708;
+}
+.bar:hover, .bar.hover {
+    fill: #DBDB9B;
+}
+
+.valueShape {
+    fill: #A3A708;
+    stroke: darkGrey;
+}
+
+.valueText {
+    fill: white;
+}
+
+ul.chartNav li a {
+    color: #333333;
+}
+ul.chartNav li a:hover {
+    background-color: #DBDB9B;
+}
+ul.chartNav li.active a {
+    background-color: #A3A708;
+    color: #white;
+}
+ul.chartNav li.active a:hover {
+    background-color: #A3A708;
+}
+.btn-bar-sort {
+  float: right !important;
+}
+
+.chart-gallery p {
+    margin: 1em 0 2em;
+}
+
+.chart-gallery a.thumbnail:hover, .chart-gallery a.thumbnail:focus {
+    border-color: #808080;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.groups {
+    cursor: pointer;
+}
+.groups rect {
+    fill-opacity: 0.8;
+}
+.groups rect:hover, .groups rect.active {
+    fill-opacity: 1;
+}
+
+.legend-entry text {
+    cursor: pointer;
+    fill: #686868;
+}
+.legend-entry rect {
+    cursor: pointer;
+    stroke: #909090;
+    fill-opacity: 0.8;
+}
+.legend-entry.active text, .legend-entry text:hover, #legend-title {
+    visibility: visible !important;
+    fill: #000;
+}
+#legend-container.active {
+    visibility: visible !important;
+}
+.legend-entry.active rect, .legend-entry rect:hover {
+    stroke: #000;
+    fill-opacity: 1;
+}
+#legend-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+#legend-container {
+    fill: white;
+    fill-opacity: 0.7;
+    stroke: #909090;
+    visibility: hidden;
+}
+
+#legend.legend-small text {
+    visibility: hidden;
+}
+
+.chart-top-menu {
+  margin-bottom: 10px;
+}
+
+
+/**
+ * Map Chart
+ */
+#map {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+#map-loading rect {
+  fill: #fff;
+  fill-opacity: 0.6;
+}
+#map-loading.hidden {
+  fill: none;
+}
+
+#countries {
+  fill: #cde; /* Also used in mapchart.js */
+  stroke: #fff;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+#countries path.active {
+  fill: darkGrey !important;
+  cursor: pointer;
+}
+
+#countries-list {
+  margin-top: 3px;
+  padding-left: 10px;
+  border-left: 1px solid silver;
+}
+
+.countries-list-entry {
+  cursor: pointer;
+}
+.countries-list-entry.active {
+  font-weight: bold;
+}
+.countries-list-entry .pull-right {
+  margin-right: 10px;
+}
+
+.map-profile-select {
+  float: left;
+  line-height: 30px;
+  margin-right: 5px;
+}
+#profile-selector, .btn-country-selector {
+  text-transform: uppercase;
+}

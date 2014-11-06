@@ -13,7 +13,12 @@
   - Languages (add Code, Spanish to existing languages)
   - Stakeholder Roles
   - Institution Types
-  
+  - Users:
+    - user1: active and approved, moderator in laos profile
+    - user2: active and approved, regular user (in cambodia profile)
+    - user3: active but not approved (in laos profile)
+    - user4: inactive (in laos profile)
+
   It also links user 1 (addmin) with the global profile.
 
 */
@@ -76,13 +81,17 @@ INSERT INTO data.categories(id, name, type, fk_language, description, fk_categor
   (49, '[SH-T] Subcategory 7', NULL, 3, NULL, 23),
   (50, '[SH-T] Subcategory 8', NULL, 3, NULL, 24),
   (51, '[SH-T] Subcategory 9', NULL, 3, NULL, 25),
-  (52, '[SH-T] Subcategory 10', NULL, 3, NULL, 26)
+  (52, '[SH-T] Subcategory 10', NULL, 3, NULL, 26),
+  (53, '[A] Category 4', 'activities', 1, NULL, NULL),
+  (54, '[A] Category 5', 'activities', 1, NULL, NULL),
+  (55, '[SH] Category 4', 'stakeholders', 1, NULL, NULL),
+  (56, '[SH] Category 5', 'stakeholders', 1, NULL, NULL)
 ;
-SELECT setval('data.categories_id_seq', 52, true);
+SELECT setval('data.categories_id_seq', 56, true);
 
 INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, description, validator) VALUES
   (1, NULL, NULL, '[A] Textfield 1', 'String', NULL, NULL, NULL),
-  (2, NULL, NULL, '[A] Textfield 2', 'String', NULL, NULL, NULL),
+  (2, NULL, NULL, '[A] Textfield 2', 'String', 'ha 1', NULL, NULL),
   (3, NULL, NULL, '[A] Textfield 3', 'String', NULL, NULL, NULL),
   (4, NULL, NULL, '[A] Textarea 1', 'Text', NULL, NULL, NULL),
   (5, NULL, NULL, '[A] Textarea 2', 'Text', NULL, NULL, NULL),
@@ -108,11 +117,11 @@ INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, descript
   (25, NULL, NULL, '[A] Inputtoken 1', 'InputToken', NULL, NULL, NULL),
   (26, NULL, NULL, '[A] Inputtoken 2', 'InputToken', NULL, NULL, NULL),
   (27, NULL, NULL, '[A] Inputtoken 3', 'InputToken', NULL, NULL, NULL),
-  (28, NULL, NULL, '[A] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, NULL),
-  (29, NULL, NULL, '[A] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, NULL),
-  (30, NULL, NULL, '[A] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, NULL),
-  (31, 1, 1, '[A] Textfield 1', NULL, NULL, NULL, NULL),
-  (32, 2, 1, '[A] Textfield 2', NULL, NULL, NULL, NULL),
+  (28, NULL, NULL, '[A] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (29, NULL, NULL, '[A] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (30, NULL, NULL, '[A] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (31, 1, 1, '[A] Textfield 1_', NULL, NULL, NULL, NULL),
+  (32, 2, 1, '[A] Textfield 2', NULL, 'ha 2', NULL, NULL),
   (33, 3, 1, '[A] Textfield 3', NULL, NULL, NULL, NULL),
   (34, 4, 1, '[A] Textarea 1', NULL, NULL, NULL, NULL),
   (35, 5, 1, '[A] Textarea 2', NULL, NULL, NULL, NULL),
@@ -141,12 +150,12 @@ INSERT INTO data.a_keys(id, fk_a_key, fk_language, key, type, helptext, descript
   (58, 28, 1, '[A] Integerdropdown 1', NULL, NULL, NULL, NULL),
   (59, 29, 1, '[A] Integerdropdown 2', NULL, NULL, NULL, NULL),
   (60, 30, 1, '[A] Integerdropdown 3', NULL, NULL, NULL, NULL),
-  (61, 1, 3, '[A-T] Textfield 1', NULL, NULL, NULL, NULL),
+  (61, 1, 3, '[A-T] Identical Translation', NULL, NULL, NULL, NULL),
   (62, 2, 3, '[A-T] Textfield 2', NULL, NULL, NULL, NULL),
-  (63, 3, 3, '[A-T] Textfield 3', NULL, NULL, NULL, NULL),
+  (63, 3, 3, '[A-T] Identical Translation', NULL, NULL, NULL, NULL),
   (64, 4, 3, '[A-T] Textarea 1', NULL, NULL, NULL, NULL),
   (65, 5, 3, '[A-T] Textarea 2', NULL, NULL, NULL, NULL),
-  (66, 6, 3, '[A-T] Textarea 3', NULL, NULL, NULL, NULL),
+  (66, 6, 3, '[A-T] éèäö', NULL, NULL, NULL, NULL),
   (67, 7, 3, '[A-T] Dropdown 1', NULL, NULL, NULL, NULL),
   (68, 8, 3, '[A-T] Dropdown 2', NULL, NULL, NULL, NULL),
   (69, 9, 3, '[A-T] Dropdown 3', NULL, NULL, NULL, NULL),
@@ -343,9 +352,9 @@ INSERT INTO data.a_values (id, fk_a_value, fk_language, value, fk_a_key, "order"
   (166, 82, 3, '[A-T] Value I1', NULL, NULL),
   (167, 83, 3, '[A-T] Value I2', NULL, NULL),
   (168, 84, 3, '[A-T] Value I3', NULL, NULL)
-;  
+;
 SELECT setval('data.a_values_id_seq', 168, true);
-   
+
 INSERT INTO data.sh_keys (id, fk_sh_key, fk_language, key, type, helptext, description, validator) VALUES
   (1, NULL, NULL, '[SH] Textfield 1', 'String', NULL, NULL, NULL),
   (2, NULL, NULL, '[SH] Textfield 2', 'String', NULL, NULL, NULL),
@@ -374,9 +383,9 @@ INSERT INTO data.sh_keys (id, fk_sh_key, fk_language, key, type, helptext, descr
   (25, NULL, NULL, '[SH] Inputtoken 1', 'InputToken', NULL, NULL, NULL),
   (26, NULL, NULL, '[SH] Inputtoken 2', 'InputToken', NULL, NULL, NULL),
   (27, NULL, NULL, '[SH] Inputtoken 3', 'InputToken', NULL, NULL, NULL),
-  (28, NULL, NULL, '[SH] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, NULL),
-  (29, NULL, NULL, '[SH] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, NULL),
-  (30, NULL, NULL, '[SH] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, NULL),
+  (28, NULL, NULL, '[SH] Integerdropdown 1', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (29, NULL, NULL, '[SH] Integerdropdown 2', 'IntegerDropdown', NULL, NULL, '[1,5]'),
+  (30, NULL, NULL, '[SH] Integerdropdown 3', 'IntegerDropdown', NULL, NULL, '[1,5]'),
   (31, 1, 1, '[SH] Textfield 1', NULL, NULL, NULL, NULL),
   (32, 2, 1, '[SH] Textfield 2', NULL, NULL, NULL, NULL),
   (33, 3, 1, '[SH] Textfield 3', NULL, NULL, NULL, NULL),
@@ -407,9 +416,9 @@ INSERT INTO data.sh_keys (id, fk_sh_key, fk_language, key, type, helptext, descr
   (58, 28, 1, '[SH] Integerdropdown 1', NULL, NULL, NULL, NULL),
   (59, 29, 1, '[SH] Integerdropdown 2', NULL, NULL, NULL, NULL),
   (60, 30, 1, '[SH] Integerdropdown 3', NULL, NULL, NULL, NULL),
-  (61, 1, 3, '[SH-T] Textfield 1', NULL, NULL, NULL, NULL),
+  (61, 1, 3, '[SH-T] Identical Translation', NULL, NULL, NULL, NULL),
   (62, 2, 3, '[SH-T] Textfield 2', NULL, NULL, NULL, NULL),
-  (63, 3, 3, '[SH-T] Textfield 3', NULL, NULL, NULL, NULL),
+  (63, 3, 3, '[SH-T] Identical Translation', NULL, NULL, NULL, NULL),
   (64, 4, 3, '[SH-T] Textarea 1', NULL, NULL, NULL, NULL),
   (65, 5, 3, '[SH-T] Textarea 2', NULL, NULL, NULL, NULL),
   (66, 6, 3, '[SH-T] Textarea 3', NULL, NULL, NULL, NULL),
@@ -437,7 +446,7 @@ INSERT INTO data.sh_keys (id, fk_sh_key, fk_language, key, type, helptext, descr
   (88, 28, 3, '[SH-T] Integerdropdown 1', NULL, NULL, NULL, NULL),
   (89, 29, 3, '[SH-T] Integerdropdown 2', NULL, NULL, NULL, NULL),
   (90, 30, 3, '[SH-T] Integerdropdown 3', NULL, NULL, NULL, NULL)
-;  
+;
 SELECT setval('data.sh_keys_id_seq', 90, true);
 
 INSERT INTO data.sh_values (id, fk_sh_value, fk_language, value, fk_sh_key, "order") VALUES
@@ -619,10 +628,31 @@ INSERT INTO data.profiles (id, code, polygon) VALUES (4, 'madagascar', '01030000
 INSERT INTO data.profiles (id, code, polygon) VALUES (5, 'cambodia', '0103000020E6100000010000001E000000FEFFFFBFBFB9594098000040C6D323400A0000C05FB959401000002045D42340FEFFFF3F6EB859401801006029DA23400E00008049B85940180000001ADD23400A0000C076965940900000003B8D2A40020000003396594070000060FAB02A400E0000C88795594060000030F0122B400A000060929559403800004015162B40060000E0A89559405800008093182B4006000080F0955940880000C0881D2B40120000803DBC5940900000A0D1622C402AE66D2432BD5940A0E026CC7D692C400E000020CFC35940780000C0FF902C40060000D029C95940A00000101DA62C400A000020C5CA5940380000C009AA2C400A000080CEE35940180000C019D82C40020000A02AE5594020000060BAD92C40FEFFFFBF4EEA59400000000085DF2C40363333136BE25A40F0999939C0602D40FEFFFF7F80E35A40100000A0945F2D4006000080AEE35A4078000050FC5D2D40060000C051E85A40580000A0B1B82A4002000000C2E55A4060000020CF1D29400E0000E001E55A401000002055FA28400A0000A081E35A401000008050C2284046984E19F8E25A406095868B2DB6284002000060C1E25A4018000080D7B228405E555595298C5A40C0555575ED932540120000C0C9BB59402000000083D42340FEFFFFBFBFB9594098000040C6D32340');
 SELECT setval('data.profiles_id_seq', 5, true);
 
-INSERT INTO data.users_profiles(id, fk_user, fk_profile) VALUES 
-  (1, 1, 1)
+INSERT INTO data.users(id, uuid, username, email, firstname, lastname, privacy, registration_timestamp, is_active, activation_uuid, is_approved, fk_institution, password) VALUES
+  (2, '032f1ef8-8db9-41e9-b18d-170da6ea288e', 'user1', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, true, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4='),
+  (3, 'ebf77c29-267a-43d0-a85d-4c1fe8a4b196', 'user2', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, true, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4='),
+  (4, '9d124316-d853-41f0-a9c2-dd177d649113', 'user3', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', true, NULL, false, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4='),
+  (5, 'c48f2afc-a642-4571-b469-01a7416dc355', 'user4', 'lukas.vonlanthen@cde.unibe.ch', '', '', 1, '2014-07-21 09:30:00.000+02', false, 'ff0f0050-bf5e-4361-954b-4b95809d6e32', false, NULL, '$p5k2$1000$W_xPYQFaism2IVAdnx-Oyg==$JSA4ab8fFYNc8jzDMz-TkszzxO4=')
 ;
-SELECT setval('data.users_profiles_id_seq', 1, true);
+SELECT setval('data.users_id_seq', 5, true);
+
+INSERT INTO data.users_profiles(id, fk_user, fk_profile) VALUES
+  (1, 1, 1),
+  (2, 2, 2),
+  (3, 3, 3),
+  (4, 4, 2),
+  (5, 5, 2)
+;
+SELECT setval('data.users_profiles_id_seq', 5, true);
+
+INSERT INTO data.users_groups(id, fk_user, fk_group) VALUES
+  (5, 2, 2),
+  (6, 2, 3),
+  (7, 3, 3),
+  (8, 4, 3),
+  (9, 5, 3)
+;
+SELECT setval('data.users_groups_id_seq', 9, true);
 
 INSERT INTO data.stakeholder_roles(id, name, description) VALUES
   (1, 'Stakeholder Role 1', NULL),
