@@ -3,9 +3,11 @@ import pytest
 from ..base import (
     LmkpTestCase,
     get_base_url_by_item_type,
+    get_involvements_from_item_json,
 )
 from ..diffs import (
     get_new_diff,
+    get_edit_diff,
 )
 from ...base import (
     TITLE_HISTORY_VIEW,
@@ -65,6 +67,38 @@ class ActivityReadManyTests(LmkpTestCase):
 
         self.assertIn(uid_1, res)
         self.assertNotIn(uid_2, res)
+
+    def test_change_involvement_role_does_not_create_duplicate_invs(self):
+        self.login()
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+
+        inv_data = [{
+            'id': sh_uid,
+            'version': 2,
+            'role': 6,
+            'op': 'delete'
+        }, {
+            'id': sh_uid,
+            'version': 2,
+            'role': 5,
+            'op': 'add'
+        }]
+        self.create(
+            'a', get_edit_diff(102, a_uid, version=1, data=inv_data))
+
+        res = self.read_one('sh', sh_uid)
+        inv_v1 = get_involvements_from_item_json(res)
+        self.assertEqual(len(inv_v1), 1)
 
 
 @pytest.mark.usefixtures('app')

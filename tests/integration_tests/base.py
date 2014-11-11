@@ -41,7 +41,7 @@ class LmkpTestCase(TestCase):
             return ret.json['data'][0]['id']
         return ret
 
-    def read_one(self, item_type, uid, format):
+    def read_one(self, item_type, uid, format='json'):
         url = get_base_url_by_item_type(item_type)
         if format == 'json':
             res = self.app.get('%s/json/%s?translate=false' % (url, uid))
