@@ -8,8 +8,8 @@ from lmkp.views.views import (
     get_output_format,
     get_page_parameters,
     get_status_parameter,
-    get_current_locale,
     get_current_profile,
+    get_current_attribute_filters,
 )
 from ...integration_tests.base import (
     LmkpTestCase,
@@ -214,8 +214,8 @@ class ViewsGetCurrentProfileTests(LmkpTestCase):
 
 @pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-@pytest.mark.locale
-class ViewsGetCurrentLocaleTests(LmkpTestCase):
+@pytest.mark.filter
+class ViewsGetCurrentAttributeFilters(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -225,22 +225,41 @@ class ViewsGetCurrentLocaleTests(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def test_get_current_locale_returns_en_by_default(self):
-        locale = get_current_locale(self.request)
-        self.assertEqual(locale, 'en')
+    def test_get_current_attribute_filters_returns_empty_array(self):
+        filters = get_current_attribute_filters(self.request)
+        self.assertEqual(filters, [])
 
-    def test_get_current_locale_returns_locale_from_params(self):
-        self.request.params = {'_LOCALE_': 'foo'}
-        locale = get_current_locale(self.request)
-        self.assertEqual(locale, 'foo')
+    def test_get_current_attribute_filters_returns_filters(self):
+        self.request.params = {
+            'a__foo1__eq': 'bar1',
+            'sh__foo2__ne': 'bar2'
+        }
+        filters = get_current_attribute_filters(self.request)
+        self.assertEqual(len(filters), 2)
+        filter1 = filters[0]
+        self.assertEqual(len(filter1), 4)
+        self.assertEqual(filter1[0], 'a')
+        self.assertEqual(filter1[1], 'foo1')
+        self.assertEqual(filter1[2], 'eq')
+        self.assertEqual(filter1[3], 'bar1')
+        filter2 = filters[1]
+        self.assertEqual(len(filter2), 4)
+        self.assertEqual(filter2[0], 'sh')
+        self.assertEqual(filter2[1], 'foo2')
+        self.assertEqual(filter2[2], 'ne')
+        self.assertEqual(filter2[3], 'bar2')
 
-    def test_get_current_locale_returns_locale_from_cookies(self):
-        self.request.cookies = {'_LOCALE_': 'foo'}
-        locale = get_current_locale(self.request)
-        self.assertEqual(locale, 'foo')
+    def test_get_current_attribute_filters_ignores_incorrect_prefix(self):
+        self.request.params = {
+            'foo__foo__eq': 'bar'
+        }
+        filters = get_current_attribute_filters(self.request)
+        self.assertEqual(filters, [])
 
-    def test_get_current_locale_returns_params_before_cookies(self):
-        self.request.cookies = {'_LOCALE_': 'cookie'}
-        self.request.params = {'_LOCALE_': 'param'}
-        locale = get_current_locale(self.request)
-        self.assertEqual(locale, 'param')
+    def test_get_current_attribute_filters_handles_invalid_input(self):
+        self.request.params = {
+            'foo__foo': 'bar',
+            'foo__foo__foo__foo': 'bar'
+        }
+        filters = get_current_attribute_filters(self.request)
+        self.assertEqual(filters, [])
