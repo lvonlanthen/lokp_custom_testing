@@ -479,3 +479,64 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v1_inv), 0)
         self.assertEqual(len(v2_inv), 1)
         self.assertEqual(len(v3_inv), 0)
+
+    def test_inactive_involvements_are_not_visible_if_active_present(self):
+        """
+        This is a bugfix. Sometimes, involvements to inactive Activities
+        were visible even if they had an involvement to a newer, active
+        version of the Activity. This way, some involvements appeared
+        double.
+        """
+        sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid_1 = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid_1)
+        inv_data = [{
+            'id': sh_uid,
+            'version': 2,
+            'role': 6
+        }]
+        a_uid_2 = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid_2)
+        self.create('a', get_edit_diff(101, a_uid_1, version=1))
+        self.review('a', a_uid_1, version=2)
+
+        res = self.read_one('sh', sh_uid, 'json')
+        v1_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 2)
+
+    def test_pending_involvements_appear_instead_of_active(self):
+        """
+        This is probably also a bugfix, linked with the one above.
+        """
+        sh_uid_1 = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid_1)
+        inv_data = [{
+            'id': sh_uid_1,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid_1 = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid_1)
+        sh_uid_2 = self.create('sh', get_new_diff(201), return_uid=True)
+        self.review('sh', sh_uid_2)
+        inv_data = [{
+            'id': sh_uid_2,
+            'version': 1,
+            'role': 6
+        }]
+        self.create('a', get_edit_diff(102, a_uid_1, version=1, data=inv_data))
+        self.review('a', a_uid_1, version=2)
+        self.create('sh', get_edit_diff(204, sh_uid_1, version=2))
+
+        res = self.read_one('a', a_uid_1, 'json')
+        v1_inv = get_involvements_from_item_json(res, 0)
+        self.assertEqual(len(v1_inv), 2)
