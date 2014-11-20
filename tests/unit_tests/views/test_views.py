@@ -10,6 +10,9 @@ from lmkp.views.views import (
     get_status_parameter,
     get_current_profile,
     get_current_attribute_filters,
+    get_current_logical_filter_operator,
+    get_current_order_key,
+    get_current_order_direction,
 )
 from ...integration_tests.base import (
     LmkpTestCase,
@@ -263,3 +266,80 @@ class ViewsGetCurrentAttributeFilters(LmkpTestCase):
         }
         filters = get_current_attribute_filters(self.request)
         self.assertEqual(filters, [])
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.filter
+class ViewsGetLogicalFilterOperator(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_logical_filter_operator_returns_default(self):
+        op = get_current_logical_filter_operator(self.request)
+        self.assertEqual(op, 'and')
+
+    def test_get_logical_filter_operator_returns_operator(self):
+        self.request.params = {'logical_op': 'or'}
+        op = get_current_logical_filter_operator(self.request)
+        self.assertEqual(op, 'or')
+
+    def test_get_logical_filter_operator_handles_invalid_operator(self):
+        self.request.params = {'logical_op': 'foo'}
+        op = get_current_logical_filter_operator(self.request)
+        self.assertEqual(op, 'and')
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+class ViewsGetCurrentOrderKey(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_current_order_key_returns_default(self):
+        key = get_current_order_key(self.request)
+        self.assertEqual(key, 'timestamp')
+
+    def test_get_current_order_key_returns_order_key(self):
+        self.request.params = {'order_by': 'foo'}
+        key = get_current_order_key(self.request)
+        self.assertEqual(key, 'foo')
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+class ViewsGetCurrentOrderDirection(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_current_order_direction_returns_default(self):
+        direction = get_current_order_direction(self.request)
+        self.assertEqual(direction, 'asc')
+
+    def test_get_current_order_direction_returns_order_direction(self):
+        self.request.params = {'dir': 'desc'}
+        direction = get_current_order_direction(self.request)
+        self.assertEqual(direction, 'desc')
+
+    def test_get_current_order_direction_handles_invalid_direction(self):
+        self.request.params = {'dir': 'foo'}
+        direction = get_current_order_direction(self.request)
+        self.assertEqual(direction, 'asc')

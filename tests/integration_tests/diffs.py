@@ -34,6 +34,10 @@ def get_new_diff(diff_type, data=[]):
                 somewhere in Laos.
             109: [A] A complete Activity with a (simulated) file upload
                 and its Point somewhere in Laos.
+            110: [A] A complete Activity with its Point somewhere in
+                Laos.
+            111: [A] A complete Activity with its Point somewhere in
+                Laos.
             201: [SH] A complete Stakeholder.
             202: [SH] An incomplete Stakeholder.
             203: [SH] A complete Stakeholder with two values
@@ -636,6 +640,82 @@ def get_new_diff(diff_type, data=[]):
                                     'value': 'filename1.jpg|891f3b35-29d3-4ef2'
                                     '-93d4-2ca45ff718ea,filename2.pdf|56256744'
                                     '-cf88-434f-90b7-25db9f0fb0a0',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    elif diff_type == 110:
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': u'[A] Value A3',
+                                'key': u'[A] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A3',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 99,
+                                'key': u'[A] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 99,
+                                    'key': u'[A] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    elif diff_type == 111:
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': u'[A] Value A2',
+                                'key': u'[A] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A2',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 1000000,
+                                'key': u'[A] Numberfield 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': 1000000,
+                                    'key': u'[A] Numberfield 1',
                                     'op': 'add'
                                 }
                             ],

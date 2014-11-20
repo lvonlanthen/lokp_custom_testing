@@ -66,6 +66,59 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertIn(uid_1, res)
         self.assertNotIn(uid_2, res)
 
+    def test_activities_order_default_by_timestamp(self):
+        self.login()
+
+        uid_1 = self.create('a', get_new_diff(101), return_uid=True)
+        uid_2 = self.create('a', get_new_diff(110), return_uid=True)
+        uid_3 = self.create('a', get_new_diff(111), return_uid=True)
+
+        res = self.read_many('a', 'json')
+        self.assertEqual(len(res.get('data')), 3)
+        res_1 = res.get('data')[0]
+        res_2 = res.get('data')[1]
+        res_3 = res.get('data')[2]
+
+        self.assertEqual(res_1.get('id'), uid_3)
+        self.assertEqual(res_2.get('id'), uid_2)
+        self.assertEqual(res_3.get('id'), uid_1)
+
+    def test_activities_order_by_numbers(self):
+        self.login()
+
+        uid_1 = self.create('a', get_new_diff(101), return_uid=True)  # 123.4
+        uid_2 = self.create('a', get_new_diff(110), return_uid=True)  # 999
+        uid_3 = self.create('a', get_new_diff(111), return_uid=True)  # 1000
+
+        order_params = {'order_by': '[A] Numberfield 1'}
+        res = self.read_many('a', 'json', params=order_params)
+        self.assertEqual(len(res.get('data')), 3)
+        res_1 = res.get('data')[0]
+        res_2 = res.get('data')[1]
+        res_3 = res.get('data')[2]
+
+        self.assertEqual(res_1.get('id'), uid_2)
+        self.assertEqual(res_2.get('id'), uid_1)
+        self.assertEqual(res_3.get('id'), uid_3)
+
+    def test_activities_order_by_strings(self):
+        self.login()
+
+        uid_1 = self.create('a', get_new_diff(101), return_uid=True)  # A1
+        uid_2 = self.create('a', get_new_diff(110), return_uid=True)  # A3
+        uid_3 = self.create('a', get_new_diff(111), return_uid=True)  # A2
+
+        order_params = {'order_by': '[A] Dropdown 1'}
+        res = self.read_many('a', 'json', params=order_params)
+        self.assertEqual(len(res.get('data')), 3)
+        res_1 = res.get('data')[0]
+        res_2 = res.get('data')[1]
+        res_3 = res.get('data')[2]
+
+        self.assertEqual(res_1.get('id'), uid_1)
+        self.assertEqual(res_2.get('id'), uid_3)
+        self.assertEqual(res_3.get('id'), uid_2)
+
 
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration

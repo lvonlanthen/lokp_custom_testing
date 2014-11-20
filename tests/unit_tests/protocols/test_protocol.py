@@ -10,9 +10,45 @@ from ...base import get_settings
 from lmkp.models.database_objects import Activity
 
 
+@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.protocol
-class ProtocolsProtocolGetAttributeFilters(LmkpTestCase):
+class ProtocolsProtocolGetOrderTest(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.protocol = Protocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.protocol.validate_item_type')
+    def test_get_order_calls_validate_item_type(
+            self, mock_validate_item_type):
+        self.protocol.get_order('a')
+        mock_validate_item_type.assert_called_once_with('a')
+
+    @patch('lmkp.protocols.protocol.get_current_order_key')
+    def test_get_order_calls_get_current_order_key(
+            self, mock_get_current_order_key):
+        mock_get_current_order_key.return_value = 'foo'
+        self.protocol.get_order('a')
+        mock_get_current_order_key.assert_called_once_with(self.request)
+
+    @patch('lmkp.protocols.protocol.get_current_order_key')
+    def test_get_order_returns_subquery(self, mock_get_current_order_key):
+        mock_get_current_order_key.return_value = 'foo'
+        order = self.protocol.get_order('a')
+        params = order.compile().params
+        self.assertEqual(len(params), 1)
+        self.assertEqual(params.get('key_1'), 'foo')
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsProtocolGetAttributeFiltersTest(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
