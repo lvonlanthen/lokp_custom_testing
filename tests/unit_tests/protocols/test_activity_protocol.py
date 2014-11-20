@@ -10,6 +10,41 @@ from ...integration_tests.base import (
 )
 from ...base import get_settings
 
+from lmkp.models.meta import DBSession as Session
+from lmkp.models.database_objects import A_Key, A_Value
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.activity_protocol = ActivityProtocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.get_translations')
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
+    def test_query_many_calls_get_translations(
+            self, mock_get_profile_filter, mock_get_translations):
+        mock_get_profile_filter.return_value = None
+        mock_get_translations.return_value = Session.query(
+            A_Key.fk_key.label("key_original_id"),
+            A_Key.key.label("key_translated")
+        ).subquery(), Session.query(
+            A_Value.fk_value.label("value_original_id"),
+            A_Value.value.label("value_translated")
+        ).subquery()
+        rel_act = self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.query_many(rel_act, return_count=False)
+        mock_get_translations.assert_called_once_with('a')
+
 
 @pytest.mark.unittest
 @pytest.mark.protocol
@@ -27,7 +62,7 @@ class ProtocolsActivityProtocolReadMany(LmkpTestCase):
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
         'get_relevant_activities_many')
-    @patch('lmkp.protocols.activity_protocol.ActivityProtocol._query_many')
+    @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
         '_query_to_activities')
@@ -39,6 +74,26 @@ class ProtocolsActivityProtocolReadMany(LmkpTestCase):
         self.activity_protocol.read_many(self.request)
         mock_get_relevant_activities_many.assert_called_once_with(
             public_query=True)
+
+    @patch(
+        'lmkp.protocols.activity_protocol.get_current_involvement_details')
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.'
+        'get_relevant_activities_many')
+    @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.'
+        '_query_to_activities')
+    def test_read_many_calls_get_current_involvement_details(
+            self, mock_query_to_activities, mock_query_many,
+            mock_get_relevant_activities_many,
+            mock_get_current_involvement_details):
+        mock_query_many.return_value = (None, 0)
+        mock_query_to_activities.return_value = []
+        mock_get_relevant_activities_many.return_value = None
+        self.activity_protocol.read_many(self.request)
+        mock_get_current_involvement_details.assert_called_once_with(
+            self.request)
 
 
 @pytest.mark.unittest

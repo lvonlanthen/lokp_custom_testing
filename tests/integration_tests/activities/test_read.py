@@ -3,6 +3,7 @@ import pytest
 from ..base import (
     LmkpTestCase,
     get_base_url_by_item_type,
+    find_key_value_in_taggroups_json,
 )
 from ..diffs import (
     get_new_diff,
@@ -118,6 +119,17 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(res_1.get('id'), uid_1)
         self.assertEqual(res_2.get('id'), uid_3)
         self.assertEqual(res_3.get('id'), uid_2)
+
+    def test_activities_translation(self):
+        self.login()
+        self.create('a', get_new_diff(101))
+        res = self.read_many('a', 'json', params={'_LOCALE_': 'es'})
+        self.assertEqual(len(res.get('data')), 1)
+        res_1 = res.get('data')[0]
+        self.assertFalse(find_key_value_in_taggroups_json(
+            res_1.get('taggroups'), '[A] Dropdown 1', '[A] Value A1'))
+        self.assertTrue(find_key_value_in_taggroups_json(
+            res_1.get('taggroups'), '[A-T] Dropdown 1', '[A-T] Value A1'))
 
 
 @pytest.mark.usefixtures('app')

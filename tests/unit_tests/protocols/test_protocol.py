@@ -1,6 +1,7 @@
 import pytest
 from mock import patch
 from pyramid import testing
+from sqlalchemy.sql import expression
 
 from lmkp.protocols.protocol import Protocol
 from ...integration_tests.base import (
@@ -8,6 +9,38 @@ from ...integration_tests.base import (
 )
 from ...base import get_settings
 from lmkp.models.database_objects import Activity
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsProtocolGetTranslationsTest(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.protocol = Protocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.protocol.validate_item_type')
+    def test_get_translations_calls_validate_item_type(
+            self, mock_validate_item_type):
+        self.protocol.get_translations('a')
+        mock_validate_item_type.assert_called_once_with('a')
+
+    @patch('lmkp.protocols.protocol.get_current_locale')
+    def test_get_translations_calls_get_current_locale(
+            self, mock_get_current_locale):
+        self.protocol.get_translations('a')
+        mock_get_current_locale.assert_called_once_with(self.request)
+
+    def test_get_translations_returns_subqueries(self):
+        key_query, value_query = self.protocol.get_translations('a')
+        self.assertIsInstance(key_query, expression.Alias)
+        self.assertIsInstance(value_query, expression.Alias)
 
 
 @pytest.mark.usefixtures('app')

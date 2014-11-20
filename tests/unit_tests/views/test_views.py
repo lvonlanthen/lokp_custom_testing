@@ -13,6 +13,7 @@ from lmkp.views.views import (
     get_current_logical_filter_operator,
     get_current_order_key,
     get_current_order_direction,
+    get_current_involvement_details,
 )
 from ...integration_tests.base import (
     LmkpTestCase,
@@ -343,3 +344,30 @@ class ViewsGetCurrentOrderDirection(LmkpTestCase):
         self.request.params = {'dir': 'foo'}
         direction = get_current_order_direction(self.request)
         self.assertEqual(direction, 'asc')
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+class ViewsGetCurrentInvolvementDetails(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_current_involvement_details_returns_default(self):
+        details = get_current_involvement_details(self.request)
+        self.assertEqual(details, 'full')
+
+    def test_get_current_involvement_details_returns_details(self):
+        self.request.params = {'involvements': 'none'}
+        details = get_current_involvement_details(self.request)
+        self.assertEqual(details, 'none')
+
+    def test_get_current_involvement_details_handles_invalid_keyword(self):
+        self.request.params = {'involvements': 'foo'}
+        details = get_current_involvement_details(self.request)
+        self.assertEqual(details, 'full')
