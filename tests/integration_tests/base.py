@@ -24,14 +24,17 @@ class LmkpTestCase(TestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def login(self, redirect=None):
+    def login(self, redirect=None, username=USERNAME, password=PASSWORD):
         params = {
-            'login': USERNAME,
-            'password': PASSWORD,
+            'login': username,
+            'password': password,
             'form.submitted': 'true'
         }
         res = self.app.post('/login', params)
         return res.follow()
+
+    def logout(self):
+        self.app.get('/logout')
 
     def create(
             self, item_type, diff, return_uid=False, expect_errors=False):

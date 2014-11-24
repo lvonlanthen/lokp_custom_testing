@@ -1,17 +1,18 @@
 import pytest
 from mock import patch
 from pyramid import testing
+from sqlalchemy.orm.query import Query
 from sqlalchemy.sql import expression
 
+from lmkp.models.meta import DBSession as Session
 from lmkp.protocols.protocol import Protocol
 from ...integration_tests.base import (
     LmkpTestCase,
 )
 from ...base import get_settings
-from lmkp.models.database_objects import Activity
+from lmkp.models.database_objects import Activity, User
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.protocol
 class ProtocolsProtocolGetTranslationsTest(LmkpTestCase):
@@ -260,10 +261,9 @@ class ProtocolsProtocolGetAttributeFiltersTest(LmkpTestCase):
         mock_get_current_filters.assert_called_once_with(self.request)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.protocol
-class ProtocolsProtocolGetStatusFilterTest(LmkpTestCase):
+class ProtocolsProtocolGetValidStatusIdsTest(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -274,69 +274,214 @@ class ProtocolsProtocolGetStatusFilterTest(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    @patch('lmkp.protocols.protocol.get_status_parameter')
-    def test_get_status_filter_calls_get_status_parameter(
-            self, mock_get_status_parameter):
-        self.protocol.get_status_filter(Activity)
-        mock_get_status_parameter.assert_called_once_with(self.request)
+    def test_get_valid_status_ids_filter_not_moderator(self):
+        status_ids = self.protocol.get_valid_status_ids(
+            'filter', False, False)
+        self.assertEqual(len(status_ids), 4)
+        self.assertNotIn(1, status_ids)
+        self.assertNotIn(6, status_ids)
 
     @patch('lmkp.protocols.protocol.get_user_privileges')
-    def test_get_status_filter_calls_get_user_privileges(
+    def test_get_valid_status_ids_filter_moderator(
             self, mock_get_user_privileges):
-        mock_get_user_privileges.return_value = (None, None)
-        self.protocol.get_status_filter(Activity)
+        status_ids = self.protocol.get_valid_status_ids(
+            'filter', True, True)
+        self.assertEqual(len(status_ids), 6)
+        self.assertIn(1, status_ids)
+        self.assertIn(6, status_ids)
+
+    def test_get_valid_status_ids_involvements_not_logged_in(self):
+        status_ids = self.protocol.get_valid_status_ids(
+            'involvements', False, False)
+        self.assertEqual(len(status_ids), 2)
+        self.assertNotIn(1, status_ids)
+        self.assertNotIn(4, status_ids)
+
+    @patch('lmkp.protocols.protocol.get_user_privileges')
+    def test_get_valid_status_ids_involvements_logged_in(
+            self, mock_get_user_privileges):
+        status_ids = self.protocol.get_valid_status_ids(
+            'involvements', True, True)
+        self.assertEqual(len(status_ids), 4)
+        self.assertIn(1, status_ids)
+        self.assertNotIn(4, status_ids)
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsProtocolApplyVisibleVersionFilterTest(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.protocol = Protocol(self.request)
+        self.query = Session.query(Activity)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.protocol.validate_item_type')
+    def test_apply_visible_version_filter_calls_validate_item_type(
+            self, mock_validate_item_type):
+        self.protocol.apply_visible_version_filter(
+            'a', self.query)
+        mock_validate_item_type.assert_called_once_with('a')
+
+    @patch('lmkp.protocols.protocol.get_user_privileges')
+    def test_apply_visible_version_filter_calls_get_user_privileges(
+            self, mock_get_user_privileges):
+        mock_get_user_privileges.return_value = None, None
+        self.protocol.apply_visible_version_filter(
+            'a', self.query)
         mock_get_user_privileges.assert_called_once_with(self.request)
 
-    def test_default_status(self):
-        status_filter = self.protocol.get_status_filter(Activity)
-        params = status_filter.compile().params
+    @patch('lmkp.protocols.protocol.get_status_parameter')
+    def test_apply_visible_version_filter_calls_get_status_parameter(
+            self, mock_get_status_parameter):
+        self.protocol.apply_visible_version_filter(
+            'a', self.query)
+        mock_get_status_parameter.assert_called_once_with(self.request)
+
+    @patch(
+        'lmkp.protocols.activity_protocol.Protocol.'
+        'get_valid_status_ids')
+    @patch('lmkp.protocols.protocol.get_status_parameter')
+    def test_apply_visible_version_filter_calls_get_valid_status_ids(
+            self, mock_get_status_parameter, mock_get_valid_status_ids):
+        mock_get_status_parameter.return_value = 'foo'
+        self.protocol.apply_visible_version_filter(
+            'a', self.query)
+        mock_get_valid_status_ids.assert_called_once_with(
+            'filter', None, None)
+
+    def test_apply_visible_version_filter_public_query_default(self):
+        query = self.protocol.apply_visible_version_filter(
+            'a', self.query, public_query=True)
+        self.assertIsInstance(query, Query)
+        params = query.statement.compile().params
         self.assertEqual(len(params), 1)
         self.assertEqual(params.get('fk_status_1'), 2)
 
-    def test_handle_single_status(self):
-        self.request.params = {'status': 'inactive'}
-        status_filter = self.protocol.get_status_filter(Activity)
-        params = status_filter.compile().params
+    @patch('lmkp.protocols.protocol.get_status_parameter')
+    def test_apply_visible_version_filter_public_query_filter_pending(
+            self, mock_get_status_parameter):
+        mock_get_status_parameter.return_value = 'pending'
+        query = self.protocol.apply_visible_version_filter(
+            'a', self.query, public_query=True)
+        self.assertIsInstance(query, Query)
+        params = query.statement.compile().params
+        self.assertEqual(len(params), 1)
+        self.assertEqual(params.get('fk_status_1'), 2)
+
+    @patch('lmkp.protocols.protocol.get_status_parameter')
+    def test_apply_visible_version_filter_public_query_filter_inactive(
+            self, mock_get_status_parameter):
+        mock_get_status_parameter.return_value = 'inactive'
+        query = self.protocol.apply_visible_version_filter(
+            'a', self.query, public_query=True)
+        self.assertIsInstance(query, Query)
+        params = query.statement.compile().params
         self.assertEqual(len(params), 1)
         self.assertEqual(params.get('fk_status_1'), 3)
 
-    def test_handle_multiple_statii(self):
-        self.request.params = {'status': 'active,inactive'}
-        status_filter = self.protocol.get_status_filter(Activity)
-        params = status_filter.compile().params
-        self.assertEqual(len(params), 2)
-        self.assertEqual(params.get('fk_status_1'), 2)
-        self.assertEqual(params.get('fk_status_2'), 3)
-
-    def test_remove_one_invalid_status(self):
-        self.request.params = {'status': 'foo,inactive'}
-        status_filter = self.protocol.get_status_filter(Activity)
-        params = status_filter.compile().params
+    @patch('lmkp.protocols.protocol.get_status_parameter')
+    def test_apply_visible_version_filter_not_public_query_filter_inactive(
+            self, mock_get_status_parameter):
+        mock_get_status_parameter.return_value = 'inactive'
+        query = self.protocol.apply_visible_version_filter(
+            'a', self.query, public_query=True)
+        self.assertIsInstance(query, Query)
+        params = query.statement.compile().params
         self.assertEqual(len(params), 1)
         self.assertEqual(params.get('fk_status_1'), 3)
-
-    def test_remove_all_invalid_statii(self):
-        self.request.params = {'status': 'foo,bar'}
-        status_filter = self.protocol.get_status_filter(Activity)
-        params = status_filter.compile().params
-        self.assertEqual(len(params), 1)
-        self.assertEqual(params.get('fk_status_1'), 2)
-
-    def test_public_cannot_see_pending_and_edited(self):
-        self.request.params = {'status': 'pending,active,edited'}
-        status_filter = self.protocol.get_status_filter(Activity)
-        params = status_filter.compile().params
-        self.assertEqual(len(params), 1)
-        self.assertEqual(params.get('fk_status_1'), 2)
 
     @patch('lmkp.protocols.protocol.get_user_privileges')
-    def test_moderators_can_see_pending_and_edited(
+    def test_apply_visible_version_filter_logged_in(
             self, mock_get_user_privileges):
-        self.request.params = {'status': 'pending,active,edited'}
-        mock_get_user_privileges.return_value = (True, True)
-        status_filter = self.protocol.get_status_filter(Activity)
-        params = status_filter.compile().params
+        mock_get_user_privileges.return_value = True, None
+        self.request.user = Session.query(User).get(1)
+        query = self.protocol.apply_visible_version_filter(
+            'a', self.query)
+        self.assertIsInstance(query, Query)
+        params = query.statement.compile().params
         self.assertEqual(len(params), 3)
-        self.assertEqual(params.get('fk_status_1'), 1)
-        self.assertEqual(params.get('fk_status_2'), 2)
-        self.assertEqual(params.get('fk_status_3'), 6)
+        self.assertEqual(params.get('fk_user_1'), 1)
+        self.assertEqual(params.get('fk_status_1'), 2)
+        self.assertEqual(params.get('fk_status_2'), 1)
+
+
+# @pytest.mark.usefixtures('app')
+# @pytest.mark.unittest
+# @pytest.mark.protocol
+# class ProtocolsProtocolGetStatusFilterTest(LmkpTestCase):
+
+#     def setUp(self):
+#         self.request = testing.DummyRequest()
+#         settings = get_settings()
+#         self.config = testing.setUp(request=self.request, settings=settings)
+#         self.protocol = Protocol(self.request)
+
+#     def tearDown(self):
+#         testing.tearDown()
+
+#     @patch('lmkp.protocols.protocol.get_status_parameter')
+#     def test_get_status_filter_calls_get_status_parameter(
+#             self, mock_get_status_parameter):
+#         self.protocol.get_status_filter(Activity)
+#         mock_get_status_parameter.assert_called_once_with(self.request)
+
+#     def test_default_status(self):
+#         status_filter = self.protocol.get_status_filter(Activity)
+#         params = status_filter.compile().params
+#         self.assertEqual(len(params), 1)
+#         self.assertEqual(params.get('fk_status_1'), 2)
+
+#     def test_handle_single_status(self):
+#         self.request.params = {'status': 'inactive'}
+#         status_filter = self.protocol.get_status_filter(Activity)
+#         params = status_filter.compile().params
+#         self.assertEqual(len(params), 1)
+#         self.assertEqual(params.get('fk_status_1'), 3)
+
+#     def test_handle_multiple_statii(self):
+#         self.request.params = {'status': 'active,inactive'}
+#         status_filter = self.protocol.get_status_filter(Activity)
+#         params = status_filter.compile().params
+#         self.assertEqual(len(params), 2)
+#         self.assertEqual(params.get('fk_status_1'), 2)
+#         self.assertEqual(params.get('fk_status_2'), 3)
+
+#     def test_remove_one_invalid_status(self):
+#         self.request.params = {'status': 'foo,inactive'}
+#         status_filter = self.protocol.get_status_filter(Activity)
+#         params = status_filter.compile().params
+#         self.assertEqual(len(params), 1)
+#         self.assertEqual(params.get('fk_status_1'), 3)
+
+#     def test_remove_all_invalid_statii(self):
+#         self.request.params = {'status': 'foo,bar'}
+#         status_filter = self.protocol.get_status_filter(Activity)
+#         params = status_filter.compile().params
+#         self.assertEqual(len(params), 1)
+#         self.assertEqual(params.get('fk_status_1'), 2)
+
+#     def test_public_cannot_see_pending_and_edited(self):
+#         self.request.params = {'status': 'pending,active,edited'}
+#         status_filter = self.protocol.get_status_filter(Activity)
+#         params = status_filter.compile().params
+#         self.assertEqual(len(params), 1)
+#         self.assertEqual(params.get('fk_status_1'), 2)
+
+#     @patch('lmkp.protocols.protocol.get_user_privileges')
+#     def test_moderators_can_see_pending_and_edited(
+#             self, mock_get_user_privileges):
+#         self.request.params = {'status': 'pending,active,edited'}
+#         mock_get_user_privileges.return_value = (True, True)
+#         status_filter = self.protocol.get_status_filter(Activity)
+#         params = status_filter.compile().params
+#         self.assertEqual(len(params), 3)
+#         self.assertEqual(params.get('fk_status_1'), 1)
+#         self.assertEqual(params.get('fk_status_2'), 2)
+#         self.assertEqual(params.get('fk_status_3'), 6)

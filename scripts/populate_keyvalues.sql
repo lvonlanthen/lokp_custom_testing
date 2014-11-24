@@ -19,7 +19,7 @@
     - user3: active but not approved (in laos profile)
     - user4: inactive (in laos profile)
 
-  It also links user 1 (addmin) with the global profile.
+  It also links user 1 (admin) with the global profile.
 
 */
 
@@ -641,7 +641,8 @@ INSERT INTO data.users_profiles(id, fk_user, fk_profile) VALUES
   (2, 2, 2),
   (3, 3, 3),
   (4, 4, 2),
-  (5, 5, 2)
+  (5, 5, 2),
+  (6, 5, 3)
 ;
 SELECT setval('data.users_profiles_id_seq', 5, true);
 
@@ -650,7 +651,8 @@ INSERT INTO data.users_groups(id, fk_user, fk_group) VALUES
   (6, 2, 3),
   (7, 3, 3),
   (8, 4, 3),
-  (9, 5, 3)
+  (9, 5, 3),
+  (10, 3, 2)
 ;
 SELECT setval('data.users_groups_id_seq', 9, true);
 

@@ -7,6 +7,7 @@ from ..base import (
 )
 from ..diffs import (
     get_new_diff,
+    get_edit_diff,
 )
 from ...base import (
     TITLE_HISTORY_VIEW,
@@ -130,6 +131,65 @@ class ActivityReadManyTests(LmkpTestCase):
             res_1.get('taggroups'), '[A] Dropdown 1', '[A] Value A1'))
         self.assertTrue(find_key_value_in_taggroups_json(
             res_1.get('taggroups'), '[A-T] Dropdown 1', '[A-T] Value A1'))
+
+    def test_activities_status_active(self):
+        self.login()
+        uid_1 = self.create('a', get_new_diff(101), return_uid=True)
+        self.review('a', uid_1)
+        self.create('a', get_new_diff(101))
+
+        status_params = {'status': 'active'}
+        res = self.read_many('a', 'json', params=status_params)
+        self.assertEqual(len(res.get('data')), 1)
+        self.assertEqual(res.get('data')[0].get('id'), uid_1)
+
+    def test_activities_status_inactive(self):
+        self.login()
+        uid_1 = self.create('a', get_new_diff(101), return_uid=True)
+        self.review('a', uid_1)
+        self.create('a', get_edit_diff(101, uid_1))
+        self.review('a', uid_1, version=2)
+        self.create('a', get_new_diff(101), return_uid=True)
+
+        status_params = {'status': 'inactive'}
+        res = self.read_many('a', 'json', params=status_params)
+        self.assertEqual(len(res.get('data')), 1)
+        res_1 = res.get('data')[0]
+        self.assertEqual(res_1.get('id'), uid_1)
+        self.assertEqual(res_1.get('version'), 1)
+
+    def test_activities_status_pending(self):
+        self.login()
+        uid_1 = self.create('a', get_new_diff(101), return_uid=True)
+        self.review('a', uid_1)
+        uid_2 = self.create('a', get_new_diff(101), return_uid=True)
+
+        status_params = {'status': 'pending'}
+        res = self.read_many('a', 'json', params=status_params)
+        self.assertEqual(len(res.get('data')), 1)
+        res_1 = res.get('data')[0]
+        self.assertEqual(res_1.get('id'), uid_2)
+        self.assertEqual(res_1.get('version'), 1)
+
+    def test_read_moderator_sees_pending_inside_profile(self):
+        self.login()
+        self.create('a', get_new_diff(101))
+        self.logout()
+
+        self.login(username='user1', password='asdfasdf')
+        profile_params = {'_PROFILE_': 'laos'}
+        json = self.read_many('a', 'json', params=profile_params)
+        self.assertEqual(json['total'], 1)
+
+    def test_read_moderator_does_not_see_pending_outside_profile(self):
+        self.login()
+        self.create('a', get_new_diff(101))
+        self.logout()
+
+        self.login(username='user2', password='asdfasdf')
+        profile_params = {'_PROFILE_': 'laos'}
+        json = self.read_many('a', 'json', params=profile_params)
+        self.assertEqual(json['total'], 0)
 
 
 @pytest.mark.usefixtures('app')
