@@ -15,7 +15,7 @@ from lmkp.models.database_objects import Activity, User
 
 @pytest.mark.unittest
 @pytest.mark.protocol
-class ProtocolsProtocolGetTranslationsTest(LmkpTestCase):
+class ProtocolsProtocolGetTranslationQueriesTest(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -27,19 +27,19 @@ class ProtocolsProtocolGetTranslationsTest(LmkpTestCase):
         testing.tearDown()
 
     @patch('lmkp.protocols.protocol.validate_item_type')
-    def test_get_translations_calls_validate_item_type(
+    def test_get_translation_queries_calls_validate_item_type(
             self, mock_validate_item_type):
-        self.protocol.get_translations('a')
+        self.protocol.get_translation_queries('a')
         mock_validate_item_type.assert_called_once_with('a')
 
     @patch('lmkp.protocols.protocol.get_current_locale')
-    def test_get_translations_calls_get_current_locale(
+    def test_get_translation_queries_calls_get_current_locale(
             self, mock_get_current_locale):
-        self.protocol.get_translations('a')
+        self.protocol.get_translation_queries('a')
         mock_get_current_locale.assert_called_once_with(self.request)
 
-    def test_get_translations_returns_subqueries(self):
-        key_query, value_query = self.protocol.get_translations('a')
+    def test_get_translation_queries_returns_subqueries(self):
+        key_query, value_query = self.protocol.get_translation_queries('a')
         self.assertIsInstance(key_query, expression.Alias)
         self.assertIsInstance(value_query, expression.Alias)
 

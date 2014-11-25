@@ -11,9 +11,8 @@ from ..integration_tests.base import (
 from ..base import get_settings
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-@pytest.mark.views
+@pytest.mark.authentication
 class AuthenticationGetUserPrivilegesTests(LmkpTestCase):
 
     def setUp(self):

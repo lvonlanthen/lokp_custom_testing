@@ -14,6 +14,8 @@ from lmkp.views.views import (
     get_current_order_key,
     get_current_order_direction,
     get_current_involvement_details,
+    get_current_limit,
+    get_current_offset,
 )
 from ...integration_tests.base import (
     LmkpTestCase,
@@ -21,7 +23,6 @@ from ...integration_tests.base import (
 from ...base import get_settings
 
 
-@pytest.mark.usefixtrues('app')
 @pytest.mark.unittest
 @pytest.mark.views
 class ViewsBaseViewGetBaseTemplateValuesTests(LmkpTestCase):
@@ -57,7 +58,6 @@ class ViewsBaseViewGetBaseTemplateValuesTests(LmkpTestCase):
         mock_get_current_locale.assert_called_once_with(self.request)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.views
 class ViewsGetOutputFormatTests(LmkpTestCase):
@@ -81,7 +81,6 @@ class ViewsGetOutputFormatTests(LmkpTestCase):
         self.assertEqual(output, 'foo')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.views
 class ViewsGetPageParametersTests(LmkpTestCase):
@@ -116,7 +115,6 @@ class ViewsGetPageParametersTests(LmkpTestCase):
         self.assertEqual(page_size, 50)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.views
 class ViewsGetBboxParametersTests(LmkpTestCase):
@@ -159,7 +157,6 @@ class ViewsGetBboxParametersTests(LmkpTestCase):
         self.assertEqual(bbox, 'param')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.views
 class ViewsGetStatusParameterTests(LmkpTestCase):
@@ -182,9 +179,9 @@ class ViewsGetStatusParameterTests(LmkpTestCase):
         self.assertIsNone(status)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.profile
+@pytest.mark.views
 class ViewsGetCurrentProfileTests(LmkpTestCase):
 
     def setUp(self):
@@ -216,10 +213,10 @@ class ViewsGetCurrentProfileTests(LmkpTestCase):
         self.assertEqual(profile, 'param')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.filter
-class ViewsGetCurrentAttributeFilters(LmkpTestCase):
+@pytest.mark.views
+class ViewsGetCurrentAttributeFiltersTests(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -269,10 +266,10 @@ class ViewsGetCurrentAttributeFilters(LmkpTestCase):
         self.assertEqual(filters, [])
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.filter
-class ViewsGetLogicalFilterOperator(LmkpTestCase):
+@pytest.mark.views
+class ViewsGetLogicalFilterOperatorTests(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -297,9 +294,9 @@ class ViewsGetLogicalFilterOperator(LmkpTestCase):
         self.assertEqual(op, 'and')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-class ViewsGetCurrentOrderKey(LmkpTestCase):
+@pytest.mark.views
+class ViewsGetCurrentOrderKeyTests(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -319,9 +316,9 @@ class ViewsGetCurrentOrderKey(LmkpTestCase):
         self.assertEqual(key, 'foo')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-class ViewsGetCurrentOrderDirection(LmkpTestCase):
+@pytest.mark.views
+class ViewsGetCurrentOrderDirectionTetss(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -333,22 +330,22 @@ class ViewsGetCurrentOrderDirection(LmkpTestCase):
 
     def test_get_current_order_direction_returns_default(self):
         direction = get_current_order_direction(self.request)
-        self.assertEqual(direction, 'asc')
+        self.assertEqual(direction, 'desc')
 
     def test_get_current_order_direction_returns_order_direction(self):
-        self.request.params = {'dir': 'desc'}
+        self.request.params = {'dir': 'asc'}
         direction = get_current_order_direction(self.request)
-        self.assertEqual(direction, 'desc')
+        self.assertEqual(direction, 'asc')
 
     def test_get_current_order_direction_handles_invalid_direction(self):
         self.request.params = {'dir': 'foo'}
         direction = get_current_order_direction(self.request)
-        self.assertEqual(direction, 'asc')
+        self.assertEqual(direction, 'desc')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
-class ViewsGetCurrentInvolvementDetails(LmkpTestCase):
+@pytest.mark.views
+class ViewsGetCurrentInvolvementDetailsTests(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()
@@ -371,3 +368,67 @@ class ViewsGetCurrentInvolvementDetails(LmkpTestCase):
         self.request.params = {'involvements': 'foo'}
         details = get_current_involvement_details(self.request)
         self.assertEqual(details, 'full')
+
+
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsGetCurrentLimitTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_current_limit_returns_default(self):
+        limit = get_current_limit(self.request)
+        self.assertIsNone(limit)
+
+    def test_get_current_limit_returns_limit(self):
+        self.request.params = {'limit': 15}
+        limit = get_current_limit(self.request)
+        self.assertEqual(limit, 15)
+
+    def test_get_current_limit_returns_absolute_limit(self):
+        self.request.params = {'limit': -15}
+        limit = get_current_limit(self.request)
+        self.assertEqual(limit, 15)
+
+    def test_get_current_limit_handles_invalid_limit(self):
+        self.request.params = {'limit': 'foo'}
+        limit = get_current_limit(self.request)
+        self.assertIsNone(limit)
+
+
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsGetCurrentOffsetTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_current_offset_returns_default(self):
+        offset = get_current_offset(self.request)
+        self.assertEqual(offset, 0)
+
+    def test_get_current_offset_returns_limit(self):
+        self.request.params = {'offset': 15}
+        offset = get_current_offset(self.request)
+        self.assertEqual(offset, 15)
+
+    def test_get_current_offset_returns_absolute_offset(self):
+        self.request.params = {'offset': -15}
+        offset = get_current_offset(self.request)
+        self.assertEqual(offset, 15)
+
+    def test_get_current_offset_handles_invalid_limit(self):
+        self.request.params = {'offset': 'foo'}
+        offset = get_current_offset(self.request)
+        self.assertEqual(offset, 0)

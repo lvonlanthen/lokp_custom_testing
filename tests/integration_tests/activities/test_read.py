@@ -14,6 +14,7 @@ from ...base import (
 )
 
 
+@pytest.mark.read
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
 @pytest.mark.activities
