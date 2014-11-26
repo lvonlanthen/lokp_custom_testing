@@ -319,7 +319,7 @@ class ProtocolsActivityProtocolReadMany(LmkpTestCase):
 
 @pytest.mark.unittest
 @pytest.mark.protocol
-class ProtocolsActivityProtocolGetRelevantActivitiesMany(LmkpTestCase):
+class ProtocolsActivityProtocolGetRelevantQueryMany(LmkpTestCase):
 
     def setUp(self):
         self.request = testing.DummyRequest()

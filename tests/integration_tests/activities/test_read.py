@@ -1,4 +1,6 @@
 import pytest
+from pyramid import testing
+from ...base import get_settings
 
 from ..base import (
     LmkpTestCase,
@@ -20,9 +22,16 @@ from ...base import (
 @pytest.mark.activities
 class ActivityReadManyTests(LmkpTestCase):
 
-    def test_activities_appear_in_read_many_json(self):
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
         self.login()
 
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_activities_appear_in_read_many_json(self):
         json = self.read_many('a', 'json')
         self.assertEqual(json['data'], [])
         self.assertEqual(json['total'], 0)
@@ -33,7 +42,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(json['total'], 1)
 
     def test_only_active_activities_appear_in_many_json_public(self):
-        self.login()
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid_1)
         self.create('a', get_new_diff(101))
@@ -45,8 +53,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(json['data'][0]['id'], uid_1)
 
     def test_activities_appear_in_read_many_html(self):
-        self.login()
-
         uid = self.create('a', get_new_diff(101), return_uid=True)
         url = get_base_url_by_item_type('a')
         res = self.app.get('%s/html' % url)
@@ -54,8 +60,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertIn(uid, res)
 
     def test_activities_appear_in_read_many_html_public(self):
-        self.login()
-
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid_1)
         uid_2 = self.create('a', get_new_diff(101), return_uid=True)
@@ -67,8 +71,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertNotIn(uid_2, res)
 
     def test_activities_order_default_by_timestamp(self):
-        self.login()
-
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
         uid_2 = self.create('a', get_new_diff(110), return_uid=True)
         uid_3 = self.create('a', get_new_diff(111), return_uid=True)
@@ -84,8 +86,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(res_3.get('id'), uid_1)
 
     def test_activities_order_by_numbers(self):
-        self.login()
-
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)  # 123.4
         uid_2 = self.create('a', get_new_diff(110), return_uid=True)  # 999
         uid_3 = self.create('a', get_new_diff(111), return_uid=True)  # 1000
@@ -102,8 +102,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(res_3.get('id'), uid_3)
 
     def test_activities_order_by_strings(self):
-        self.login()
-
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)  # A1
         uid_2 = self.create('a', get_new_diff(110), return_uid=True)  # A3
         uid_3 = self.create('a', get_new_diff(111), return_uid=True)  # A2
@@ -120,7 +118,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(res_3.get('id'), uid_2)
 
     def test_activities_translation(self):
-        self.login()
         self.create('a', get_new_diff(101))
         res = self.read_many('a', 'json', params={'_LOCALE_': 'es'})
         self.assertEqual(len(res.get('data')), 1)
@@ -131,7 +128,6 @@ class ActivityReadManyTests(LmkpTestCase):
             res_1.get('taggroups'), '[A-T] Dropdown 1', '[A-T] Value A1'))
 
     def test_activities_status_active(self):
-        self.login()
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid_1)
         self.create('a', get_new_diff(101))
@@ -142,7 +138,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(res.get('data')[0].get('id'), uid_1)
 
     def test_activities_status_inactive(self):
-        self.login()
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid_1)
         self.create('a', get_edit_diff(101, uid_1))
@@ -157,7 +152,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(res_1.get('version'), 1)
 
     def test_activities_status_pending(self):
-        self.login()
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid_1)
         uid_2 = self.create('a', get_new_diff(101), return_uid=True)
@@ -170,7 +164,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(res_1.get('version'), 1)
 
     def test_read_moderator_sees_pending_inside_profile(self):
-        self.login()
         self.create('a', get_new_diff(101))
         self.logout()
 
@@ -180,7 +173,6 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(json['total'], 1)
 
     def test_read_moderator_does_not_see_pending_outside_profile(self):
-        self.login()
         self.create('a', get_new_diff(101))
         self.logout()
 
@@ -188,6 +180,25 @@ class ActivityReadManyTests(LmkpTestCase):
         profile_params = {'_PROFILE_': 'laos'}
         json = self.read_many('a', 'json', params=profile_params)
         self.assertEqual(json['total'], 0)
+
+    @pytest.mark.asdf
+    def test_read_single_activity_with_involvement(self):
+        sh = self.create('sh', get_new_diff(201), return_uid=True)
+        inv_data = [{
+            'id': sh,
+            'version': 1,
+            'role': 6
+        }]
+        self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+
+        res = self.read_many('a', 'json')
+        print res
+        self.assertEqual(len(res.get('data')), 1)
+        a = res.get('data')[0]
+        self.assertEqual(len(a.get('involvements')), 1)
+
+        self.fail()
 
     # def test_read_activity_with_taggroup_geometry(self):
     #     self.login()
