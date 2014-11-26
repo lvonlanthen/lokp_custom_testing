@@ -208,5 +208,15 @@ def create_geometry(country):
                 float(19 + decimal.Decimal(str(random.random())))
             ]
         }
+    elif country == 'laospoly':
+        return {
+            'type': 'Polygon',
+            'coordinates': [
+                [
+                    [102.0, 19.0], [102.1, 19.0], [102.1, 19.1],
+                    [102.0, 19.1], [102.0, 19.0]
+                ]
+            ]
+        }
     else:
         raise Exception('Invalid country for geometry: %s' % country)

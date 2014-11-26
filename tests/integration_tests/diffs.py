@@ -38,6 +38,8 @@ def get_new_diff(diff_type, data=[]):
                 Laos.
             111: [A] A complete Activity with its Point somewhere in
                 Laos.
+            112: [A] A complete Activity with a taggroup geometry and
+                its Point somewhere in Laos.
             201: [SH] A complete Stakeholder.
             202: [SH] An incomplete Stakeholder.
             203: [SH] A complete Stakeholder with two values
@@ -715,6 +717,45 @@ def get_new_diff(diff_type, data=[]):
                             'tags': [
                                 {
                                     'value': 1000000,
+                                    'key': u'[A] Numberfield 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }
+                    ],
+                    'version': 1
+                }
+            ]
+        }
+    elif diff_type == 112:
+        return {
+            'activities': [
+                {
+                    'geometry': create_geometry('laos'),
+                    'taggroups': [
+                        {
+                            'main_tag': {
+                                'value': u'[A] Value A1',
+                                'key': u'[A] Dropdown 1'
+                            },
+                            'tags': [
+                                {
+                                    'value': u'[A] Value A1',
+                                    'key': u'[A] Dropdown 1',
+                                    'op': 'add'
+                                }
+                            ],
+                            'op': 'add'
+                        }, {
+                            'main_tag': {
+                                'value': 123.45,
+                                'key': u'[A] Numberfield 1'
+                            },
+                            'geometry': create_geometry('laospoly'),
+                            'tags': [
+                                {
+                                    'value': 123.45,
                                     'key': u'[A] Numberfield 1',
                                     'op': 'add'
                                 }

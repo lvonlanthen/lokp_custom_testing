@@ -5,12 +5,60 @@ from sqlalchemy.orm.query import Query
 from sqlalchemy.sql import expression
 
 from lmkp.models.meta import DBSession as Session
-from lmkp.protocols.protocol import Protocol
+from lmkp.protocols.protocol import (
+    Protocol,
+    get_status_ids,
+    get_status_id_by_code,
+    get_status_name_by_id,
+)
 from ...integration_tests.base import (
     LmkpTestCase,
 )
 from ...base import get_settings
 from lmkp.models.database_objects import Activity, User
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsGetStatusIdsTests(LmkpTestCase):
+
+    def test_get_status_ids_returns_status_ids(self):
+        status_ids = get_status_ids()
+        self.assertIsInstance(status_ids, list)
+        self.assertEqual(len(status_ids), 6)
+        self.assertEqual(status_ids[0], 1)
+        self.assertEqual(status_ids[5], 6)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsGetStatusIdByCodeTests(LmkpTestCase):
+
+    def test_get_status_id_by_code_returns_id(self):
+        self.assertEqual(get_status_id_by_code('active'), 2)
+        self.assertEqual(get_status_id_by_code('rejected'), 5)
+
+    def test_get_status_id_by_code_returns_none_if_not_found(self):
+        self.assertIsNone(get_status_id_by_code('foo'))
+        self.assertIsNone(get_status_id_by_code('bar'))
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsGetStatusNameByIdTests(LmkpTestCase):
+
+    def test_get_status_name_by_id_returns_name(self):
+        self.assertEqual(get_status_name_by_id(1), 'pending')
+        self.assertEqual(get_status_name_by_id(4), 'deleted')
+
+    @patch('lmkp.protocols.protocol.get_localizer')
+    def test_get_status_name_by_id_with_request_calls_translation(
+            self, mock_get_localizer):
+        get_status_name_by_id(1, self.request)
+        mock_get_localizer.assert_called_once_with(self.request)
+
+    def test_get_status_name_by_id_returns_none_if_not_found(self):
+        self.assertIsNone(get_status_name_by_id(-1))
 
 
 @pytest.mark.unittest

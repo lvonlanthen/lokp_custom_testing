@@ -65,6 +65,7 @@
       # [TG]
       1:
         order: 1
+        geometry: true
         # [K] 16: Numberfield 1
         16:
           maintag: true
