@@ -21,9 +21,6 @@ from ...base import (
 class ActivityReadManyTests(LmkpTestCase):
 
     def test_activities_appear_in_read_many_json(self):
-        """
-        Newly created Activities appear in the JSON service "read many".
-        """
         self.login()
 
         json = self.read_many('a', 'json')
@@ -192,14 +189,14 @@ class ActivityReadManyTests(LmkpTestCase):
         json = self.read_many('a', 'json', params=profile_params)
         self.assertEqual(json['total'], 0)
 
-    def test_read_activity_with_taggroup_geometry(self):
-        self.login()
-        self.create('a', get_new_diff(112))
+    # def test_read_activity_with_taggroup_geometry(self):
+    #     self.login()
+    #     self.create('a', get_new_diff(112))
 
-        json = self.read_many('a', 'json')
-        self.assertEqual(json['total'], 1)
-        geom_taggroup = json.get('data')[0].get('taggroups')[1]
-        self.assertIn('geometry', geom_taggroup)
+    #     json = self.read_many('a', 'json')
+    #     self.assertEqual(json['total'], 1)
+    #     geom_taggroup = json.get('data')[0].get('taggroups')[1]
+    #     self.assertIn('geometry', geom_taggroup)
 
 
 @pytest.mark.usefixtures('app')

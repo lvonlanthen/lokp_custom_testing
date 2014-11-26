@@ -131,7 +131,7 @@ class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
             A_Value.fk_value.label("value_original_id"),
             A_Value.value.label("value_translated")
         ).subquery()
-        rel_act = self.activity_protocol.get_relevant_activities_many()
+        rel_act = self.activity_protocol.get_relevant_query_many()
         self.activity_protocol.query_many(rel_act, return_count=False)
         mock_get_translation_queries.assert_called_once_with('a')
 
@@ -141,7 +141,7 @@ class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
     def test_query_many_with_involvements_calls_get_current_order_direction(
             self, mock_get_profile_filter, mock_get_current_order_direction):
         mock_get_profile_filter.return_value = None
-        rel_act = self.activity_protocol.get_relevant_activities_many()
+        rel_act = self.activity_protocol.get_relevant_query_many()
         self.activity_protocol.query_many(
             rel_act, with_involvements=True, return_count=False)
         mock_get_current_order_direction.assert_called()
@@ -153,7 +153,7 @@ class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
             self, mock_get_profile_filter, mock_get_user_privileges):
         mock_get_user_privileges.return_value = None, None
         mock_get_profile_filter.return_value = None
-        rel_act = self.activity_protocol.get_relevant_activities_many()
+        rel_act = self.activity_protocol.get_relevant_query_many()
         self.activity_protocol.query_many(
             rel_act, with_involvements=True, return_count=False)
         mock_get_user_privileges.assert_called()
@@ -166,7 +166,7 @@ class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
     def test_query_many_with_involvements_calls_get_valid_status_ids(
             self, mock_get_profile_filter, mock_get_valid_status_ids):
         mock_get_profile_filter.return_value = None
-        rel_act = self.activity_protocol.get_relevant_activities_many()
+        rel_act = self.activity_protocol.get_relevant_query_many()
         self.activity_protocol.query_many(
             rel_act, with_involvements=True, return_count=False)
         mock_get_valid_status_ids.assert_called_once_with(
@@ -177,7 +177,7 @@ class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
     def test_query_many_returns_query(
             self, mock_get_profile_filter):
         mock_get_profile_filter.return_value = None
-        rel_act = self.activity_protocol.get_relevant_activities_many()
+        rel_act = self.activity_protocol.get_relevant_query_many()
         query = self.activity_protocol.query_many(
             rel_act, with_involvements=True, return_count=False)
         self.assertIsInstance(query, Query)
@@ -188,7 +188,7 @@ class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
     def test_query_many_returns_query_and_count(
             self, mock_get_profile_filter):
         mock_get_profile_filter.return_value = None
-        rel_act = self.activity_protocol.get_relevant_activities_many()
+        rel_act = self.activity_protocol.get_relevant_query_many()
         query, count = self.activity_protocol.query_many(
             rel_act, with_involvements=True, return_count=True)
         self.assertIsInstance(query, Query)
@@ -210,37 +210,37 @@ class ProtocolsActivityProtocolReadMany(LmkpTestCase):
 
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
-        'get_relevant_activities_many')
+        'get_relevant_query_many')
     @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
         'query_to_features')
-    def test_read_many_calls_get_relevant_activities_many(
+    def test_read_many_calls_get_relevant_query_many(
             self, mock_query_to_features, mock_query_many,
-            mock_get_relevant_activities_many):
+            mock_get_relevant_query_many):
         mock_query_many.return_value = (None, 0)
         mock_query_to_features.return_value = []
         self.activity_protocol.read_many()
-        mock_get_relevant_activities_many.assert_called_once_with(
+        mock_get_relevant_query_many.assert_called_once_with(
             public_query=True)
 
     @patch(
         'lmkp.protocols.activity_protocol.get_current_involvement_details')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
-        'get_relevant_activities_many')
+        'get_relevant_query_many')
     @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
         'query_to_features')
     def test_read_many_calls_get_current_involvement_details(
             self, mock_query_to_features, mock_query_many,
-            mock_get_relevant_activities_many,
+            mock_get_relevant_query_many,
             mock_get_current_involvement_details):
         mock_query_many.return_value = (None, 0)
         mock_query_to_features.return_value = []
-        mock_get_relevant_activities_many.return_value = None
-        self.activity_protocol.read_many(self.request)
+        mock_get_relevant_query_many.return_value = None
+        self.activity_protocol.read_many()
         mock_get_current_involvement_details.assert_called_once_with(
             self.request)
 
@@ -248,39 +248,73 @@ class ProtocolsActivityProtocolReadMany(LmkpTestCase):
         'lmkp.protocols.activity_protocol.get_current_limit')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
-        'get_relevant_activities_many')
+        'get_relevant_query_many')
     @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
         'query_to_features')
     def test_read_many_calls_get_current_limit(
             self, mock_query_to_features, mock_query_many,
-            mock_get_relevant_activities_many,
+            mock_get_relevant_query_many,
             mock_get_current_limit):
         mock_query_many.return_value = (None, 0)
         mock_query_to_features.return_value = []
-        mock_get_relevant_activities_many.return_value = None
-        self.activity_protocol.read_many(self.request)
+        mock_get_relevant_query_many.return_value = None
+        self.activity_protocol.read_many()
         mock_get_current_limit.assert_called_once_with(self.request)
 
     @patch(
         'lmkp.protocols.activity_protocol.get_current_offset')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
-        'get_relevant_activities_many')
+        'get_relevant_query_many')
     @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.'
         'query_to_features')
     def test_read_many_calls_get_current_offset(
             self, mock_query_to_features, mock_query_many,
-            mock_get_relevant_activities_many,
+            mock_get_relevant_query_many,
             mock_get_current_offset):
         mock_query_many.return_value = (None, 0)
         mock_query_to_features.return_value = []
-        mock_get_relevant_activities_many.return_value = None
-        self.activity_protocol.read_many(self.request)
+        mock_get_relevant_query_many.return_value = None
+        self.activity_protocol.read_many()
         mock_get_current_offset.assert_called_once_with(self.request)
+
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.'
+        'get_relevant_query_many')
+    @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.'
+        'query_to_features')
+    def test_read_many_calls_query_many(
+            self, mock_query_to_features, mock_query_many,
+            mock_get_relevant_query_many):
+        mock_query_many.return_value = (None, 0)
+        mock_query_to_features.return_value = []
+        mock_get_relevant_query_many.return_value = None
+        self.activity_protocol.read_many()
+        mock_query_many.assert_called_once_with(
+            None, limit=None, with_involvements=True, offset=0)
+
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.'
+        'get_relevant_query_many')
+    @patch('lmkp.protocols.activity_protocol.ActivityProtocol.query_many')
+    @patch(
+        'lmkp.protocols.activity_protocol.ActivityProtocol.'
+        'query_to_features')
+    def test_read_many_calls_query_to_features(
+            self, mock_query_to_features, mock_query_many,
+            mock_get_relevant_query_many):
+        mock_query_many.return_value = (None, 0)
+        mock_query_to_features.return_value = []
+        mock_get_relevant_query_many.return_value = None
+        self.activity_protocol.read_many()
+        mock_query_to_features.assert_called_once_with(
+            None, involvements='full', translate=True, public_query=True)
 
 
 @pytest.mark.unittest
@@ -299,11 +333,11 @@ class ProtocolsActivityProtocolGetRelevantActivitiesMany(LmkpTestCase):
     @patch('lmkp.protocols.activity_protocol.get_user_privileges')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_get_user_privileges(
+    def test_get_relevant_query_many_calls_get_user_privileges(
             self, mock_get_profile_filter, mock_get_user_privileges):
         mock_get_user_privileges.return_value = (None, None)
         mock_get_profile_filter.return_value = None
-        self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.get_relevant_query_many()
         mock_get_user_privileges.assert_called_once_with(self.request)
 
     @patch(
@@ -311,50 +345,50 @@ class ProtocolsActivityProtocolGetRelevantActivitiesMany(LmkpTestCase):
         'get_attribute_filters')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_get_attribute_filters(
+    def test_get_relevant_query_many_calls_get_attribute_filters(
             self, mock_get_profile_filter, mock_get_attribute_filters):
         mock_get_attribute_filters.return_value = ([], [])
         mock_get_profile_filter.return_value = None
-        self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.get_relevant_query_many()
         mock_get_attribute_filters.assert_called_once_with()
 
     @patch(
         'lmkp.protocols.activity_protocol.get_current_logical_filter_operator')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_get_logical_filter_operator(
+    def test_get_relevant_query_many_calls_get_logical_filter_operator(
             self, mock_get_profile_filter, mock_get_logical_filter_operator):
         self.request.params = {'a__foo__like': 'bar'}
         mock_get_profile_filter.return_value = None
-        self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.get_relevant_query_many()
         mock_get_logical_filter_operator.assert_called_once_with(self.request)
 
     @patch('lmkp.protocols.activity_protocol.ActivityProtocol.get_order')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_get_order(
+    def test_get_relevant_query_many_calls_get_order(
             self, mock_get_profile_filter, mock_get_order):
         mock_get_profile_filter.return_value = None
         with self.assertRaises(UnboundLocalError):
-            self.activity_protocol.get_relevant_activities_many()
+            self.activity_protocol.get_relevant_query_many()
         mock_get_order.assert_called_once_with('a')
 
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_get_profile_filter(
+    def test_get_relevant_query_many_calls_get_profile_filter(
             self, mock_get_profile_filter):
         mock_get_profile_filter.return_value = None
-        self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.get_relevant_query_many()
         mock_get_profile_filter.assert_called_once_with()
 
     @patch('lmkp.protocols.activity_protocol.ActivityProtocol.get_bbox_filter')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_get_bbox_filter(
+    def test_get_relevant_query_many_calls_get_bbox_filter(
             self, mock_get_profile_filter, mock_get_box_filter):
         mock_get_box_filter.return_value = None
         mock_get_profile_filter.return_value = None
-        self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.get_relevant_query_many()
         mock_get_box_filter.assert_called_once_with(cookies=True)
 
     @patch(
@@ -362,27 +396,27 @@ class ProtocolsActivityProtocolGetRelevantActivitiesMany(LmkpTestCase):
         'apply_visible_version_filter')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_apply_visible_version_filter(
+    def test_get_relevant_query_many_calls_apply_visible_version_filter(
             self, mock_get_profile_filter, mock_apply_visible_version_filter):
         mock_get_profile_filter.return_value = None
-        self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.get_relevant_query_many()
         mock_apply_visible_version_filter.assert_called_once()
 
     @patch('lmkp.protocols.activity_protocol.get_current_order_direction')
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_calls_get_current_order_direction(
+    def test_get_relevant_query_many_calls_get_current_order_direction(
             self, mock_get_profile_filter, mock_get_order_direction):
         mock_get_profile_filter.return_value = None
-        self.activity_protocol.get_relevant_activities_many()
+        self.activity_protocol.get_relevant_query_many()
         mock_get_order_direction.assert_called_once_with(self.request)
 
     @patch(
         'lmkp.protocols.activity_protocol.ActivityProtocol.get_profile_filter')
-    def test_get_relevant_activities_many_returns_query(
+    def test_get_relevant_query_many_returns_query(
             self, mock_get_profile_filter):
         mock_get_profile_filter.return_value = None
-        rel_act = self.activity_protocol.get_relevant_activities_many()
+        rel_act = self.activity_protocol.get_relevant_query_many()
         self.assertIsInstance(rel_act, Query)
 
 
