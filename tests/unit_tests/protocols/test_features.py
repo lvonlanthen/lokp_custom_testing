@@ -1,4 +1,5 @@
 import pytest
+from mock import patch
 from pyramid import testing
 
 from ...integration_tests.base import (
@@ -6,10 +7,56 @@ from ...integration_tests.base import (
 )
 from ...base import get_settings
 from lmkp.protocols.features import (
+    InvolvementFeature,
     ItemFeature,
     ItemTaggroup,
     ItemTag,
 )
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+@pytest.mark.features
+class FeaturesInvolvementFeatureTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.involvement = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_create_involvement_feature(self):
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.assertIsInstance(inv, InvolvementFeature)
+
+    def test_involvement_feature_identifier(self):
+        self.assertEqual(self.involvement.identifier, 'identifier1')
+        self.assertIsInstance(self.involvement.identifier, str)
+
+    def test_involvement_feature_version(self):
+        self.assertEqual(self.involvement.version, 1)
+
+    def test_involvement_feature_status_id(self):
+        self.assertEqual(self.involvement.status_id, 2)
+
+    def test_involvement_feature_role_id(self):
+        self.assertEqual(self.involvement.role_id, 1)
+
+    def test_involvement_feature_role(self):
+        self.assertEqual(self.involvement.role, 'role1')
+
+    def test_involvement_feature_username(self):
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        inv.username = 'foo'
+        self.assertEqual(inv.username, 'foo')
+
+    def test_involvement_feature_feature(self):
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        inv.feature = 'foo'
+        self.assertEqual(inv.feature, 'foo')
 
 
 @pytest.mark.unittest
@@ -128,6 +175,68 @@ class FeaturesItemFeatureTests(LmkpTestCase):
         self.feature.add_taggroup(self.taggroup2)
         self.assertIsNone(self.feature.get_taggroup_by_id(0))
 
+    def test_item_feature_add_involvement_adds_involvement(self):
+        self.assertEqual(len(self.feature.involvements), 0)
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.assertEqual(self.feature.involvements[0], inv)
+
+    def test_item_feature_add_involvement_handles_invalid_input(self):
+        inv = 'foo'
+        self.feature.add_involvement(inv)
+        self.assertEqual(len(self.feature.involvements), 0)
+
+    def test_item_feature_remove_involvement_removes_involvement(self):
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.feature.remove_involvement(inv)
+        self.assertEqual(len(self.feature.involvements), 0)
+
+    def test_item_feature_remove_involvement_involvement_not_found(self):
+        inv1 = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv1)
+        self.assertEqual(len(self.feature.involvements), 1)
+        inv2 = InvolvementFeature('identifier2', 1, 2, 'role1', 1)
+        self.feature.remove_involvement(inv2)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.assertEqual(self.feature.involvements[0], inv1)
+
+    def test_item_feature_get_involvement_by_identifier_found(self):
+        inv1 = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv1)
+        inv2 = InvolvementFeature('identifier2', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv2)
+        self.assertEqual(self.feature.get_involvement_by_identifier(
+            'identifier1'), inv1)
+
+    def test_item_feature_get_involvement_by_identifier_not_found(self):
+        inv1 = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv1)
+        inv2 = InvolvementFeature('identifier2', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv2)
+        self.assertIsNone(self.feature.get_involvement_by_identifier('foo'))
+
+    def test_item_feature_get_involvement_by_identifier_version_found(self):
+        inv1 = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv1)
+        inv2 = InvolvementFeature('identifier1', 2, 2, 'role1', 1)
+        self.feature.add_involvement(inv2)
+        self.assertEqual(self.feature.get_involvement_by_identifier_version(
+            'identifier1', 1), inv1)
+
+    def test_item_feature_get_involvement_by_identifier_version_not_found(
+            self):
+        inv1 = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv1)
+        inv2 = InvolvementFeature('identifier2', 1, 2, 'role1', 1)
+        self.feature.add_involvement(inv2)
+        self.assertIsNone(self.feature.get_involvement_by_identifier_version(
+            'identifier1', 2))
+        self.assertIsNone(self.feature.get_involvement_by_identifier_version(
+            'identifier3', 1))
+
     def test_item_feature_to_json(self):
         self.taggroup1.add_tag(ItemTag(3, 'key1', 'value1'))
         self.feature.add_taggroup(self.taggroup1)
@@ -157,7 +266,7 @@ class FeaturesItemFeatureTests(LmkpTestCase):
     def test_item_feature_to_json_contains_involvements_if_available(self):
         json = self.feature.to_json(self.request)
         self.assertNotIn('involvements', json)
-        inv = ItemFeature('id', 'order', 2, 3)
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
         self.feature.add_involvement(inv)
         json = self.feature.to_json(self.request)
         self.assertEqual(json.get('involvements'), [inv.to_json(self.request)])
@@ -205,6 +314,123 @@ class FeaturesItemFeatureTests(LmkpTestCase):
         self.assertIn('institution', json)
         self.assertEqual(json.get('institution').get('id'), 'inst_id')
         self.assertEqual(json.get('institution').get('name'), 'inst_name')
+
+    @patch('lmkp.protocols.features.get_user_privileges')
+    def test_item_feature_add_or_replace_calls_get_user_privileges(
+            self, mock_get_user_privileges):
+        mock_get_user_privileges.return_value = None, None
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_or_replace_involvement(inv, self.request)
+        mock_get_user_privileges.assert_called_once_with(self.request)
+
+    def test_item_feature_add_or_replace_inv_handles_invalid_input(self):
+        inv = 'foo'
+        self.feature.add_or_replace_involvement(
+            inv, self.request)
+        self.assertEqual(len(self.feature.involvements), 0)
+
+    def test_item_feature_add_or_replace_inv_adds_inv(self):
+        inv = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_or_replace_involvement(
+            inv, self.request)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.assertEqual(self.feature.involvements[0], inv)
+
+    def test_item_feature_add_or_replace_deleted_versions(self):
+        inv = InvolvementFeature('identifier1', 1, 4, 'role1', 1)
+        self.feature.add_or_replace_involvement(
+            inv, self.request)
+        self.assertEqual(len(self.feature.involvements), 0)
+
+    def test_item_feature_add_or_replace_public(self):
+        inv1 = InvolvementFeature('identifier1', 1, 1, 'role1', 1)
+        inv2 = InvolvementFeature('identifier2', 1, 5, 'role1', 1)
+        inv3 = InvolvementFeature('identifier3', 1, 6, 'role1', 1)
+        self.feature.add_or_replace_involvement(
+            inv1, self.request, public_query=True)
+        self.feature.add_or_replace_involvement(
+            inv2, self.request, public_query=True)
+        self.feature.add_or_replace_involvement(
+            inv3, self.request, public_query=True)
+        self.assertEqual(len(self.feature.involvements), 0)
+
+    def test_item_feature_add_or_replace_not_public(self):
+        inv1 = InvolvementFeature('identifier1', 1, 1, 'role1', 1)
+        inv2 = InvolvementFeature('identifier2', 1, 5, 'role1', 1)
+        inv3 = InvolvementFeature('identifier3', 1, 6, 'role1', 1)
+        self.feature.add_or_replace_involvement(
+            inv1, self.request, public_query=False)
+        self.feature.add_or_replace_involvement(
+            inv2, self.request, public_query=False)
+        self.feature.add_or_replace_involvement(
+            inv3, self.request, public_query=False)
+        self.assertEqual(len(self.feature.involvements), 3)
+
+    @patch('lmkp.protocols.features.get_user_privileges')
+    def test_item_feature_add_or_replace_not_logged_in(
+            self, mock_get_user_privileges):
+        mock_get_user_privileges.return_value = False, False
+        inv1 = InvolvementFeature('identifier1', 1, 1, 'role1', 1)
+        inv2 = InvolvementFeature('identifier2', 1, 5, 'role1', 1)
+        inv3 = InvolvementFeature('identifier3', 1, 6, 'role1', 1)
+        self.feature.add_or_replace_involvement(
+            inv1, self.request, public_query=False)
+        self.feature.add_or_replace_involvement(
+            inv2, self.request, public_query=False)
+        self.feature.add_or_replace_involvement(
+            inv3, self.request, public_query=False)
+        self.assertEqual(len(self.feature.involvements), 0)
+
+    def test_item_feature_add_or_replace_inv_1(self):
+        """
+        Involvements with same identifier and version are added only once.
+        """
+        inv1 = InvolvementFeature('identifier1', 1, 2, 'role1', 1)
+        self.feature.add_or_replace_involvement(inv1, self.request)
+        inv2 = InvolvementFeature('identifier1', 1, 2, 'role2', 2)
+        self.feature.add_or_replace_involvement(inv2, self.request)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.assertEqual(self.feature.involvements[0], inv1)
+
+    def test_item_feature_add_or_replace_inv_2(self):
+        """
+        If there are multiple pending versions, only the latest (max
+        version number) is visible
+        """
+        inv1 = InvolvementFeature('identifier1', 2, 1, 'role1', 1)
+        inv2 = InvolvementFeature('identifier1', 3, 1, 'role1', 1)
+        inv3 = InvolvementFeature('identifier1', 1, 1, 'role1', 1)
+        self.feature.add_or_replace_involvement(inv1, self.request)
+        self.feature.add_or_replace_involvement(inv2, self.request)
+        self.feature.add_or_replace_involvement(inv3, self.request)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.assertEqual(self.feature.involvements[0], inv2)
+
+    def test_item_feature_add_or_replace_inv_3(self):
+        """
+        By default, show the latest version.
+        """
+        inv1 = InvolvementFeature('identifier1', 2, 3, 'role1', 1)
+        inv2 = InvolvementFeature('identifier1', 3, 2, 'role1', 1)
+        inv3 = InvolvementFeature('identifier1', 1, 3, 'role1', 1)
+        self.feature.add_or_replace_involvement(inv1, self.request)
+        self.feature.add_or_replace_involvement(inv2, self.request)
+        self.feature.add_or_replace_involvement(inv3, self.request)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.assertEqual(self.feature.involvements[0], inv2)
+
+    def test_item_feature_add_or_replace_inv_4(self):
+        """
+        By default, show the latest version.
+        """
+        inv1 = InvolvementFeature('identifier1', 2, 2, 'role1', 1)
+        inv2 = InvolvementFeature('identifier1', 3, 3, 'role1', 1)
+        inv3 = InvolvementFeature('identifier1', 1, 3, 'role1', 1)
+        self.feature.add_or_replace_involvement(inv1, self.request)
+        self.feature.add_or_replace_involvement(inv2, self.request)
+        self.feature.add_or_replace_involvement(inv3, self.request)
+        self.assertEqual(len(self.feature.involvements), 1)
+        self.assertEqual(self.feature.involvements[0], inv1)
 
 
 @pytest.mark.unittest

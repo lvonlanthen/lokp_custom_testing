@@ -181,7 +181,6 @@ class ActivityReadManyTests(LmkpTestCase):
         json = self.read_many('a', 'json', params=profile_params)
         self.assertEqual(json['total'], 0)
 
-    @pytest.mark.asdf
     def test_read_single_activity_with_involvement(self):
         sh = self.create('sh', get_new_diff(201), return_uid=True)
         inv_data = [{
@@ -193,12 +192,9 @@ class ActivityReadManyTests(LmkpTestCase):
             'a', get_new_diff(103, data=inv_data), return_uid=True)
 
         res = self.read_many('a', 'json')
-        print res
         self.assertEqual(len(res.get('data')), 1)
         a = res.get('data')[0]
         self.assertEqual(len(a.get('involvements')), 1)
-
-        self.fail()
 
     # def test_read_activity_with_taggroup_geometry(self):
     #     self.login()

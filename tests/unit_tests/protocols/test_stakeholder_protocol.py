@@ -233,6 +233,37 @@ class ProtocolsStakeholderProtocolReadMany(LmkpTestCase):
 
 @pytest.mark.unittest
 @pytest.mark.protocol
+class ProtocolsStakeholderProtocolGetRelevantQueryFromList(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.stakeholder_protocol = StakeholderProtocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.stakeholder_protocol.StakeholderProtocol.get_order')
+    def test_get_relevant_query_from_list_calls_get_order(
+            self, mock_get_order):
+        with self.assertRaises(UnboundLocalError):
+            self.stakeholder_protocol.get_relevant_query_from_list([])
+        mock_get_order.assert_called_once_with('sh')
+
+    @patch('lmkp.protocols.stakeholder_protocol.get_current_order_direction')
+    def test_get_relevant_query_from_list_calls_get_current_order_direction(
+            self, mock_get_order_direction):
+        self.stakeholder_protocol.get_relevant_query_from_list([])
+        mock_get_order_direction.assert_called_once_with(self.request)
+
+    def test_get_relevant_query_from_list_returns_query(self):
+        rel_query = self.stakeholder_protocol.get_relevant_query_from_list([])
+        self.assertIsInstance(rel_query, Query)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
 class ProtocolsStakeholderProtocolGetRelevantQueryMany(LmkpTestCase):
 
     def setUp(self):

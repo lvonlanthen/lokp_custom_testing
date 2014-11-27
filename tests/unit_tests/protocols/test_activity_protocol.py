@@ -105,6 +105,37 @@ class ProtocolsActivityProtocolQueryToFeatures(LmkpTestCase):
 
 @pytest.mark.unittest
 @pytest.mark.protocol
+class ProtocolsActivityProtocolGetRelevantQueryFromList(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.activity_protocol = ActivityProtocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.activity_protocol.ActivityProtocol.get_order')
+    def test_get_relevant_query_from_list_calls_get_order(
+            self, mock_get_order):
+        with self.assertRaises(UnboundLocalError):
+            self.activity_protocol.get_relevant_query_from_list([])
+        mock_get_order.assert_called_once_with('a')
+
+    @patch('lmkp.protocols.activity_protocol.get_current_order_direction')
+    def test_get_relevant_query_from_list_calls_get_current_order_direction(
+            self, mock_get_order_direction):
+        self.activity_protocol.get_relevant_query_from_list([])
+        mock_get_order_direction.assert_called_once_with(self.request)
+
+    def test_get_relevant_query_from_list_returns_query(self):
+        rel_query = self.activity_protocol.get_relevant_query_from_list([])
+        self.assertIsInstance(rel_query, Query)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
 class ProtocolsActivityProtocolQueryMany(LmkpTestCase):
 
     def setUp(self):
