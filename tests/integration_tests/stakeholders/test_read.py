@@ -55,3 +55,30 @@ class StakeholderReadManyTests(LmkpTestCase):
         self.assertEqual(len(res.get('data')), 1)
         sh = res.get('data')[0]
         self.assertEqual(len(sh.get('involvements')), 1)
+
+    def test_stakeholders_with_activities_filter(self):
+        sh_uid_1 = self.create('sh', get_new_diff(201), return_uid=True)
+        sh_uid_2 = self.create('sh', get_new_diff(201), return_uid=True)
+        inv_data_1 = [{
+            'id': sh_uid_1,
+            'version': 1,
+            'role': 6
+        }]
+        self.create(
+            'a', get_new_diff(103, data=inv_data_1), return_uid=True)
+        inv_data_2 = [{
+            'id': sh_uid_2,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid_2 = self.create(
+            'a', get_new_diff(106, data=inv_data_2), return_uid=True)
+
+        filter_params = {'a__[A] Checkbox 1__like': '[A] Value D2'}
+        res = self.read_many('sh', 'json', params=filter_params)
+        self.assertEqual(len(res.get('data')), 1)
+        res_1 = res.get('data')[0]
+        self.assertEqual(res_1.get('id'), sh_uid_2)
+        inv_1 = res_1.get('involvements')
+        self.assertEqual(len(inv_1), 1)
+        self.assertEqual(inv_1[0].get('id'), a_uid_2)
