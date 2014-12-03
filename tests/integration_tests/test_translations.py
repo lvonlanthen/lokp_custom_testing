@@ -6,6 +6,7 @@ from .base import (
     LmkpTestCase
 )
 from .diffs import get_new_diff
+from lmkp.views.translation import get_translated_keys
 
 
 @pytest.mark.usefixtures('app')
@@ -53,3 +54,40 @@ class TranslationTests(LmkpTestCase):
         res = self.app.get('/activities/html/%s?_LOCALE_=es' % a_uid)
         res.mustcontain('[A-T] Dropdown 1')
         res.mustcontain('[A-T] Value A1')
+
+
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+class TranslationGetTranslatedKeysTests(LmkpTestCase):
+
+    def test_get_translated_keys_returns_a_keys(self):
+        keys = ['[A] Dropdown 1', '[A] Textarea 1']
+        t = get_translated_keys('a', keys, 'es')
+        self.assertEqual(len(keys), len(t))
+        k1 = t[1]
+        self.assertEqual(k1[0], keys[0])
+        self.assertEqual(k1[1], '[A-T] Dropdown 1')
+        k2 = t[0]
+        self.assertEqual(k2[0], keys[1])
+        self.assertEqual(k2[1], '[A-T] Textarea 1')
+
+    def test_get_translated_keys_handles_invalid_locale(self):
+        keys = ['[A] Dropdown 1', '[A] Textarea 1']
+        t = get_translated_keys('a', keys, 'foo')
+        self.assertEqual(t, [])
+
+    def test_get_translated_keys_handles_invalid_keys(self):
+        keys = ['foo', 'bar']
+        t = get_translated_keys('a', keys, 'es')
+        self.assertEqual(t, [])
+
+    def test_get_translated_keys_returns_sh_keys(self):
+        keys = ['[SH] Integerfield 1', '[SH] Numberfield 1']
+        t = get_translated_keys('sh', keys, 'es')
+        self.assertEqual(len(keys), len(t))
+        k1 = t[0]
+        self.assertEqual(k1[0], keys[0])
+        self.assertEqual(k1[1], '[SH-T] Integerfield 1')
+        k2 = t[1]
+        self.assertEqual(k2[0], keys[1])
+        self.assertEqual(k2[1], '[SH-T] Numberfield 1')

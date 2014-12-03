@@ -16,6 +16,9 @@ from lmkp.views.views import (
     get_current_involvement_details,
     get_current_limit,
     get_current_offset,
+    get_current_translation_parameter,
+    get_current_taggroup_geometry_parameter,
+    get_current_attributes,
 )
 from ...integration_tests.base import (
     LmkpTestCase,
@@ -432,3 +435,100 @@ class ViewsGetCurrentOffsetTests(LmkpTestCase):
         self.request.params = {'offset': 'foo'}
         offset = get_current_offset(self.request)
         self.assertEqual(offset, 0)
+
+
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsGetCurrentTranslationParameterTests(LmkpTestCase):
+
+    def test_get_current_translation_parameter_returns_default(self):
+        translate = get_current_translation_parameter(self.request)
+        self.assertTrue(translate)
+
+    def test_get_current_translation_parameter_returns_parameter_false(self):
+        self.request.params = {'translate': 'false'}
+        translate = get_current_translation_parameter(self.request)
+        self.assertFalse(translate)
+
+    def test_get_current_translation_parameter_returns_parameter_foo(self):
+        self.request.params = {'translate': 'foo'}
+        translate = get_current_translation_parameter(self.request)
+        self.assertTrue(translate)
+
+    def test_get_current_translation_parameter_returns_parameter_true(self):
+        self.request.params = {'translate': 'true'}
+        translate = get_current_translation_parameter(self.request)
+        self.assertTrue(translate)
+
+
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsGetCurrentTaggroupGeometryParameterTests(LmkpTestCase):
+
+    def test_get_current_taggroup_geometry_parameter_returns_default(self):
+        translate = get_current_taggroup_geometry_parameter(self.request)
+        self.assertFalse(translate)
+
+    def test_get_current_taggroup_geometry_parameter_returns_parameter_false(
+            self):
+        self.request.params = {'taggroup_geometry': 'false'}
+        translate = get_current_taggroup_geometry_parameter(self.request)
+        self.assertFalse(translate)
+
+    def test_get_current_taggroup_geometry_parameter_returns_parameter_foo(
+            self):
+        self.request.params = {'taggroup_geometry': 'foo'}
+        translate = get_current_taggroup_geometry_parameter(self.request)
+        self.assertFalse(translate)
+
+    def test_get_current_taggroup_geometry_parameter_returns_parameter_true(
+            self):
+        self.request.params = {'taggroup_geometry': 'true'}
+        translate = get_current_taggroup_geometry_parameter(self.request)
+        self.assertTrue(translate)
+
+    def test_get_current_taggroup_geometry_parameter_tggeom(self):
+        self.request.params = {'tggeom': 'false'}
+        translate = get_current_taggroup_geometry_parameter(self.request)
+        self.assertFalse(translate)
+
+    def test_get_current_taggroup_geometry_parameter_tggeom_lower_priority(
+            self):
+        self.request.params = {'taggroup_geometry': 'false', 'tggeom': 'true'}
+        translate = get_current_taggroup_geometry_parameter(self.request)
+        self.assertFalse(translate)
+
+
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsGetCurrentAttributesTests(LmkpTestCase):
+
+    def test_get_current_attributes_returns_empty_list(self):
+        attributes = get_current_attributes(self.request)
+        self.assertEqual(attributes, [])
+
+    def test_get_current_attributes_returns_single_attribute(self):
+        self.request.params = {'attributes': 'foo'}
+        attributes = get_current_attributes(self.request)
+        self.assertEqual(len(attributes), 1)
+        self.assertEqual(attributes[0], 'foo')
+
+    def test_get_current_attributes_returns_multiple_attributes(self):
+        self.request.params = {'attributes': 'foo,bar'}
+        attributes = get_current_attributes(self.request)
+        self.assertEqual(len(attributes), 2)
+        self.assertEqual(attributes[0], 'foo')
+        self.assertEqual(attributes[1], 'bar')
+
+    def test_get_current_attributes_attrs_param(self):
+        self.request.params = {'attrs': 'foo'}
+        attributes = get_current_attributes(self.request)
+        self.assertEqual(len(attributes), 1)
+        self.assertEqual(attributes[0], 'foo')
+
+    def test_get_current_attributes_attrs_lower_priority(self):
+        self.request.params = {'attributes': 'foo,bar', 'attrs': 'asdf'}
+        attributes = get_current_attributes(self.request)
+        self.assertEqual(len(attributes), 2)
+        self.assertEqual(attributes[0], 'foo')
+        self.assertEqual(attributes[1], 'bar')

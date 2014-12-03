@@ -68,7 +68,7 @@ class FeaturesItemFeatureTests(LmkpTestCase):
         self.request = testing.DummyRequest()
         settings = get_settings()
         self.config = testing.setUp(request=self.request, settings=settings)
-        self.feature = ItemFeature('identifier', 'order_value', 1, 2)
+        self.feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         self.taggroup1 = ItemTaggroup(1, 2, 3)
         self.taggroup2 = ItemTaggroup(2, 3, 4)
 
@@ -76,7 +76,7 @@ class FeaturesItemFeatureTests(LmkpTestCase):
         testing.tearDown()
 
     def test_create_item_feature(self):
-        feature = ItemFeature('id', 'order', 2, 3)
+        feature = ItemFeature('id', 'id', 'order', 2, 3)
         self.assertIsInstance(feature, ItemFeature)
 
     def test_item_feature_identifier(self):
@@ -92,57 +92,57 @@ class FeaturesItemFeatureTests(LmkpTestCase):
         self.assertEqual(self.feature.status_id, 2)
 
     def test_item_feature_timestamp(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.timestamp = 'foo'
         self.assertEqual(feature.timestamp, 'foo')
 
     def test_item_feature_previous_version(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.previous_version = 1
         self.assertEqual(feature.previous_version, 1)
 
     def test_item_feature_userid(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.userid = 1
         self.assertEqual(feature.userid, 1)
 
     def test_item_feature_username(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.username = 'foo'
         self.assertEqual(feature.username, 'foo')
 
     def test_item_feature_user_privacy(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.user_privacy = 1
         self.assertEqual(feature.user_privacy, 1)
 
     def test_item_feature_user_firstname(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.user_firstname = 'foo'
         self.assertEqual(feature.user_firstname, 'foo')
 
     def test_item_feature_user_lastname(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.user_lastname = 'foo'
         self.assertEqual(feature.user_lastname, 'foo')
 
     def test_item_feature_institution_id(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.institution_id = 1
         self.assertEqual(feature.institution_id, 1)
 
     def test_item_feature_institution_name(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.institution_name = 'foo'
         self.assertEqual(feature.institution_name, 'foo')
 
     def test_item_feature_institution_url(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.institution_url = 'foo'
         self.assertEqual(feature.institution_url, 'foo')
 
     def test_item_feature_institution_logo(self):
-        feature = ItemFeature('identifier', 'order_value', 1, 2)
+        feature = ItemFeature('id', 'identifier', 'order_value', 1, 2)
         feature.institution_logo = 'foo'
         self.assertEqual(feature.institution_logo, 'foo')
 

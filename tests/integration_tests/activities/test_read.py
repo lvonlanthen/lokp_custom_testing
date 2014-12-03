@@ -43,6 +43,32 @@ class ActivityReadManyTests(LmkpTestCase):
 
         json = self.read_many('a', 'json')
         self.assertEqual(json['total'], 1)
+        a1 = json['data'][0]
+        self.assertEqual(a1.get('status'), 'pending')
+        self.assertEqual(a1.get('status_id'), 1)
+        self.assertIsNone(a1['previous_version'])
+        self.assertEqual(a1.get('geometry').get('type'), 'Point')
+        self.assertEqual(len(a1.get('geometry').get('coordinates')), 2)
+        self.assertEqual(a1.get('version'), 1)
+        self.assertIn('timestamp', a1)
+        self.assertIn('id', a1)
+        self.assertEqual(len(a1.get('taggroups')), 2)
+        tg1 = a1.get('taggroups')[0]
+        self.assertEqual(tg1.get('tg_id'), 1)
+        self.assertEqual(tg1.get('main_tag').get('key'), '[A] Dropdown 1')
+        self.assertEqual(tg1.get('main_tag').get('value'), '[A] Value A1')
+        self.assertEqual(len(tg1.get('tags')), 1)
+        t1 = tg1.get('tags')[0]
+        self.assertEqual(t1.get('key'), '[A] Dropdown 1')
+        self.assertEqual(t1.get('value'), '[A] Value A1')
+        tg2 = a1.get('taggroups')[1]
+        self.assertEqual(tg2.get('tg_id'), 2)
+        self.assertEqual(tg2.get('main_tag').get('key'), '[A] Numberfield 1')
+        self.assertEqual(tg2.get('main_tag').get('value'), '123.45')
+        self.assertEqual(len(tg2.get('tags')), 1)
+        t2 = tg2.get('tags')[0]
+        self.assertEqual(t2.get('key'), '[A] Numberfield 1')
+        self.assertEqual(t2.get('value'), '123.45')
 
     def test_only_active_activities_appear_in_many_json_public(self):
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
@@ -305,6 +331,84 @@ class ActivityReadManyTests(LmkpTestCase):
         self.assertEqual(len(inv_1), 1)
         self.assertEqual(inv_1[0].get('id'), sh_uid_1)
 
+    def test_activities_filter_logical_operator(self):
+        uid_1 = self.create('a', get_new_diff(101), return_uid=True)  # A1
+        uid_2 = self.create('a', get_new_diff(104), return_uid=True)  # A2
+        self.create('a', get_new_diff(110), return_uid=True)  # A3
+
+        filter_params = {
+            'a__[A] Dropdown 1__like': '[A] Value A1',
+            'a__[A] Numberfield 1__eq': '123.45'
+        }
+        res = self.read_many('a', 'json', params=filter_params)
+        self.assertEqual(len(res.get('data')), 1)
+        res_1 = res.get('data')[0]
+        self.assertEqual(res_1.get('id'), uid_1)
+        filter_params['logical_op'] = 'or'
+        res = self.read_many('a', 'json', params=filter_params)
+        self.assertEqual(len(res.get('data')), 2)
+        res_1 = res.get('data')[0]
+        self.assertEqual(res_1.get('id'), uid_2)
+        res_2 = res.get('data')[1]
+        self.assertEqual(res_2.get('id'), uid_1)
+
+    # def test_activities_filter_logical_operator_same_attribute(self):
+    #     uid_1 = self.create('a', get_new_diff(101), return_uid=True)  # A1
+    #     uid_2 = self.create('a', get_new_diff(104), return_uid=True)  # A2
+    #     self.create('a', get_new_diff(110), return_uid=True)  # A3
+
+    #     filter_params = {
+    #         'a__[A] Dropdown 1__like': '[A] Value A1',
+    #         'a__[A] Dropdown 1__like': '[A] Value A2'
+    #     }
+    #     res = self.read_many('a', 'json', params=filter_params)
+
+    #     # res_1 = res.get('data')[0]
+    #     # self.assertEqual(res_1.get('id'), uid_2)
+
+    #     self.assertEqual(len(res.get('data')), 0)
+
+    #     filter_params['logical_op'] = 'or'
+    #     res = self.read_many('a', 'json', params=filter_params)
+    #     self.assertEqual(len(res.get('data')), 2)
+    #     res_1 = res.get('data')[0]
+    #     self.assertEqual(res_1.get('id'), uid_1)
+    #     res_2 = res.get('data')[1]
+    #     self.assertEqual(res_2.get('id'), uid_2)
+
+    def test_activities_filter_logical_operator_stakeholder(self):
+        sh_uid_1 = self.create('sh', get_new_diff(201), return_uid=True)
+        sh_uid_2 = self.create('sh', get_new_diff(204), return_uid=True)
+        inv_data_1 = [{
+            'id': sh_uid_1,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid_1 = self.create(
+            'a', get_new_diff(103, data=inv_data_1), return_uid=True)
+        inv_data_2 = [{
+            'id': sh_uid_2,
+            'version': 1,
+            'role': 6
+        }]
+        self.create(
+            'a', get_new_diff(103, data=inv_data_2), return_uid=True)
+
+        filter_params = {
+            'sh__[SH] Textfield 1__like': 'asdf',
+            'a__[A] Dropdown 1__like': '[A] Value A2'
+        }
+        res = self.read_many('a', 'json', params=filter_params)
+        self.assertEqual(len(res.get('data')), 0)
+        filter_params['logical_op'] = 'or'
+        res = self.read_many('a', 'json', params=filter_params)
+        self.assertEqual(len(res.get('data')), 1)
+        res_1 = res.get('data')[0]
+        self.assertEqual(res_1.get('id'), a_uid_1)
+        inv_1 = res_1.get('involvements')
+        self.assertEqual(len(inv_1), 1)
+        self.assertEqual(inv_1[0].get('id'), sh_uid_1)
+
     def test_activities_order_default_by_timestamp(self):
         uid_1 = self.create('a', get_new_diff(101), return_uid=True)
         uid_2 = self.create('a', get_new_diff(110), return_uid=True)
@@ -476,6 +580,82 @@ class ActivityReadManyTests(LmkpTestCase):
     #     self.assertEqual(json['total'], 1)
     #     geom_taggroup = json.get('data')[0].get('taggroups')[1]
     #     self.assertIn('geometry', geom_taggroup)
+
+
+@pytest.mark.read
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+@pytest.mark.activities
+class ActivityReadManyGeojsonTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.login()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_activities_appear_in_read_many_geojson(self):
+        json = self.read_many('a', 'geojson')
+        self.assertEqual(json['features'], [])
+        self.assertEqual(json['type'], 'FeatureCollection')
+
+        uid = self.create('a', get_new_diff(101), return_uid=True)
+
+        json = self.read_many('a', 'geojson')
+        self.assertEqual(json['type'], 'FeatureCollection')
+        self.assertEqual(len(json['features']), 1)
+        f1 = json['features'][0]
+        self.assertEqual(f1.get('geometry').get('type'), 'Point')
+        self.assertEqual(len(f1.get('geometry').get('coordinates')), 2)
+        self.assertEqual(f1.get('type'), 'Feature')
+        self.assertEqual(len(f1.get('properties')), 4)
+        self.assertEqual(f1.get('properties').get('activity_identifier'), uid)
+        self.assertEqual(f1.get('properties').get('status'), 'pending')
+        self.assertEqual(f1.get('properties').get('status_id'), 1)
+        self.assertEqual(f1.get('properties').get('version'), 1)
+        self.assertIn('id', f1)
+        self.assertIn('fid', f1)
+
+    def test_activities_geojson_single_attribute(self):
+        self.create('a', get_new_diff(101))
+
+        attributes = {'attributes': '[A] Dropdown 1'}
+        json = self.read_many('a', 'geojson', params=attributes)
+        self.assertEqual(len(json['features']), 1)
+        f1 = json['features'][0]
+        self.assertEqual(len(f1.get('properties')), 5)
+        self.assertEqual(
+            f1.get('properties').get('[A] Dropdown 1'), '[A] Value A1')
+
+    def test_activities_geojson_multiple_attributes(self):
+        self.create('a', get_new_diff(101))
+
+        attributes = {'attributes': '[A] Dropdown 1,[A] Numberfield 1'}
+        json = self.read_many('a', 'geojson', params=attributes)
+        self.assertEqual(len(json['features']), 1)
+        f1 = json['features'][0]
+        self.assertEqual(len(f1.get('properties')), 6)
+        self.assertEqual(
+            f1.get('properties').get('[A] Dropdown 1'), '[A] Value A1')
+        self.assertEqual(
+            f1.get('properties').get('[A] Numberfield 1'), 123.45)
+
+    def test_activities_geojson_attributes_translated(self):
+        self.create('a', get_new_diff(101))
+
+        attributes = {
+            'attributes': '[A] Dropdown 1',
+            '_LOCALE_': 'es'
+        }
+        json = self.read_many('a', 'geojson', params=attributes)
+        self.assertEqual(len(json['features']), 1)
+        f1 = json['features'][0]
+        self.assertEqual(len(f1.get('properties')), 5)
+        self.assertEqual(
+            f1.get('properties').get('[A-T] Dropdown 1'), '[A-T] Value A1')
 
 
 @pytest.mark.usefixtures('app')

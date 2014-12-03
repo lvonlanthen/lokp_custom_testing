@@ -23,7 +23,7 @@ class FeaturesActivityFeatureTests(LmkpTestCase):
         settings = get_settings()
         self.config = testing.setUp(request=self.request, settings=settings)
         self.feature = ActivityFeature(
-            'identifier', 'order_value', 1, 2, 'geometry')
+            'id', 'identifier', 'order_value', 1, 2, 'geometry')
         self.taggroup1 = ActivityTaggroup(1, 2, 3, 'geom1')
         self.taggroup2 = ActivityTaggroup(2, 3, 4, 'geom2')
 
@@ -31,11 +31,25 @@ class FeaturesActivityFeatureTests(LmkpTestCase):
         testing.tearDown()
 
     def test_create_activity_feature(self):
-        feature = ActivityFeature('id', 'order', 2, 3, 'geom')
+        feature = ActivityFeature('id', 'id', 'order', 2, 3, 'geom')
         self.assertIsInstance(feature, ActivityFeature)
 
     def test_activity_feature_geometry(self):
         self.assertEqual(self.feature.geometry, 'geometry')
+
+    def test_activity_feature_geojson_properties(self):
+        self.assertEqual(self.feature.geojson_properties, {})
+
+    def test_activity_feature_set_geojson_properties(self):
+        self.feature.set_geojson_property('foo', 'bar')
+        self.assertEqual(self.feature.geojson_properties, {'foo': 'bar'})
+
+    def test_activity_feature_set_geojson_properties_duplicates(self):
+        self.feature.set_geojson_property('foo', 'bar1')
+        self.feature.set_geojson_property('foo', 'bar2')
+        self.feature.set_geojson_property('foo', 'bar3')
+        self.assertEqual(
+            self.feature.geojson_properties, {'foo': ['bar1', 'bar2', 'bar3']})
 
     def test_activity_feature_add_taggroups(self):
         self.feature.add_taggroup(self.taggroup1)
@@ -60,6 +74,41 @@ class FeaturesActivityFeatureTests(LmkpTestCase):
         json = self.feature.to_json(self.request)
         self.assertIn('geometry', json)
         self.assertEqual(json.get('geometry'), 'geom')
+
+    def test_activity_feature_to_geojson_returns_none_if_no_geometry(self):
+        self.feature.geometry = None
+        geojson = self.feature.to_geojson(self.request)
+        self.assertIsNone(geojson)
+
+    def test_activity_feature_to_geojson_returns_none_if_invalid_geometry(
+            self):
+        geojson = self.feature.to_geojson(self.request)
+        self.assertIsNone(geojson)
+
+    @patch('lmkp.protocols.activity_features.geometry')
+    @patch('lmkp.protocols.activity_features.wkb')
+    def test_activity_feature_to_geojson_contains_geometry_and_properties(
+            self, mock_wkb, mock_geometry):
+        mock_wkb.loads.return_value = 'foo'
+        mock_geometry.mapping.return_value = 'geom'
+        self.feature.geometry = Mock()
+        self.feature.geometry.geom_wkb = 'foo'
+        geojson = self.feature.to_geojson(self.request)
+        self.assertIn('geometry', geojson)
+        self.assertIn('properties', geojson)
+
+    @patch('lmkp.protocols.activity_features.geometry')
+    @patch('lmkp.protocols.activity_features.wkb')
+    def test_activity_feature_to_geojson_contains_properties(
+            self, mock_wkb, mock_geometry):
+        mock_wkb.loads.return_value = 'foo'
+        mock_geometry.mapping.return_value = 'geom'
+        self.feature.geometry = Mock()
+        self.feature.geometry.geom_wkb = 'foo'
+        self.feature.set_geojson_property('foo', 'bar')
+        geojson = self.feature.to_geojson(self.request)
+        self.assertIn('foo', geojson.get('properties'))
+        self.assertEqual(geojson.get('properties').get('foo'), 'bar')
 
 
 @pytest.mark.unittest

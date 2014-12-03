@@ -7,6 +7,7 @@ from pyramid.httpexceptions import (
     HTTPNotFound,
 )
 
+from lmkp.protocols.activity_protocol import ActivityProtocol
 from lmkp.views.activities import ActivityView
 from ...integration_tests.base import (
     LmkpTestCase,
@@ -148,16 +149,15 @@ class ActivityViewReadManyJsonTests(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    @patch('lmkp.views.activities.activity_protocol.read_many')
+    @patch.object(ActivityProtocol, 'read_many')
     def test_read_many_json_calls_activity_protocol(
             self, mock_protocol_read_many):
         mock_protocol_read_many.return_value = []
         self.view.read_many()
-        mock_protocol_read_many.assert_called_once_with(
-            self.request, public=False)
+        mock_protocol_read_many.assert_called_once_with(public_query=False)
 
     @patch('lmkp.views.activities.render_to_response')
-    @patch('lmkp.views.activities.activity_protocol.read_many')
+    @patch.object(ActivityProtocol, 'read_many')
     def test_read_many_json_calls_render_to_response(
             self, mock_protocol_read_many, mock_render_to_response):
         mock_protocol_read_many.return_value = []
@@ -335,16 +335,16 @@ class ActivityViewReadManyGeojsonTests(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    @patch('lmkp.views.activities.activity_protocol.read_many_geojson')
+    @patch.object(ActivityProtocol, 'read_many_geojson')
     def test_read_many_geojson_calls_activity_protocol(
             self, mock_protocol_read_many_geojson):
         mock_protocol_read_many_geojson.return_value = []
         self.view.read_many()
         mock_protocol_read_many_geojson.assert_called_once_with(
-            self.request, public=False)
+            public_query=False)
 
     @patch('lmkp.views.activities.render_to_response')
-    @patch('lmkp.views.activities.activity_protocol.read_many_geojson')
+    @patch.object(ActivityProtocol, 'read_many_geojson')
     def test_read_many_json_calls_render_to_response(
             self, mock_protocol_read_many_geojson, mock_render_to_response):
         mock_protocol_read_many_geojson.return_value = []
@@ -407,7 +407,7 @@ class ActivityViewReadManyHtmlTests(LmkpTestCase):
         self.view.read_many()
         mock_get_bbox_parameters.assert_called_once_with(self.request)
 
-    @patch('lmkp.views.activities.activity_protocol.read_many')
+    @patch.object(ActivityProtocol, 'read_many')
     @patch('lmkp.views.activities.render_to_response')
     def test_read_many_json_calls_activity_protocol(
             self, mock_render_to_response, mock_protocol_read_many):
@@ -415,7 +415,7 @@ class ActivityViewReadManyHtmlTests(LmkpTestCase):
         mock_protocol_read_many.return_value = []
         self.view.read_many()
         mock_protocol_read_many.assert_called_once_with(
-            self.request, public=False, limit=10, offset=0)
+            public_query=False, limit=10, offset=0)
 
     @patch('lmkp.views.activities.get_status_parameter')
     @patch('lmkp.views.activities.render_to_response')
