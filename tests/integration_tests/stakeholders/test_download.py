@@ -3,9 +3,8 @@ from pyramid import testing
 from mock import patch, Mock
 
 from lmkp.models.database_objects import Stakeholder
-from lmkp.models.meta import DBSession as Session
 from lmkp.views import download
-from lmkp.views.stakeholder_protocol3 import StakeholderProtocol3
+from lmkp.protocols.stakeholder_protocol import StakeholderProtocol
 from ..base import (
     LmkpTestCase,
 )
@@ -30,17 +29,17 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         settings = get_settings()
         self.config = testing.setUp(request=self.request, settings=settings)
         self.header_length = 16
-        self.sh_protocol = StakeholderProtocol3(Session)
+        self.sh_protocol = StakeholderProtocol(self.request)
 
     def tearDown(self):
         testing.tearDown()
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_table_calls_stakeholder_protocol_read_many_by_activities(
-            self, mock_read_many_by_activities):
+    @patch.object(StakeholderProtocol, 'read_many')
+    def test_to_table_calls_stakeholder_protocol_read_many(
+            self, mock_read_many):
         download.to_flat_table(self.request, 'stakeholders')
-        mock_read_many_by_activities.assert_called_once_with(
-            self.request, public=True, translate=False)
+        mock_read_many.assert_called_once_with(
+            public_query=True, translate=False, other_identifiers=[])
 
     def test_to_flat_table_preserves_order_inside_taggroup(self):
         header, __ = download.to_flat_table(self.request, 'stakeholders')
@@ -72,14 +71,20 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(len(header), self.header_length)
         self.assertEqual(len(rows), 0)
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_returns_one_row(self, mock_read_many_by_activities):
+    def test_to_flat_table_returns_one_row(self):
         self.login()
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
-        header, rows = download.to_flat_table(self.request, 'sh')
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        header, rows = download.to_flat_table(
+            self.request, 'sh', involvements='none')
         self.assertEqual(len(header), self.header_length)
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0][header.index('id')], uid)
@@ -89,16 +94,21 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(
             rows[0][header.index('[SH] Numberfield 1')], '123.0')
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_returns_multiple_rows(
-            self, mock_read_many_by_activities):
+    def test_to_flat_table_returns_multiple_rows(self):
         self.login()
         for i in range(3):
             uid = self.create('sh', get_new_diff(201), return_uid=True)
             self.review('sh', uid)
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
-        header, rows = download.to_flat_table(self.request, 'sh')
+            inv_data = [{
+                'id': uid,
+                'version': 1,
+                'role': 6
+            }]
+            a_uid = self.create(
+                'a', get_new_diff(103, data=inv_data), return_uid=True)
+            self.review('a', a_uid)
+        header, rows = download.to_flat_table(
+            self.request, 'sh', involvements='none')
         self.assertEqual(len(header), self.header_length)
         self.assertEqual(len(rows), 3)
         for r in rows:
@@ -108,16 +118,22 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
             self.assertEqual(
                 r[header.index('[SH] Numberfield 1')], '123.0')
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_with_checkboxes(self, mock_read_many_by_activities):
+    def test_to_flat_table_with_checkboxes(self):
         self.login()
-        self.create('sh', get_new_diff(202))
+        uid = self.create('sh', get_new_diff(202), return_uid=True)
         # The Stakeholder cannot be reviewed because it is not complete. We
         # can however set it "active" directly in the database
         self.db_session.query(Stakeholder).update({'fk_status': 2})
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
-        header, rows = download.to_flat_table(self.request, 'sh')
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        header, rows = download.to_flat_table(
+            self.request, 'sh', involvements='none')
         self.assertEqual(len(header), self.header_length + 1)
         self.assertEqual(len(rows), 1)
         row = rows[0]
@@ -127,15 +143,20 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(
             row[header.index('[SH] Checkbox 1_2')], '[SH] Value D5')
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_with_repeating_taggroup(
-            self, mock_read_many_by_activities):
+    def test_to_flat_table_with_repeating_taggroup(self):
         self.login()
         uid = self.create('sh', get_new_diff(206), return_uid=True)
         self.review('sh', uid)
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
-        header, rows = download.to_flat_table(self.request, 'sh')
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
+        header, rows = download.to_flat_table(
+            self.request, 'sh', involvements='none')
         self.assertEqual(len(header), self.header_length + 2)
         self.assertEqual(len(rows), 1)
         row = rows[0]
@@ -153,17 +174,24 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
             row[header.index('[SH] Numberfield 2_[SH] Integerfield 1_2')],
             '123')
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_files(self, mock_read_many_by_activities):
+    def test_to_flat_table_files(self):
         self.login()
         uid = self.create('stakeholders', get_new_diff(207), return_uid=True)
         self.review('stakeholders', uid)
+        self.review('sh', uid)
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
         request = self.request
         request.route_url = Mock()
         request.route_url.return_value = 'file_url'
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
-        header, rows = download.to_flat_table(self.request, 'stakeholders')
+        header, rows = download.to_flat_table(
+            self.request, 'stakeholders', involvements='none')
         self.assertEqual(len(header), self.header_length)
         self.assertEqual(len(rows), 1)
         row = rows[0]
@@ -171,36 +199,70 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
             row[header.index('[SH] Dropdown 2_[SH] Filefield 1_1')],
             'filename1.jpg (file_url)|filename2.pdf (file_url)')
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_different_stakeholders(
-            self, mock_read_many_by_activities):
+    def test_to_flat_table_different_stakeholders(self):
         self.login()
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', uid)
         uid = self.create('sh', get_new_diff(204), return_uid=True)
         self.review('sh', uid)
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', uid)
         uid = self.create('sh', get_new_diff(206), return_uid=True)
         self.review('sh', uid)
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
-        header, rows = download.to_flat_table(self.request, 'sh')
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', uid)
+        header, rows = download.to_flat_table(
+            self.request, 'sh', involvements='none')
         self.assertEqual(len(header), self.header_length + 2)
         self.assertEqual(len(rows), 3)
         for r in rows:
             self.assertEqual(len(header), len(r))
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_filters_columns(self, mock_read_many_by_activities):
+    def test_to_flat_table_filters_columns(self):
         self.login()
         uid_1 = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid_1)
+        inv_data = [{
+            'id': uid_1,
+            'version': 1,
+            'role': 6
+        }]
+        uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', uid)
         uid_2 = self.create('sh', get_new_diff(206), return_uid=True)
         self.review('sh', uid_2)
+        inv_data = [{
+            'id': uid_2,
+            'version': 1,
+            'role': 6
+        }]
+        uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', uid)
         columns = ['[SH] Textfield 1', '[SH] Integerfield 1']
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
         header, rows = download.to_flat_table(
-            self.request, 'stakeholders', columns=columns)
+            self.request, 'stakeholders', columns=columns, involvements='none')
         self.assertEqual(len(header), 6)
         self.assertIn('[SH] Textfield 1_[SH] Textfield 1', header)
         self.assertIn('[SH] Numberfield 2_[SH] Integerfield 1_1', header)
@@ -246,17 +308,21 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(header_filtered, header)
         self.assertEqual(rows_filtered, rows)
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_filter_non_existing_columns(
-            self, mock_read_many_by_activities):
+    def test_to_flat_table_filter_non_existing_columns(self):
         self.login()
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
+        inv_data = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+        self.review('a', a_uid)
         columns = ['foo', 'bar']
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
         header, rows = download.to_flat_table(
-            self.request, 'stakeholders', columns=columns)
+            self.request, 'stakeholders', columns=columns, involvements='none')
         self.assertEqual(len(header), 3)
         self.assertNotIn('[SH] Textfield 1_[SH] Textfield 1', header)
         row = rows[0]
@@ -352,9 +418,7 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(row[header.index('inv_role_1')], 'Stakeholder Role 6')
         self.assertEqual(row[header.index('inv_id_1')], a_uid)
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_with_mixed_involvements(
-            self, mock_read_many_by_activities):
+    def test_to_flat_table_with_mixed_involvements(self):
         self.login()
         sh_uid_1 = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid_1)
@@ -385,12 +449,10 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         a_uid_3 = self.create(
             'a', get_new_diff(103, data=inv_2), return_uid=True)
         self.review('a', a_uid_3)
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
         header, rows = download.to_flat_table(self.request, 'stakeholders')
         self.assertEqual(len(header), self.header_length + 6)
-        self.assertEqual(len(rows), 3)
-        row_sh_3 = rows[1]
+        self.assertEqual(len(rows), 2)
+        row_sh_3 = rows[0]
         self.assertEqual(len(row_sh_3), len(header))
         self.assertEqual(row_sh_3[header.index('id')], sh_uid_3)
         self.assertEqual(
@@ -399,14 +461,7 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
         self.assertEqual(
             row_sh_3[header.index('inv_role_2')], 'Stakeholder Role 4')
         self.assertEqual(row_sh_3[header.index('inv_id_2')], a_uid_3)
-        row_sh_2 = rows[2]
-        self.assertEqual(len(row_sh_2), len(header))
-        self.assertEqual(row_sh_2[header.index('id')], sh_uid_2)
-        self.assertIsNone(row_sh_2[header.index('inv_role_1')])
-        self.assertIsNone(row_sh_2[header.index('inv_id_1')])
-        self.assertIsNone(row_sh_2[header.index('inv_role_2')])
-        self.assertIsNone(row_sh_2[header.index('inv_id_2')])
-        row_sh_1 = rows[0]
+        row_sh_1 = rows[1]
         self.assertEqual(len(row_sh_1), len(header))
         self.assertEqual(row_sh_1[header.index('id')], sh_uid_1)
         self.assertEqual(
@@ -439,16 +494,20 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
                 '[SH-T] Identical Translation_[SH-T] Identical Translation')],
             'asdf')
 
-    @patch('lmkp.views.download.stakeholder_protocol.read_many_by_activities')
-    def test_to_flat_table_translation_same_translation(
-            self, mock_read_many_by_activities):
+    def test_to_flat_table_translation_same_translation(self):
         self.login()
         uid = self.create('sh', get_new_diff(208), return_uid=True)
         self.review('sh', uid)
+        inv = [{
+            'id': uid,
+            'version': 1,
+            'role': 6
+        }]
+        a_uid = self.create('a', get_new_diff(103, data=inv), return_uid=True)
+        self.review('a', a_uid)
         self.request.params = {'_LOCALE_': 'es'}
-        mock_read_many_by_activities.return_value = self.sh_protocol.read_many(
-            self.request, public=True, translate=False)
-        header, rows = download.to_flat_table(self.request, 'sh')
+        header, rows = download.to_flat_table(
+            self.request, 'sh', involvements='none')
         self.assertEqual(len(header), self.header_length)
         row = rows[0]
         self.assertEqual(len(rows), 1)

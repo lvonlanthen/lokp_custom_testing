@@ -82,3 +82,35 @@ class StakeholderReadManyTests(LmkpTestCase):
         inv_1 = res_1.get('involvements')
         self.assertEqual(len(inv_1), 1)
         self.assertEqual(inv_1[0].get('id'), a_uid_2)
+
+
+@pytest.mark.read
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+@pytest.mark.stakeholders
+class StakeholderReadManyByActivitiesTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.login()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_read_many_by_a_basic(self):
+        self.create('sh', get_new_diff(201), return_uid=True)
+        sh2 = self.create('sh', get_new_diff(201), return_uid=True)
+        inv_data = [{
+            'id': sh2,
+            'version': 1,
+            'role': 6
+        }]
+        self.create(
+            'a', get_new_diff(103, data=inv_data), return_uid=True)
+
+        res = self.read_by('sh', 'json')
+        self.assertEqual(len(res.get('data')), 1)
+        res_1 = res.get('data')[0]
+        self.assertEqual(res_1.get('id'), sh2)

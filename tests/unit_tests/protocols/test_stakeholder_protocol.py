@@ -1,9 +1,7 @@
 import pytest
-from geoalchemy.functions import functions as geofunctions
 from mock import patch, Mock
 from pyramid import testing
 from sqlalchemy.orm.query import Query
-import sqlalchemy
 
 from lmkp.protocols.stakeholder_protocol import StakeholderProtocol
 from lmkp.protocols.features import ItemFeature
@@ -13,10 +11,8 @@ from ...integration_tests.base import (
 from ...base import get_settings
 
 from lmkp.models.database_objects import (
-    Activity,
     SH_Key,
     SH_Value,
-    User,
 )
 from lmkp.models.meta import DBSession as Session
 
@@ -131,7 +127,7 @@ class ProtocolsStakeholderProtocolReadMany(LmkpTestCase):
         mock_query_to_features.return_value = []
         self.stakeholder_protocol.read_many()
         mock_get_relevant_query_many.assert_called_once_with(
-            public_query=True)
+            public_query=True, other_identifiers=None)
 
     @patch(
         'lmkp.protocols.stakeholder_protocol.get_current_involvement_details')

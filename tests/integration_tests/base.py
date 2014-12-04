@@ -69,6 +69,20 @@ class LmkpTestCase(TestCase):
         else:
             self.fail('Unknown format: %s' % format)
 
+    def read_by(self, item_type, format='json', params={}):
+        by = 'byactivities'
+        if item_type == 'a':
+            by = 'bystakeholders'
+        url = get_base_url_by_item_type(item_type)
+        url_params = [
+            '%s=%s' % (key, value) for key, value in params.iteritems()]
+        if format == 'json':
+            res = self.app.get(
+                '%s/%s/json?%s' % (url, by, '&'.join(url_params)))
+            return res.json
+        else:
+            self.fail('Unknown format: %s' % format)
+
     def review(
             self, item_type, identifier, decision='approve', version=1,
             comment='', expect_errors=False):

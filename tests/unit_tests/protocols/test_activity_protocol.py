@@ -364,7 +364,7 @@ class ProtocolsActivityProtocolReadMany(LmkpTestCase):
         mock_query_to_features.return_value = []
         self.activity_protocol.read_many()
         mock_get_relevant_query_many.assert_called_once_with(
-            public_query=True)
+            public_query=True, other_identifiers=None)
 
     @patch(
         'lmkp.protocols.activity_protocol.get_current_involvement_details')
