@@ -1,5 +1,5 @@
 import pytest
-from mock import patch
+from mock import patch, Mock
 from pyramid import testing
 from sqlalchemy.orm.query import Query
 from sqlalchemy.sql import expression
@@ -329,9 +329,7 @@ class ProtocolsProtocolGetValidStatusIdsTest(LmkpTestCase):
         self.assertNotIn(1, status_ids)
         self.assertNotIn(6, status_ids)
 
-    @patch('lmkp.protocols.protocol.get_user_privileges')
-    def test_get_valid_status_ids_filter_moderator(
-            self, mock_get_user_privileges):
+    def test_get_valid_status_ids_filter_moderator(self):
         status_ids = self.protocol.get_valid_status_ids(
             'filter', True, True)
         self.assertEqual(len(status_ids), 6)
@@ -345,14 +343,83 @@ class ProtocolsProtocolGetValidStatusIdsTest(LmkpTestCase):
         self.assertNotIn(1, status_ids)
         self.assertNotIn(4, status_ids)
 
-    @patch('lmkp.protocols.protocol.get_user_privileges')
-    def test_get_valid_status_ids_involvements_logged_in(
-            self, mock_get_user_privileges):
+    def test_get_valid_status_ids_involvements_logged_in(self):
         status_ids = self.protocol.get_valid_status_ids(
             'involvements', True, True)
         self.assertEqual(len(status_ids), 4)
         self.assertIn(1, status_ids)
         self.assertNotIn(4, status_ids)
+
+    def test_get_valid_status_ids_history_not_logged_in(self):
+        status_ids = self.protocol.get_valid_status_ids(
+            'history', False, False)
+        self.assertEqual(len(status_ids), 2)
+        self.assertNotIn(1, status_ids)
+        self.assertNotIn(4, status_ids)
+
+    def test_get_valid_status_ids_history_logged_in(self):
+        status_ids = self.protocol.get_valid_status_ids(
+            'history', True, False)
+        self.assertEqual(len(status_ids), 2)
+        self.assertNotIn(1, status_ids)
+        self.assertNotIn(4, status_ids)
+
+    def test_get_valid_status_ids_history_moderator(self):
+        status_ids = self.protocol.get_valid_status_ids(
+            'history', True, True)
+        self.assertEqual(len(status_ids), 6)
+        self.assertIn(1, status_ids)
+        self.assertIn(4, status_ids)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsProtocolApplyManyVisibleVersionFilterTest(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.protocol = Protocol(self.request)
+        self.query = Session.query(Activity)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.protocol.validate_item_type')
+    def test_apply_many_visible_version_filter_calls_validate_item_type(
+            self, mock_validate_item_type):
+        self.protocol.apply_many_visible_version_filter(
+            'a', self.query)
+        mock_validate_item_type.assert_called_once_with('a')
+
+    @patch('lmkp.protocols.protocol.get_user_privileges')
+    def test_apply_many_visible_version_filter_calls_get_user_privileges(
+            self, mock_get_user_privileges):
+        mock_get_user_privileges.return_value = None, None
+        self.protocol.apply_many_visible_version_filter(
+            'a', self.query)
+        mock_get_user_privileges.assert_called_once_with(self.request)
+
+    @patch.object(Protocol, 'get_valid_status_ids')
+    def test_apply_many_visible_version_filter_calls_get_valid_status_ids(
+            self, mock_get_valid_status_ids):
+        self.protocol.apply_many_visible_version_filter(
+            'a', self.query)
+        mock_get_valid_status_ids.assert_called_once_with(
+            'history', False, False)
+
+    @patch.object(Protocol, 'get_valid_status_ids')
+    @patch('lmkp.protocols.protocol.get_user_privileges')
+    def test_apply_many_visible_version_filter_calls_get_valid_status_ids_2(
+            self, mock_get_user_privileges, mock_get_valid_status_ids):
+        mock_get_user_privileges.return_value = True, True
+        self.request.user = Mock()
+        self.request.user.id = 1
+        self.protocol.apply_many_visible_version_filter(
+            'sh', self.query)
+        mock_get_valid_status_ids.assert_called_with(
+            'history', True, True)
 
 
 @pytest.mark.usefixtures('app')

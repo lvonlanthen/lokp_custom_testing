@@ -44,14 +44,18 @@ class LmkpTestCase(TestCase):
             return ret.json['data'][0]['id']
         return ret
 
-    def read_one(self, item_type, uid, format):
+    def read_one(self, item_type, uid, format, params={}):
         url = get_base_url_by_item_type(item_type)
+        url_params = [
+            '%s=%s' % (key, value) for key, value in params.iteritems()]
         if format == 'json':
-            res = self.app.get('%s/json/%s?translate=false' % (url, uid))
+            res = self.app.get('%s/json/%s?translate=false&%s' % (
+                url, uid, '&'.join(url_params)))
             self.check_json_response(item_type, res.json)
             return res.json
         elif format == 'html':
-            return self.app.get('%s/html/%s' % (url, uid))
+            return self.app.get('%s/html/%s?%s' % (
+                url, uid, '&'.join(url_params)))
         else:
             self.fail('Unknown format: %s' % format)
 

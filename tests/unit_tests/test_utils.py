@@ -10,7 +10,6 @@ from lmkp.utils import (
 )
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.utils
 class ValidateBboxTests(LmkpTestCase):
@@ -35,7 +34,6 @@ class ValidateBboxTests(LmkpTestCase):
             self.assertIsInstance(b, float)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.utils
 class ValidateItemTypeTests(LmkpTestCase):
@@ -52,7 +50,6 @@ class ValidateItemTypeTests(LmkpTestCase):
         self.assertEqual(validate_item_type('stakeholders'), 'sh')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.utils
 class ValidateUuidTests(LmkpTestCase):
@@ -72,8 +69,8 @@ class ValidateUuidTests(LmkpTestCase):
             unicode('87b9ce04-ad4a-4a8c-84af-8e9643f8701a')))
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
+@pytest.mark.utils
 class ViewsHandleQueryStringTests(LmkpTestCase):
 
     def setUp(self):

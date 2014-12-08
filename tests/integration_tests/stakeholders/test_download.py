@@ -34,12 +34,20 @@ class StakeholderDownloadToTableTest(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    @patch.object(StakeholderProtocol, 'read_many')
-    def test_to_table_calls_stakeholder_protocol_read_many(
-            self, mock_read_many):
-        download.to_flat_table(self.request, 'stakeholders')
-        mock_read_many.assert_called_once_with(
-            public_query=True, translate=False, other_identifiers=[])
+    def test_download_returns_csv(self):
+        res = self.app.post('/stakeholders/download', params={
+            'format': 'csv'
+        })
+        self.assertEqual(res.status_int, 200)
+        self.assertEqual(res.content_type, 'text/csv')
+
+    @patch('lmkp.views.download.to_flat_table')
+    def test_download_calls_to_table(self, mock_to_flat_table):
+        mock_to_flat_table.return_value = ([], [])
+        self.app.post('/stakeholders/download', params={
+            'format': 'csv'
+        })
+        mock_to_flat_table.assert_called_once()
 
     def test_to_flat_table_preserves_order_inside_taggroup(self):
         header, __ = download.to_flat_table(self.request, 'stakeholders')

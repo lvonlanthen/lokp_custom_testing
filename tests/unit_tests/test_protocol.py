@@ -12,7 +12,6 @@ from lmkp.views.protocol import (
 )
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.protocol
 class GetValueByKeyFromItemJsonTest(LmkpTestCase):
@@ -86,7 +85,6 @@ class GetValueByKeyFromItemJsonTest(LmkpTestCase):
         self.assertEqual(get_value_by_key_from_item_json(json, 'abc'), 'foo')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.protocol
 class GetMainKeysFromItemJsonTest(LmkpTestCase):

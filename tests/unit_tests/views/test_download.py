@@ -6,9 +6,11 @@ from ...integration_tests.base import (
     LmkpTestCase,
 )
 from ...base import get_settings
+from lmkp.protocols.activity_protocol import ActivityProtocol
+from lmkp.protocols.stakeholder_protocol import StakeholderProtocol
+from lmkp.views.download import to_flat_table
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.download
 class ActivityDownloadTest(LmkpTestCase):
@@ -21,23 +23,16 @@ class ActivityDownloadTest(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def test_download_returns_csv(self):
-        res = self.app.post('/activities/download', params={
-            'format': 'csv'
-        })
-        self.assertEqual(res.status_int, 200)
-        self.assertEqual(res.content_type, 'text/csv')
-
-    @patch('lmkp.views.download.to_flat_table')
-    def test_download_calls_to_table(self, mock_to_flat_table):
-        mock_to_flat_table.return_value = ([], [])
-        self.app.post('/activities/download', params={
-            'format': 'csv'
-        })
-        mock_to_flat_table.assert_called_once()
+    @patch.object(ActivityProtocol, 'read_many')
+    @patch('lmkp.views.download.getCategoryList')
+    def test_to_table_calls_activity_protocol_read_many(
+            self, mock_getCategoryList, mock_read_many):
+        mock_read_many.return_value = {}
+        to_flat_table(self.request, 'activities')
+        mock_read_many.assert_called_once_with(
+            public_query=True, translate=False)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.download
 class StakeholderDownloadTest(LmkpTestCase):
@@ -50,17 +45,10 @@ class StakeholderDownloadTest(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    def test_download_returns_csv(self):
-        res = self.app.post('/stakeholders/download', params={
-            'format': 'csv'
-        })
-        self.assertEqual(res.status_int, 200)
-        self.assertEqual(res.content_type, 'text/csv')
-
-    @patch('lmkp.views.download.to_flat_table')
-    def test_download_calls_to_table(self, mock_to_flat_table):
-        mock_to_flat_table.return_value = ([], [])
-        self.app.post('/stakeholders/download', params={
-            'format': 'csv'
-        })
-        mock_to_flat_table.assert_called_once()
+    @patch.object(StakeholderProtocol, 'read_many')
+    @patch('lmkp.views.download.getCategoryList')
+    def test_to_table_calls_stakeholder_protocol_read_many(
+            self, mock_getCategoryList, mock_read_many):
+        to_flat_table(self.request, 'stakeholders')
+        mock_read_many.assert_called_once_with(
+            public_query=True, translate=False, other_identifiers=[])

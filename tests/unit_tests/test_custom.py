@@ -12,7 +12,6 @@ from ..integration_tests.base import (
 from ..base import get_settings
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.customization
 class CustomGetCustomizedTemplatePath(LmkpTestCase):
@@ -40,7 +39,6 @@ class CustomGetCustomizedTemplatePath(LmkpTestCase):
         self.assertEqual(path, 'lmkp:customization/foo/templates/foo.mak')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.customization
 class CustomGetCustomizationName(LmkpTestCase):

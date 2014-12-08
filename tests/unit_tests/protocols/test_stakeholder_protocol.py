@@ -17,7 +17,6 @@ from lmkp.models.database_objects import (
 from lmkp.models.meta import DBSession as Session
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.protocol
 class ProtocolsStakeholderProtocolQueryToFeatures(LmkpTestCase):
@@ -97,6 +96,80 @@ class ProtocolsStakeholderProtocolQueryToFeatures(LmkpTestCase):
         self.assertEqual(len(features), 2)
         for f in features:
             self.assertIsInstance(f, ItemFeature)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsStakeholderProtocolReadOne(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.stakeholder_protocol = StakeholderProtocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.stakeholder_protocol.get_current_version')
+    @patch.object(StakeholderProtocol, 'query_many')
+    @patch.object(StakeholderProtocol, 'query_to_features')
+    def test_read_one_calls_get_current_version(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_get_current_version):
+        mock_protocol_query_many.return_value = None, 0
+        mock_protocol_query_to_features.return_value = []
+        self.stakeholder_protocol.read_one('uid')
+        mock_get_current_version.assert_called_once_with(self.request)
+
+    @patch.object(StakeholderProtocol, 'get_relevant_query_one')
+    @patch.object(StakeholderProtocol, 'query_many')
+    @patch.object(StakeholderProtocol, 'query_to_features')
+    def test_read_one_calls_get_relevant_query_one(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_protocol_get_relevant_query_one):
+        mock_protocol_query_many.return_value = None, 0
+        mock_protocol_query_to_features.return_value = []
+        self.stakeholder_protocol.read_one('uid')
+        mock_protocol_get_relevant_query_one.assert_called_once_with(
+            'uid', version=None, public_query=True)
+
+    @patch.object(StakeholderProtocol, 'get_relevant_query_one')
+    @patch.object(StakeholderProtocol, 'query_many')
+    @patch.object(StakeholderProtocol, 'query_to_features')
+    def test_read_one_calls_query_many(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_protocol_get_relevant_query_one):
+        mock_protocol_query_many.return_value = None
+        mock_protocol_query_to_features.return_value = []
+        self.stakeholder_protocol.read_one('uid')
+        mock_protocol_query_many.assert_called_once_with(
+            mock_protocol_get_relevant_query_one.return_value,
+            limit=1, offset=None, return_count=False,
+            with_involvements=True)
+
+    @patch.object(StakeholderProtocol, 'query_many')
+    @patch.object(StakeholderProtocol, 'query_to_features')
+    def test_read_one_calls_query_to_features(
+            self, mock_protocol_query_to_features, mock_protocol_query_many):
+        mock_protocol_query_to_features.return_value = []
+        self.stakeholder_protocol.read_one('uid')
+        mock_protocol_query_to_features.assert_called_once_with(
+            mock_protocol_query_many.return_value, involvements='full',
+            public_query=True, translate=True)
+
+    @patch.object(StakeholderProtocol, 'query_many')
+    @patch.object(StakeholderProtocol, 'query_to_features')
+    @patch(
+        'lmkp.protocols.stakeholder_protocol.get_current_involvement_details')
+    def test_read_one_calls_get_current_involvement_details(
+            self, mock_get_current_involvement_details,
+            mock_protocol_query_to_features, mock_protocol_query_many):
+        mock_protocol_query_many.return_value = 'foo', 0
+        mock_protocol_query_to_features.return_value = []
+        self.stakeholder_protocol.read_one('uid')
+        mock_get_current_involvement_details.assert_called_once_with(
+            self.request)
 
 
 @pytest.mark.unittest
@@ -256,6 +329,27 @@ class ProtocolsStakeholderProtocolGetRelevantQueryFromList(LmkpTestCase):
     def test_get_relevant_query_from_list_returns_query(self):
         rel_query = self.stakeholder_protocol.get_relevant_query_from_list([])
         self.assertIsInstance(rel_query, Query)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
+class ProtocolsStakeholderProtocolGetRelevantQueryOne(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.stakeholder_protocol = StakeholderProtocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch.object(StakeholderProtocol, 'get_order')
+    def test_get_relevant_query_one_calls_get_order(
+            self, mock_protocol_get_order):
+        with self.assertRaises(UnboundLocalError):
+            self.stakeholder_protocol.get_relevant_query_one('uid')
+        mock_protocol_get_order.assert_called_once_with('sh')
 
 
 @pytest.mark.unittest

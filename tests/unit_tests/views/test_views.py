@@ -19,6 +19,7 @@ from lmkp.views.views import (
     get_current_translation_parameter,
     get_current_taggroup_geometry_parameter,
     get_current_attributes,
+    get_current_version,
 )
 from ...integration_tests.base import (
     LmkpTestCase,
@@ -532,3 +533,35 @@ class ViewsGetCurrentAttributesTests(LmkpTestCase):
         self.assertEqual(len(attributes), 2)
         self.assertEqual(attributes[0], 'foo')
         self.assertEqual(attributes[1], 'bar')
+
+
+@pytest.mark.unittest
+@pytest.mark.views
+class ViewsGetCurrentVersionTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_get_current_version_returns_default(self):
+        version = get_current_version(self.request)
+        self.assertIsNone(version)
+
+    def test_get_current_version_returns_version(self):
+        self.request.params = {'version': 15}
+        version = get_current_version(self.request)
+        self.assertEqual(version, 15)
+
+    def test_get_current_version_returns_absolute_version(self):
+        self.request.params = {'version': -15}
+        version = get_current_version(self.request)
+        self.assertEqual(version, 15)
+
+    def test_get_current_version_handles_invalid_version(self):
+        self.request.params = {'version': 'foo'}
+        version = get_current_version(self.request)
+        self.assertIsNone(version)

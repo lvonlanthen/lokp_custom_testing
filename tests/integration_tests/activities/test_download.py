@@ -21,16 +21,25 @@ class ActivityDownloadToTableTest(LmkpTestCase):
         self.request = testing.DummyRequest()
         settings = get_settings()
         self.config = testing.setUp(request=self.request, settings=settings)
-        self.header_length = 18
+        self.header_length = 19
 
     def tearDown(self):
         testing.tearDown()
 
-    @patch('lmkp.views.download.activity_protocol.read_many')
-    def test_to_table_calls_activity_protocol_read_many(self, mock_read_many):
-        download.to_flat_table(self.request, 'activities')
-        mock_read_many.assert_called_once_with(
-            self.request, public=True, translate=False)
+    def test_download_returns_csv(self):
+        res = self.app.post('/activities/download', params={
+            'format': 'csv'
+        })
+        self.assertEqual(res.status_int, 200)
+        self.assertEqual(res.content_type, 'text/csv')
+
+    @patch('lmkp.views.download.to_flat_table')
+    def test_download_calls_to_table(self, mock_to_flat_table):
+        mock_to_flat_table.return_value = ([], [])
+        self.app.post('/activities/download', params={
+            'format': 'csv'
+        })
+        mock_to_flat_table.assert_called_once()
 
     def test_to_flat_table_preserves_order_inside_taggroup(self):
         header, __ = download.to_flat_table(self.request, 'activities')

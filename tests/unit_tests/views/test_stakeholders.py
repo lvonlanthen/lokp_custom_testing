@@ -9,13 +9,13 @@ from pyramid.httpexceptions import (
 
 from lmkp.protocols.stakeholder_protocol import StakeholderProtocol
 from lmkp.views.stakeholders import StakeholderView
+from lmkp.views.views import BaseView
 from ...integration_tests.base import (
     LmkpTestCase,
 )
 from ...base import get_settings
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyTests(LmkpTestCase):
@@ -31,7 +31,10 @@ class StakeholderViewReadManyTests(LmkpTestCase):
         testing.tearDown()
 
     @patch('lmkp.views.stakeholders.get_output_format')
-    def test_read_many_calls_output_format(self, mock_get_output_format):
+    @patch.object(StakeholderProtocol, 'read_many')
+    def test_read_many_calls_output_format(
+            self, mock_protocol_read_many, mock_get_output_format):
+        mock_protocol_read_many.return_value = {}
         mock_get_output_format.return_value = self.request.matchdict.get(
             'output')
         self.view.read_many()
@@ -43,7 +46,6 @@ class StakeholderViewReadManyTests(LmkpTestCase):
             self.view.read_many()
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadOneTests(LmkpTestCase):
@@ -59,9 +61,12 @@ class StakeholderViewReadOneTests(LmkpTestCase):
         testing.tearDown()
 
     @patch('lmkp.views.stakeholders.get_output_format')
-    def test_read_one_calls_output_format(self, mock_get_output_format):
+    @patch.object(StakeholderProtocol, 'read_one')
+    def test_read_one_calls_output_format(
+            self, mock_protocol_read_one, mock_get_output_format):
         mock_get_output_format.return_value = self.request.matchdict.get(
             'output')
+        mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_get_output_format.assert_called_once_with(self.request)
 
@@ -71,14 +76,26 @@ class StakeholderViewReadOneTests(LmkpTestCase):
             self.view.read_one()
 
     @patch('lmkp.views.stakeholders.validate_uuid')
-    def test_read_one_calls_validate_uuid(self, mock_validate_uuid):
+    @patch.object(StakeholderProtocol, 'read_one')
+    def test_read_one_calls_validate_uuid(
+            self, mock_protocol_read_one, mock_validate_uuid):
         mock_validate_uuid.return_value = True
+        mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_validate_uuid.assert_called_once_with(
             self.request.matchdict['uid'])
 
+    @patch('lmkp.views.stakeholders.get_current_translation_parameter')
+    @patch.object(StakeholderProtocol, 'read_one')
+    def test_read_one_calls_get_current_translation_parameter(
+            self, mock_protocol_read_one,
+            mock_get_current_translation_parameter):
+        mock_protocol_read_one.return_value = {}
+        self.view.read_one()
+        mock_get_current_translation_parameter.assert_called_once_with(
+            self.request)
 
-@pytest.mark.usefixtures('app')
+
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyPublicTests(LmkpTestCase):
@@ -99,7 +116,6 @@ class StakeholderViewReadManyPublicTests(LmkpTestCase):
             self.view.read_many_public()
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyByActivitiesTests(LmkpTestCase):
@@ -131,7 +147,6 @@ class StakeholderViewReadManyByActivitiesTests(LmkpTestCase):
             self.view.by_activities()
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyJsonTests(LmkpTestCase):
@@ -163,7 +178,6 @@ class StakeholderViewReadManyJsonTests(LmkpTestCase):
             'json', mock_protocol_read_many.return_value, self.request)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadOneJsonTests(LmkpTestCase):
@@ -178,36 +192,37 @@ class StakeholderViewReadOneJsonTests(LmkpTestCase):
     def tearDown(self):
         testing.tearDown()
 
-    @patch('lmkp.views.stakeholders.stakeholder_protocol.read_one')
+    @patch.object(StakeholderProtocol, 'read_one')
     def test_read_one_json_calls_stakeholder_protocol(
             self, mock_protocol_read_one):
-        mock_protocol_read_one.return_value = []
+        mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            self.request, uid=self.request.matchdict['uid'], public=False,
+            uid=self.request.matchdict['uid'], public_query=False,
             translate=True)
 
     @patch('lmkp.views.stakeholders.render_to_response')
-    @patch('lmkp.views.stakeholders.stakeholder_protocol.read_one')
+    @patch.object(StakeholderProtocol, 'read_one')
     def test_read_one_json_calls_render_to_response(
             self, mock_protocol_read_one, mock_render_to_response):
-        mock_protocol_read_one.return_value = []
+        mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_render_to_response.assert_called_once_with(
             'json', mock_protocol_read_one.return_value, self.request)
 
-    @patch('lmkp.views.stakeholders.stakeholder_protocol.read_one')
+    @patch.object(StakeholderProtocol, 'read_one')
+    @patch('lmkp.views.stakeholders.get_current_translation_parameter')
     def test_read_one_json_calls_stakeholder_protocol_translated(
-            self, mock_protocol_read_one):
-        mock_protocol_read_one.return_value = []
-        self.request.params = {'translate': 'false'}
+            self, mock_get_current_translation_parameter,
+            mock_protocol_read_one):
+        mock_protocol_read_one.return_value = {}
+        mock_get_current_translation_parameter.return_value = False
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            self.request, uid=self.request.matchdict['uid'], public=False,
+            uid=self.request.matchdict['uid'], public_query=False,
             translate=False)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyPublicJsonTests(LmkpTestCase):
@@ -229,7 +244,6 @@ class StakeholderViewReadManyPublicJsonTests(LmkpTestCase):
         mock_read_many.assert_called_once_with(public=True)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyByActivitiesPublicTests(LmkpTestCase):
@@ -251,7 +265,6 @@ class StakeholderViewReadManyByActivitiesPublicTests(LmkpTestCase):
         mock_by_activities.assert_called_once_with(public=True)
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyByActivitiesJsonTests(LmkpTestCase):
@@ -319,7 +332,6 @@ class StakeholderViewReadManyByActivitiesJsonTests(LmkpTestCase):
         mock_validate_uuid.assert_called_with('foo')
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyFormTests(LmkpTestCase):
@@ -340,7 +352,6 @@ class StakeholderViewReadManyFormTests(LmkpTestCase):
             self.view.read_many()
 
 
-@pytest.mark.usefixtures('app')
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyHtmlTests(LmkpTestCase):
@@ -356,10 +367,13 @@ class StakeholderViewReadManyHtmlTests(LmkpTestCase):
         testing.tearDown()
 
     @patch('lmkp.views.stakeholders.get_page_parameters')
+    @patch.object(StakeholderProtocol, 'read_many')
     @patch('lmkp.views.stakeholders.render_to_response')
     def test_read_many_html_calls_get_page_parameters(
-            self, mock_render_to_response, mock_get_page_parameters):
+            self, mock_render_to_response, mock_protocol_read_many,
+            mock_get_page_parameters):
         mock_render_to_response.return_value = {}
+        mock_protocol_read_many.return_value = {}
         mock_get_page_parameters.return_value = 1, 1
         self.view.read_many()
         mock_get_page_parameters.assert_called_once_with(self.request)
@@ -369,35 +383,42 @@ class StakeholderViewReadManyHtmlTests(LmkpTestCase):
     def test_read_many_json_calls_stakeholder_protocol(
             self, mock_render_to_response, mock_protocol_read_many):
         mock_render_to_response.return_value = {}
-        mock_protocol_read_many.return_value = []
+        mock_protocol_read_many.return_value = {}
         self.view.read_many()
         mock_protocol_read_many.assert_called_once_with(
             public_query=False, limit=10, offset=0)
 
     @patch('lmkp.views.stakeholders.get_status_parameter')
+    @patch.object(StakeholderProtocol, 'read_many')
     @patch('lmkp.views.stakeholders.render_to_response')
     def test_read_many_html_calls_get_status_parameter(
-            self, mock_render_to_response, mock_get_status_parameter):
+            self, mock_render_to_response, mock_protocol_read_many,
+            mock_get_status_parameter):
         mock_render_to_response.return_value = {}
+        mock_protocol_read_many.return_value = {}
         mock_get_status_parameter.return_value = 'foo'
         self.view.read_many()
         mock_get_status_parameter.assert_called_once_with(self.request)
 
     @patch('lmkp.views.stakeholders.BaseView.get_base_template_values')
+    @patch.object(StakeholderProtocol, 'read_many')
     @patch('lmkp.views.stakeholders.render_to_response')
     def test_read_many_html_calls_get_base_template_values(
-            self, mock_render_to_response, mock_get_base_template_values):
+            self, mock_render_to_response, mock_protocol_read_many,
+            mock_get_base_template_values):
         mock_render_to_response.return_value = {}
         self.view.read_many()
         mock_get_base_template_values.assert_called_once_with()
 
+    @patch.object(StakeholderProtocol, 'read_many')
     @patch('lmkp.views.stakeholders.handle_query_string')
     @patch('lmkp.views.stakeholders.BaseView.get_base_template_values')
     @patch('lmkp.views.stakeholders.render_to_response')
     @patch('lmkp.views.stakeholders.get_customized_template_path')
     def test_read_many_html_calls_render_to_response(
             self, get_customized_template_path, mock_render_to_response,
-            mock_get_base_template_values, mock_handle_query_string):
+            mock_get_base_template_values, mock_handle_query_string,
+            mock_protocol_read_many):
         mock_render_to_response.return_value = {}
         mock_get_base_template_values.return_value = {
             'profile': 'profile',
@@ -423,7 +444,76 @@ class StakeholderViewReadManyHtmlTests(LmkpTestCase):
             self.request)
 
 
-@pytest.mark.usefixtures('app')
+@pytest.mark.unittest
+@pytest.mark.stakeholders
+class StakeholderViewReadOneHtmlTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'html', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = StakeholderView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch.object(StakeholderProtocol, 'read_one')
+    def test_read_one_json_calls_read_one(
+            self, mock_protocol_read_one):
+        mock_protocol_read_one.return_value = {}
+        self.view.read_one()
+        mock_protocol_read_one.assert_called_once_with(
+            uid=self.request.matchdict['uid'], public_query=False,
+            translate=False)
+
+    @patch.object(BaseView, 'get_base_template_values')
+    @patch.object(StakeholderProtocol, 'read_one')
+    @patch('lmkp.views.stakeholders.renderReadonlyForm')
+    @patch('lmkp.views.stakeholders.comments_sitekey')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    def test_read_one_json_calls_get_base_template_values(
+            self, mock_render_to_response, mock_comments_sitekey,
+            mock_renderReadonlyForm, mock_protocol_read_one,
+            mock_view_get_base_template_values):
+        mock_render_to_response.return_value = None
+        self.view.read_one()
+        mock_view_get_base_template_values.assert_called_once_with()
+
+    @patch.object(BaseView, 'get_base_template_values')
+    @patch.object(StakeholderProtocol, 'read_one')
+    @patch('lmkp.views.stakeholders.renderReadonlyForm')
+    @patch('lmkp.views.stakeholders.comments_sitekey')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    def test_read_one_json_calls_renderReadonlyForm(
+            self, mock_render_to_response, mock_comments_sitekey,
+            mock_renderReadonlyForm, mock_protocol_read_one,
+            mock_view_get_base_template_values):
+        mock_render_to_response.return_value = None
+        self.view.read_one()
+        mock_renderReadonlyForm.assert_called_once_with(
+            self.request, 'stakeholders', mock_protocol_read_one.return_value)
+
+    @patch.object(BaseView, 'get_base_template_values')
+    @patch.object(StakeholderProtocol, 'read_one')
+    @patch('lmkp.views.stakeholders.renderReadonlyForm')
+    @patch('lmkp.views.stakeholders.comments_sitekey')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    @patch('lmkp.views.stakeholders.get_customized_template_path')
+    def test_read_one_json_calls_render_to_response(
+            self, mock_get_customized_template_path, mock_render_to_response,
+            mock_comments_sitekey, mock_renderReadonlyForm,
+            mock_protocol_read_one, mock_view_get_base_template_values):
+        mock_comments_sitekey.return_value = {}
+        mock_protocol_read_one.return_value = {'foo': 'bar'}
+        mock_renderReadonlyForm.return_value = None
+        mock_render_to_response.return_value = None
+        self.view.read_one()
+        mock_render_to_response.assert_called_once_with(
+            mock_get_customized_template_path.return_value,
+            mock_view_get_base_template_values.return_value, self.request)
+
+
 @pytest.mark.unittest
 @pytest.mark.stakeholders
 class StakeholderViewReadManyByActivitiesHtmlTests(LmkpTestCase):
