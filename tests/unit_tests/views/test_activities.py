@@ -115,6 +115,71 @@ class ActivityViewReadManyPublicTests(LmkpTestCase):
         with self.assertRaises(HTTPNotFound):
             self.view.read_many_public()
 
+    @patch.object(ActivityView, 'read_many')
+    def test_read_many_public_json_calls_read_many(self, mock_view_read_many):
+        self.view.read_many_public()
+        mock_view_read_many.assert_called_once_with(public=True)
+
+    @patch.object(ActivityView, 'read_many')
+    def test_read_many_public_html_calls_read_many(self, mock_view_read_many):
+        self.request.matchdict['output'] = 'html'
+        self.view.read_many_public()
+        mock_view_read_many.assert_called_once_with(public=True)
+
+    @patch.object(ActivityView, 'read_many')
+    def test_read_many_public_geojson_calls_read_many(
+            self, mock_view_read_many):
+        self.request.matchdict['output'] = 'geojson'
+        self.view.read_many_public()
+        mock_view_read_many.assert_called_once_with(public=True)
+
+    def test_read_many_public_form_returns_404(self):
+        self.request.matchdict['output'] = 'form'
+        with self.assertRaises(HTTPNotFound):
+            self.view.read_many_public()
+
+
+@pytest.mark.unittest
+@pytest.mark.activities
+class ActivityViewReadOnePublicTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'json', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_read_one_public_returns_404_if_no_output_format_found(self):
+        self.request.matchdict = {'output': 'foo'}
+        with self.assertRaises(HTTPNotFound):
+            self.view.read_one_public()
+
+    @patch.object(ActivityView, 'read_one')
+    def test_read_one_public_json_calls_read_one(self, mock_view_read_one):
+        self.view.read_one_public()
+        mock_view_read_one.assert_called_once_with(public=True)
+
+    @patch.object(ActivityView, 'read_one')
+    def test_read_one_public_html_calls_read_one(self, mock_view_read_one):
+        self.request.matchdict['output'] = 'html'
+        self.view.read_one_public()
+        mock_view_read_one.assert_called_once_with(public=True)
+
+    @patch.object(ActivityView, 'read_one')
+    def test_read_one_public_geojson_calls_read_one(self, mock_view_read_one):
+        self.request.matchdict['output'] = 'geojson'
+        self.view.read_one_public()
+        mock_view_read_one.assert_called_once_with(public=True)
+
+    def test_read_one_public_form_returns_404(self):
+        self.request.matchdict['output'] = 'form'
+        with self.assertRaises(HTTPNotFound):
+            self.view.read_one_public()
+
 
 @pytest.mark.unittest
 @pytest.mark.activities
@@ -203,7 +268,7 @@ class ActivityViewReadOneJsonTests(LmkpTestCase):
         mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            uid=self.request.matchdict['uid'], public_query=False,
+            self.request.matchdict['uid'], public_query=False,
             translate=True)
 
     @patch('lmkp.views.activities.render_to_response')
@@ -224,8 +289,134 @@ class ActivityViewReadOneJsonTests(LmkpTestCase):
         mock_get_current_translation_parameter.return_value = False
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            uid=self.request.matchdict['uid'], public_query=False,
+            self.request.matchdict['uid'], public_query=False,
             translate=False)
+
+
+@pytest.mark.unittest
+@pytest.mark.activities
+class ActivityViewReadOneGeojsonTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'geojson', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch.object(ActivityProtocol, 'read_one_geojson')
+    def test_read_one_geojson_calls_read_one_geojson(
+            self, mock_protocol_read_one_geojson):
+        mock_protocol_read_one_geojson.return_value = {}
+        self.view.read_one()
+        mock_protocol_read_one_geojson.assert_called_once_with(
+            self.request.matchdict['uid'], public_query=False,
+            translate=True)
+
+    @patch('lmkp.views.activities.render_to_response')
+    @patch.object(ActivityProtocol, 'read_one_geojson')
+    def test_read_one_json_calls_render_to_response(
+            self, mock_protocol_read_one_geojson, mock_render_to_response):
+        mock_protocol_read_one_geojson.return_value = {}
+        self.view.read_one()
+        mock_render_to_response.assert_called_once_with(
+            'json', mock_protocol_read_one_geojson.return_value, self.request)
+
+    @patch.object(ActivityProtocol, 'read_one_geojson')
+    @patch('lmkp.views.activities.get_current_translation_parameter')
+    def test_read_one_json_calls_activity_protocol_translated(
+            self, mock_get_current_translation_parameter,
+            mock_protocol_read_one_geojson):
+        mock_protocol_read_one_geojson.return_value = {}
+        mock_get_current_translation_parameter.return_value = False
+        self.view.read_one()
+        mock_protocol_read_one_geojson.assert_called_once_with(
+            self.request.matchdict['uid'], public_query=False,
+            translate=False)
+
+
+@pytest.mark.unittest
+@pytest.mark.activities
+class ActivityViewReadOneFormTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'form', 'uid': str(uuid4())}
+        self.request.translate = Mock()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = ActivityView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_read_one_form_requires_login(self):
+        with self.assertRaises(HTTPForbidden):
+            self.view.read_one()
+
+    @patch('lmkp.views.activities.get_user_privileges')
+    def test_read_one_form_calls_get_user_privileges(
+            self, mock_get_user_privileges):
+        mock_get_user_privileges.return_value = None, None
+        with self.assertRaises(HTTPForbidden):
+            self.view.read_one()
+        mock_get_user_privileges.assert_called_once_with(self.request)
+
+    @patch.object(ActivityProtocol, 'read_one')
+    @patch('lmkp.views.activities.renderForm')
+    @patch('lmkp.views.activities.render_to_response')
+    @patch('lmkp.views.activities.get_user_privileges')
+    def test_read_one_form_calls_activity_protocol_read_one(
+            self, mock_get_user_privileges, mock_render_to_response,
+            mock_renderForm, mock_protocol_read_one):
+        mock_get_user_privileges.return_value = True, None
+        self.view.read_one()
+        mock_protocol_read_one.assert_called_once_with(
+            self.request.matchdict['uid'], public_query=False, translate=False)
+
+    @patch.object(ActivityProtocol, 'read_one')
+    @patch('lmkp.views.activities.renderForm')
+    @patch('lmkp.views.activities.render_to_response')
+    @patch('lmkp.views.activities.get_user_privileges')
+    @patch('lmkp.views.activities.get_current_involvement_parameter')
+    def test_read_one_form_calls_get_current_involvement_parameter(
+            self, mock_get_current_involvement_parameter,
+            mock_get_user_privileges, mock_render_to_response, mock_renderForm,
+            mock_protocol_read_one):
+        mock_get_user_privileges.return_value = True, None
+        self.view.read_one()
+        mock_get_current_involvement_parameter.assert_called_once_with(
+            self.request)
+
+    @patch.object(ActivityProtocol, 'read_one')
+    @patch('lmkp.views.activities.renderForm')
+    @patch('lmkp.views.activities.render_to_response')
+    @patch('lmkp.views.activities.get_user_privileges')
+    def test_read_one_form_calls_renderForm(
+            self, mock_get_user_privileges,
+            mock_render_to_response, mock_renderForm, mock_protocol_read_one):
+        mock_get_user_privileges.return_value = True, None
+        self.view.read_one()
+        mock_renderForm.assert_called_once_with(
+            self.request, 'activities',
+            itemJson=mock_protocol_read_one.return_value, inv=None)
+
+    @patch.object(ActivityProtocol, 'read_one')
+    @patch('lmkp.views.activities.renderForm')
+    @patch('lmkp.views.activities.render_to_response')
+    @patch('lmkp.views.activities.get_customized_template_path')
+    @patch('lmkp.views.activities.get_user_privileges')
+    def test_read_one_form_calls_render_to_response(
+            self, mock_get_user_privileges, mock_get_customized_template_path,
+            mock_render_to_response, mock_renderForm, mock_protocol_read_one):
+        mock_get_user_privileges.return_value = True, None
+        self.view.read_one()
+        mock_render_to_response.assert_called_once_with(
+            mock_get_customized_template_path.return_value,
+            mock_renderForm.return_value, self.request)
 
 
 @pytest.mark.unittest
@@ -515,7 +706,7 @@ class ActivityViewReadOneHtmlTests(LmkpTestCase):
         mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            uid=self.request.matchdict['uid'], public_query=False,
+            self.request.matchdict['uid'], public_query=False,
             translate=False)
 
     @patch.object(BaseView, 'get_base_template_values')

@@ -198,7 +198,7 @@ class StakeholderViewReadOneJsonTests(LmkpTestCase):
         mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            uid=self.request.matchdict['uid'], public_query=False,
+            self.request.matchdict['uid'], public_query=False,
             translate=True)
 
     @patch('lmkp.views.stakeholders.render_to_response')
@@ -219,8 +219,75 @@ class StakeholderViewReadOneJsonTests(LmkpTestCase):
         mock_get_current_translation_parameter.return_value = False
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            uid=self.request.matchdict['uid'], public_query=False,
+            self.request.matchdict['uid'], public_query=False,
             translate=False)
+
+
+@pytest.mark.unittest
+@pytest.mark.stakeholders
+class StakeholderViewReadOneFormTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'form', 'uid': str(uuid4())}
+        self.request.translate = Mock()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = StakeholderView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_read_one_form_requires_login(self):
+        with self.assertRaises(HTTPForbidden):
+            self.view.read_one()
+
+    @patch('lmkp.views.stakeholders.get_user_privileges')
+    def test_read_one_form_calls_get_user_privileges(
+            self, mock_get_user_privileges):
+        mock_get_user_privileges.return_value = None, None
+        with self.assertRaises(HTTPForbidden):
+            self.view.read_one()
+        mock_get_user_privileges.assert_called_once_with(self.request)
+
+    @patch.object(StakeholderProtocol, 'read_one')
+    @patch('lmkp.views.stakeholders.renderForm')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    @patch('lmkp.views.stakeholders.get_user_privileges')
+    def test_read_one_form_calls_activity_protocol_read_one(
+            self, mock_get_user_privileges, mock_render_to_response,
+            mock_renderForm, mock_protocol_read_one):
+        mock_get_user_privileges.return_value = True, None
+        self.view.read_one()
+        mock_protocol_read_one.assert_called_once_with(
+            self.request.matchdict['uid'], public_query=False, translate=False)
+
+    @patch.object(StakeholderProtocol, 'read_one')
+    @patch('lmkp.views.stakeholders.renderForm')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    @patch('lmkp.views.stakeholders.get_user_privileges')
+    def test_read_one_form_calls_renderForm(
+            self, mock_get_user_privileges,
+            mock_render_to_response, mock_renderForm, mock_protocol_read_one):
+        mock_get_user_privileges.return_value = True, None
+        self.view.read_one()
+        mock_renderForm.assert_called_once_with(
+            self.request, 'stakeholders',
+            itemJson=mock_protocol_read_one.return_value)
+
+    @patch.object(StakeholderProtocol, 'read_one')
+    @patch('lmkp.views.stakeholders.renderForm')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    @patch('lmkp.views.stakeholders.get_customized_template_path')
+    @patch('lmkp.views.stakeholders.get_user_privileges')
+    def test_read_one_form_calls_render_to_response(
+            self, mock_get_user_privileges, mock_get_customized_template_path,
+            mock_render_to_response, mock_renderForm, mock_protocol_read_one):
+        mock_get_user_privileges.return_value = True, None
+        self.view.read_one()
+        mock_render_to_response.assert_called_once_with(
+            mock_get_customized_template_path.return_value,
+            mock_renderForm.return_value, self.request)
 
 
 @pytest.mark.unittest
@@ -464,7 +531,7 @@ class StakeholderViewReadOneHtmlTests(LmkpTestCase):
         mock_protocol_read_one.return_value = {}
         self.view.read_one()
         mock_protocol_read_one.assert_called_once_with(
-            uid=self.request.matchdict['uid'], public_query=False,
+            self.request.matchdict['uid'], public_query=False,
             translate=False)
 
     @patch.object(BaseView, 'get_base_template_values')

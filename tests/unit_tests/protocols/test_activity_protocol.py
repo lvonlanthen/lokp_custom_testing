@@ -337,6 +337,117 @@ class ProtocolsActivityProtocolReadManyGeojson(LmkpTestCase):
 
 @pytest.mark.unittest
 @pytest.mark.protocol
+class ProtocolsActivityProtocolReadOneGeojson(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.activity_protocol = ActivityProtocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.protocols.activity_protocol.get_current_version')
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_get_current_version(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson, mock_get_current_version):
+        mock_protocol_query_many_geojson.return_value = None
+        mock_protocol_query_to_geojson.return_value = {}
+        self.activity_protocol.read_one_geojson('uid')
+        mock_get_current_version.assert_called_once_with(self.request)
+
+    @patch.object(ActivityProtocol, 'get_relevant_query_one')
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_get_relevant_query_one(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson,
+            mock_protocol_get_relevant_query_one):
+        mock_protocol_query_many_geojson.return_value = None
+        mock_protocol_query_to_geojson.return_value = {}
+        self.activity_protocol.read_one_geojson('uid')
+        mock_protocol_get_relevant_query_one.assert_called_once_with(
+            'uid', version=None, public_query=True)
+
+    @patch('lmkp.protocols.activity_protocol.get_current_attributes')
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_get_current_attributes(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson, mock_get_current_attributes):
+        mock_protocol_query_many_geojson.return_value = None
+        mock_protocol_query_to_geojson.return_value = {}
+        self.activity_protocol.read_one_geojson('uid')
+        mock_get_current_attributes.assert_called_once_with(self.request)
+
+    @patch('lmkp.protocols.activity_protocol.get_current_locale')
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_get_current_locale(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson, mock_get_current_locale):
+        mock_protocol_query_many_geojson.return_value = None
+        mock_protocol_query_to_geojson.return_value = {}
+        self.activity_protocol.read_one_geojson('uid')
+        mock_get_current_locale.assert_called_once_with(self.request)
+
+    @patch('lmkp.protocols.activity_protocol.get_translated_keys')
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_get_translated_keys(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson, mock_get_translated_keys):
+        mock_protocol_query_many_geojson.return_value = None
+        mock_protocol_query_to_geojson.return_value = {}
+        self.activity_protocol.read_one_geojson('uid')
+        mock_get_translated_keys.assert_called_once_with('a', [], 'en')
+
+    @patch(
+        'lmkp.protocols.activity_protocol.'
+        'get_current_taggroup_geometry_parameter')
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_get_current_taggroup_geometry_parameter(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson,
+            mock_get_current_taggroup_geometry_parameter):
+        mock_protocol_query_many_geojson.return_value = None
+        mock_protocol_query_to_geojson.return_value = {}
+        self.activity_protocol.read_one_geojson('uid')
+        mock_get_current_taggroup_geometry_parameter.assert_called_once_with(
+            self.request)
+
+    @patch.object(ActivityProtocol, 'get_relevant_query_one')
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_query_many_geojson(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson,
+            mock_protocol_get_relevant_query_one):
+        mock_protocol_query_many_geojson.return_value = None
+        mock_protocol_query_to_geojson.return_value = []
+        self.activity_protocol.read_one_geojson('uid')
+        mock_protocol_query_many_geojson.assert_called_once_with(
+            mock_protocol_get_relevant_query_one.return_value,
+            limit=1, offset=None, attributes=[], taggroup_geometry=False,
+            translate=True)
+
+    @patch.object(ActivityProtocol, 'query_many_geojson')
+    @patch.object(ActivityProtocol, 'query_to_geojson')
+    def test_read_one_geojson_calls_query_to_geojson(
+            self, mock_protocol_query_to_geojson,
+            mock_protocol_query_many_geojson):
+        mock_protocol_query_to_geojson.return_value = []
+        self.activity_protocol.read_one_geojson('uid')
+        mock_protocol_query_to_geojson.assert_called_once_with(
+            mock_protocol_query_many_geojson.return_value)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
 class ProtocolsActivityProtocolReadOne(LmkpTestCase):
 
     def setUp(self):

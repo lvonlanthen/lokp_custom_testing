@@ -48,9 +48,9 @@ class LmkpTestCase(TestCase):
         url = get_base_url_by_item_type(item_type)
         url_params = [
             '%s=%s' % (key, value) for key, value in params.iteritems()]
-        if format == 'json':
-            res = self.app.get('%s/json/%s?translate=false&%s' % (
-                url, uid, '&'.join(url_params)))
+        if format in ['json', 'geojson']:
+            res = self.app.get('%s/%s/%s?translate=false&%s' % (
+                url, format, uid, '&'.join(url_params)))
             self.check_json_response(item_type, res.json)
             return res.json
         elif format == 'html':

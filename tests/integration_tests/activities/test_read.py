@@ -126,6 +126,63 @@ class ActivityReadOneJSONTests(LmkpTestCase):
 @pytest.mark.usefixtures('app')
 @pytest.mark.integration
 @pytest.mark.activities
+class ActivityReadOneGeojsonTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.login()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_read_one_geojson_returns_empty_feature_collection_if_not_found(
+            self):
+        geojson = self.read_one('a', uuid.uuid4(), 'geojson')
+        self.assertEqual(geojson.get('type'), 'FeatureCollection')
+        self.assertEqual(geojson.get('features'), [])
+
+    def test_activity_appears_in_read_one_geojson(self):
+        uid = self.create('a', get_new_diff(101), return_uid=True)
+
+        geojson = self.read_one('a', uid, 'geojson')
+        self.assertEqual(geojson['type'], 'FeatureCollection')
+        self.assertEqual(len(geojson['features']), 1)
+        f1 = geojson['features'][0]
+        self.assertEqual(f1.get('geometry').get('type'), 'Point')
+        self.assertEqual(len(f1.get('geometry').get('coordinates')), 2)
+        self.assertEqual(f1.get('type'), 'Feature')
+        self.assertEqual(len(f1.get('properties')), 4)
+        self.assertEqual(f1.get('properties').get('activity_identifier'), uid)
+        self.assertEqual(f1.get('properties').get('status'), 'pending')
+        self.assertEqual(f1.get('properties').get('status_id'), 1)
+        self.assertEqual(f1.get('properties').get('version'), 1)
+        self.assertIn('id', f1)
+        self.assertIn('fid', f1)
+
+    def test_activity_read_one_geojson_by_version(self):
+        uid = self.create('a', get_new_diff(101), return_uid=True)
+        self.create('a', get_edit_diff(101, uid))
+        self.create('a', get_edit_diff(101, uid, version=2))
+
+        geojson = self.read_one('a', uid, 'geojson')
+        self.assertEqual(len(geojson.get('features')), 1)
+        self.assertEqual(geojson['features'][0]['properties']['version'], 3)
+
+        geojson = self.read_one('a', uid, 'geojson', params={'v': 2})
+        self.assertEqual(len(geojson.get('features')), 1)
+        self.assertEqual(geojson['features'][0]['properties']['version'], 2)
+
+        self.logout()
+        geojson = self.read_one('a', uid, 'geojson', params={'v': 2})
+        self.assertEqual(geojson.get('features'), [])
+
+
+@pytest.mark.read
+@pytest.mark.usefixtures('app')
+@pytest.mark.integration
+@pytest.mark.activities
 class ActivityReadOneHTMLTests(LmkpTestCase):
 
     def setUp(self):

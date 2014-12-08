@@ -1,4 +1,5 @@
 import pytest
+import uuid
 
 from ..base import (
     LmkpTestCase,
@@ -13,6 +14,7 @@ from ...base import (
     FEEDBACK_NO_GEOMETRY_PROVIDED,
     FEEDBACK_NOT_VALID_FORMAT,
     STATUS_PENDING,
+    TITLE_DEAL_EDITOR,
 )
 
 
@@ -209,3 +211,16 @@ class ActivityCreateTests(LmkpTestCase):
         self.assertEqual(json['total'], 1)
         status = get_status_from_item_json(json)
         self.assertEqual(STATUS_PENDING, status)
+
+    def test_activity_form_returns_404_if_no_item(self):
+        self.login()
+        res = self.app.get(
+            '/activities/form/%s?v=1' % str(uuid.uuid4()), status=404)
+        self.assertEqual(res.status_int, 404)
+
+    def test_activity_form_is_available(self):
+        self.login()
+        uid = self.create('a', get_new_diff(101), return_uid=True)
+        res = self.app.get('/activities/form/%s?v=1' % uid)
+        self.assertIn(TITLE_DEAL_EDITOR, res)
+        self.assertIn(uid, res)

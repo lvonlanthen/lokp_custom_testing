@@ -1,4 +1,5 @@
 import pytest
+import uuid
 
 from ..diffs import (
     get_new_diff,
@@ -11,6 +12,7 @@ from ...base import (
     FEEDBACK_NOT_VALID_FORMAT,
     STATUS_PENDING,
     TITLE_HISTORY_VIEW,
+    TITLE_STAKEHOLDER_EDITOR,
 )
 
 
@@ -144,3 +146,16 @@ class StakeholderCreateTests(LmkpTestCase):
         res = self.app.get('/stakeholders/history/html/%s' % uid)
         self.assertEqual(res.status_int, 200)
         self.assertIn(TITLE_HISTORY_VIEW, res.body)
+
+    def test_stakeholder_form_returns_404_if_no_item(self):
+        self.login()
+        res = self.app.get(
+            '/stakeholders/form/%s?v=1' % str(uuid.uuid4()), status=404)
+        self.assertEqual(res.status_int, 404)
+
+    def test_stakeholder_form_is_available(self):
+        self.login()
+        uid = self.create('sh', get_new_diff(201), return_uid=True)
+        res = self.app.get('/stakeholders/form/%s?v=1' % uid)
+        self.assertIn(TITLE_STAKEHOLDER_EDITOR, res)
+        self.assertIn(uid, res)
