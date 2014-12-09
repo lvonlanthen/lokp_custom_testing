@@ -31,7 +31,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(101, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -50,7 +50,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(103, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -69,7 +69,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(104, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -94,7 +94,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(105), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(107, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -115,7 +115,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(105, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -140,7 +140,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(105), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(108, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -157,7 +157,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(101, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -169,7 +169,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         uid = self.create('a', get_new_diff(101), return_uid=True)
         self.review('a', uid)
         self.create('a', get_edit_diff(106, uid, version=1))
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -195,13 +195,13 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.create('a', get_edit_diff(102, a_uid, version=1, data=inv_data1))
 
         # Check that everything was added correctly
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -224,13 +224,13 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.create('a', get_edit_diff(102, a_uid, version=1, data=inv_data1))
 
         # Check that everything was added correctly
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -268,7 +268,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         # [0] v3: without involvement, pending.
         # [1] v2: with involvement, active.
         # [2] v1: without involvement, inactive.
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -281,7 +281,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         # [0] v3: without involvement, pending.
         # [1] v2: with involvement to v1 of Activity, active.
         # [2] v1: blank Stakeholder, no involvements, inactive.
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -308,7 +308,7 @@ class ActivityEditActiveTests(LmkpTestCase):
 
         # On Activity side, there is 1 version:
         # [0] v1: with involvement to v3 of Stakeholder, pending.
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 1)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         inv = get_involvements_from_item_json(res, 0)
@@ -319,7 +319,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         # [0] v3: with involvement, pending.
         # [1] v2: with involvement, active.
         # [2] v1: no involvement, inactive.
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -338,7 +338,7 @@ class ActivityEditActiveTests(LmkpTestCase):
             'delete': 'true'
         })
 
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -373,7 +373,7 @@ class ActivityEditActiveTests(LmkpTestCase):
             'delete': 'true'
         })
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -394,7 +394,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v1_inv), 1)
         self.assertEqual(len(v2_inv), 0)
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -411,7 +411,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.review('a', uid)
         self.create('a', get_edit_diff(110, uid))
 
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -447,7 +447,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         }]
         self.create('a', get_edit_diff(110, a_uid, data=inv_data))
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -468,7 +468,7 @@ class ActivityEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v1_inv), 1)
         self.assertEqual(len(v2_inv), 0)
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))

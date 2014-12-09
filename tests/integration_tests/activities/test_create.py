@@ -121,7 +121,7 @@ class ActivityCreateTests(LmkpTestCase):
         sh_uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', sh_uid)
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual('active', status)
 
@@ -135,7 +135,7 @@ class ActivityCreateTests(LmkpTestCase):
 
         # One pending Activity version should have been created, with the
         # Stakeholder (version 2, pending) attached to it
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 1)
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
@@ -148,7 +148,7 @@ class ActivityCreateTests(LmkpTestCase):
         # still active, version 2 is pending and contains the involvement to
         # the Activity (version 1, pending). Note that the newest version is
         # on top!
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(res['data'][1]['status_id'], 2)
         self.assertEqual(res['data'][0]['status_id'], 1)
@@ -178,7 +178,7 @@ class ActivityCreateTests(LmkpTestCase):
 
         # One pending Activity version should have been created, with the
         # Stakeholder (version 2, pending) attached to it
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 1)
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
@@ -191,7 +191,7 @@ class ActivityCreateTests(LmkpTestCase):
         # inactive, version 2 is pending and contains the involvement to the
         # Activity (version 1, pending). Note that the newest version is on
         # top!
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(res['data'][1]['status_id'], 1)
         self.assertEqual(res['data'][0]['status_id'], 1)
@@ -207,7 +207,7 @@ class ActivityCreateTests(LmkpTestCase):
         """
         self.login()
         uid = self.create('a', get_new_diff(101), return_uid=True)
-        json = self.read_one('a', uid, 'json')
+        json = self.read_one_history('a', uid, 'json')
         self.assertEqual(json['total'], 1)
         status = get_status_from_item_json(json)
         self.assertEqual(STATUS_PENDING, status)

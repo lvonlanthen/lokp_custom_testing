@@ -115,7 +115,7 @@ class StakeholderCreateTests(LmkpTestCase):
         """
         self.login()
         uid = self.create('sh', get_new_diff(201), return_uid=True)
-        json = self.read_one('sh', uid, 'json')
+        json = self.read_one_history('sh', uid, 'json')
         self.assertEqual(json['total'], 1)
         status = get_status_from_item_json(json)
         self.assertEqual(STATUS_PENDING, status)

@@ -16,7 +16,9 @@ from ..diffs import (
     get_edit_diff,
 )
 from ...base import (
+    FEEDBACK_HISTORY_NOT_FOUND,
     TEXT_INACTIVE_VERSION,
+    TITLE_HISTORY_RSS,
     TITLE_HISTORY_VIEW,
 )
 
@@ -860,14 +862,58 @@ class ActivityReadManyGeojsonTests(LmkpTestCase):
 @pytest.mark.activities
 class ActivityHistoryTests(LmkpTestCase):
 
-    def test_history_view(self):
-        """
-        Test that a history view is available for newly created
-        Activities.
-        """
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
         self.login()
+
+    def tearDown(self):
+        testing.tearDown()
+
+    def test_history_view_json(self):
+        uid = self.create('a', get_new_diff(101), return_uid=True)
+
+        res = self.app.get('/activities/history/json/%s' % uid)
+        self.assertEqual(res.status_int, 200)
+        self.assertEqual(res.json.get('total'), 1)
+        self.assertEqual(len(res.json.get('data')), 1)
+        a1 = res.json.get('data')[0]
+        self.assertEqual(a1.get('id'), uid)
+
+    def test_history_view_json_not_found(self):
+        uid = str(uuid.uuid4())
+
+        res = self.app.get('/activities/history/json/%s' % uid)
+        self.assertEqual(res.status_int, 200)
+        self.assertEqual(res.json.get('total'), 0)
+        self.assertEqual(res.json.get('data'), [])
+
+    def test_history_view_html(self):
         uid = self.create('a', get_new_diff(101), return_uid=True)
 
         res = self.app.get('/activities/history/html/%s' % uid)
         self.assertEqual(res.status_int, 200)
-        self.assertIn(TITLE_HISTORY_VIEW, res.body)
+        self.assertIn(TITLE_HISTORY_VIEW, res)
+        self.assertIn(uid, res)
+
+    def test_history_view_html_not_found(self):
+        uid = str(uuid.uuid4())
+
+        res = self.app.get('/activities/history/html/%s' % uid)
+        self.assertEqual(res.status_int, 200)
+        self.assertIn(TITLE_HISTORY_VIEW, res)
+        self.assertIn(FEEDBACK_HISTORY_NOT_FOUND, res)
+
+    def test_history_view_rss(self):
+        uid = self.create('a', get_new_diff(101), return_uid=True)
+
+        res = self.app.get('/activities/history/rss/%s' % uid)
+        self.assertEqual(res.status_int, 200)
+        self.assertIn(TITLE_HISTORY_RSS, res)
+        self.assertIn(uid, res)
+
+    def test_history_view_rss_not_found(self):
+        uid = str(uuid.uuid4())
+        res = self.app.get('/activities/history/rss/%s' % uid, status=404)
+        self.assertEqual(res.status_int, 404)

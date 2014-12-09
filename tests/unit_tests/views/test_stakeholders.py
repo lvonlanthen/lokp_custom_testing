@@ -661,3 +661,136 @@ class StakeholderViewReadManyByActivitiesHtmlTests(LmkpTestCase):
                 'invfilter': [self.request.matchdict.get('uids')]
             },
             self.request)
+
+
+@pytest.mark.unittest
+@pytest.mark.stakeholders
+class StakeholderViewHistoryTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'json', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = StakeholderView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch('lmkp.views.stakeholders.get_output_format')
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    def test_history_calls_get_output_format(
+            self, mock_protocol_read_one_history, mock_get_output_format):
+        mock_protocol_read_one_history.return_value = []
+        mock_get_output_format.return_value = 'json'
+        self.view.history()
+        mock_get_output_format.assert_called_once_with(self.request)
+
+    @patch('lmkp.views.stakeholders.validate_uuid')
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    def test_history_calls_validate_uuid(
+            self, mock_protocol_read_one_history, mock_validate_uuid):
+        mock_protocol_read_one_history.return_value = []
+        mock_validate_uuid.return_value = True
+        self.view.history()
+        mock_validate_uuid.assert_called_once_with(
+            self.request.matchdict['uid'])
+
+    @patch('lmkp.views.stakeholders.get_output_format')
+    def test_history_returns_404_if_unknown_output_format(
+            self, mock_get_output_format):
+        mock_get_output_format.return_value = 'foo'
+        with self.assertRaises(HTTPNotFound):
+            self.view.history()
+
+
+@pytest.mark.unittest
+@pytest.mark.stakeholders
+class StakeholderViewHistoryJSONTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'json', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = StakeholderView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    def test_read_one_json_calls_read_one_history(
+            self, mock_protocol_read_one_history):
+        mock_protocol_read_one_history.return_value = {}
+        self.view.history()
+        mock_protocol_read_one_history.assert_called_once_with(
+            self.request.matchdict['uid'], public_query=False)
+
+    @patch('lmkp.views.stakeholders.render_to_response')
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    def test_read_one_json_calls_render_to_response(
+            self, mock_protocol_read_one_history, mock_render_to_response):
+        self.view.history()
+        mock_render_to_response.assert_called_once_with(
+            'json', mock_protocol_read_one_history.return_value, self.request)
+
+
+@pytest.mark.unittest
+@pytest.mark.stakeholders
+class StakeholderViewHistoryHTMLTests(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        self.request.matchdict = {'output': 'html', 'uid': str(uuid4())}
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.view = StakeholderView(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    def test_read_one_html_calls_read_one_history(
+            self, mock_render_to_response, mock_protocol_read_one_history):
+        mock_protocol_read_one_history.return_value = {}
+        self.view.history()
+        mock_protocol_read_one_history.assert_called_once_with(
+            self.request.matchdict['uid'], public_query=False)
+
+    @patch('lmkp.views.stakeholders.get_user_privileges')
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    def test_read_one_html_calls_get_user_privileges(
+            self, mock_render_to_response, mock_protocol_read_one_history,
+            mock_get_user_privileges):
+        mock_get_user_privileges.return_value = None, None
+        self.view.history()
+        mock_get_user_privileges.assert_called_once_with(self.request)
+
+    @patch.object(StakeholderView, 'get_base_template_values')
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    def test_read_one_html_calls_get_base_template_values(
+            self, mock_render_to_response, mock_protocol_read_one_history,
+            mock_get_base_template_values):
+        self.view.history()
+        mock_get_base_template_values.assert_called_once_with()
+
+    @patch('lmkp.views.stakeholders.get_customized_template_path')
+    @patch.object(StakeholderProtocol, 'read_one_history')
+    @patch('lmkp.views.stakeholders.render_to_response')
+    def test_read_one_html_calls_render_to_response(
+            self, mock_render_to_response, mock_protocol_read_one_history,
+            mock_get_customized_template_path):
+        mock_protocol_read_one_history.return_value = {}
+        self.view.history()
+        mock_render_to_response.assert_called_once_with(
+            mock_get_customized_template_path.return_value, {
+                'profile': 'global',
+                'count': None,
+                'versions': [],
+                'locale': 'en',
+                'is_moderator': None,
+                'active_version': None
+            }, self.request)

@@ -33,7 +33,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
     def test_first_pending_stakeholder_add_new_taggroup(self):
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.create('sh', get_edit_diff(201, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -51,7 +51,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
     def test_first_pending_stakeholder_remove_taggroup(self):
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.create('sh', get_edit_diff(202, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -68,7 +68,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
     def test_first_pending_stakeholder_edit_maintag_of_taggroup(self):
         uid = self.create('sh', get_new_diff(204), return_uid=True)
         self.create('sh', get_edit_diff(203, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -94,7 +94,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
     def test_first_pending_stakeholder_edit_tag_of_taggroup(self):
         uid = self.create('sh', get_new_diff(204), return_uid=True)
         self.create('sh', get_edit_diff(204, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -114,7 +114,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
     def test_first_pending_stakeholder_add_tag_to_taggroup(self):
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.create('sh', get_edit_diff(205, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -140,7 +140,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
     def test_first_pending_stakeholder_remove_tag_of_taggroup(self):
         uid = self.create('sh', get_new_diff(204), return_uid=True)
         self.create('sh', get_edit_diff(206, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -160,7 +160,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
     def test_combination_of_attribute_edits(self):
         uid = self.create('sh', get_new_diff(205), return_uid=True)
         self.create('sh', get_edit_diff(207, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -201,7 +201,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         # On Stakeholder side, there are 2 versions:
         # [0] v2: with involvement to v2 of Activity, pending.
         # [1] v1: without involvements, pending.
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -213,7 +213,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         # On Activity side, there are 2 versions:
         # [0] v2: with involvement to v2 of Stakeholder, pending.
         # [1] v1: with involvement to v2 of Stakeholder, edited.
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -241,7 +241,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         #         pending.
         # [1] v2: with involvement to v2 of Activity, edited.
         # [2] v1: without involvements, pending.
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -277,7 +277,7 @@ class StakeholderEditFirstPendingTests(LmkpTestCase):
         # [1] v3: with involvement and first attribute changed, edited.
         # [2] v2: with involvement to v2 of Activity, edited.
         # [3] v1: without involvements, pending.
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 4)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))

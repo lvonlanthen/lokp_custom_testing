@@ -16,6 +16,7 @@ from ...base import (
     STATUS_EDITED,
     STATUS_INACTIVE,
     STATUS_PENDING,
+    STATUS_REJECTED,
 )
 
 
@@ -35,13 +36,13 @@ class ActivityModerateTests(LmkpTestCase):
         """
         uid = self.create('a', get_new_diff(101), return_uid=True)
 
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
 
         self.review('a', uid)
 
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_ACTIVE, status)
 
@@ -51,15 +52,17 @@ class ActivityModerateTests(LmkpTestCase):
         """
         uid = self.create('a', get_new_diff(101), return_uid=True)
 
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
 
         self.review('a', uid, decision='reject')
 
-        # Rejected Activities are currently not displayed anymore.
-        res = self.read_one('a', uid, 'json')
-        self.assertEqual(res['total'], 0)
+        # Rejected Activities are still displayed in history json.
+        res = self.read_one_history('a', uid, 'json')
+        self.assertEqual(res['total'], 1)
+        status = get_status_from_item_json(res)
+        self.assertEqual(STATUS_REJECTED, status)
 
     def test_new_incomplete_activities_can_be_rejected(self):
         """
@@ -67,15 +70,17 @@ class ActivityModerateTests(LmkpTestCase):
         """
         uid = self.create('a', get_new_diff(102), return_uid=True)
 
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
 
         self.review('a', uid, decision='reject')
 
-        # Rejected Activities are currently not displayed anymore.
-        res = self.read_one('a', uid, 'json')
-        self.assertEqual(res['total'], 0)
+        # Rejected Activities are still displayed in history json.
+        res = self.read_one_history('a', uid, 'json')
+        self.assertEqual(res['total'], 1)
+        status = get_status_from_item_json(res)
+        self.assertEqual(STATUS_REJECTED, status)
 
     def test_new_incomplete_activities_cannot_be_approved(self):
         """
@@ -83,7 +88,7 @@ class ActivityModerateTests(LmkpTestCase):
         """
         uid = self.create('a', get_new_diff(102), return_uid=True)
 
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
 
@@ -93,7 +98,7 @@ class ActivityModerateTests(LmkpTestCase):
         res.mustcontain(FEEDBACK_MANDATORY_KEYS_MISSING)
 
         # The Activity is still there and pending
-        res = self.read_one('a', uid, 'json')
+        res = self.read_one_history('a', uid, 'json')
         self.assertEqual(res['total'], 1)
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
@@ -117,7 +122,7 @@ class ActivityModerateTests(LmkpTestCase):
 
         # One pending Activity version should have been created, with the
         # Stakeholder (version 2, active) attached to it.
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 1)
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_ACTIVE, status)
@@ -129,7 +134,7 @@ class ActivityModerateTests(LmkpTestCase):
         # On the Stakeholder side, there should be 2 versions: Version 1 is now
         # inactive, version 2 is active and contains the involvement to the
         # Activity (version 1, active). Note that the newest version is on top!
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(res['data'][1]['status_id'], 3)
         self.assertEqual(res['data'][0]['status_id'], 2)
@@ -156,7 +161,7 @@ class ActivityModerateTests(LmkpTestCase):
 
         res = self.review('a', a_uid)
         self.review_not_possible('a', 1, res)
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual(STATUS_PENDING, status)
 
@@ -178,13 +183,13 @@ class ActivityModerateTests(LmkpTestCase):
             'a', get_new_diff(103, data=inv_data2), return_uid=True)
 
         # Check that everything was created correctly
-        res = self.read_one('a', a_uid1, 'json')
+        res = self.read_one_history('a', a_uid1, 'json')
         self.assertEqual(res['total'], 1)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res))
-        res = self.read_one('a', a_uid2, 'json')
+        res = self.read_one_history('a', a_uid2, 'json')
         self.assertEqual(res['total'], 1)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res))
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -199,9 +204,9 @@ class ActivityModerateTests(LmkpTestCase):
 
         # A1v1 can now be reviewed, will set SH1v2 to ACTIVE (!!)
         self.review('a', a_uid1)
-        res = self.read_one('a', a_uid1, 'json')
+        res = self.read_one_history('a', a_uid1, 'json')
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res))
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -209,9 +214,9 @@ class ActivityModerateTests(LmkpTestCase):
 
         # A2v1 can be reviewed, will set SH1v2 to inactive, SH1v3 to active.
         self.review('a', a_uid2)
-        res = self.read_one('a', a_uid2, 'json')
+        res = self.read_one_history('a', a_uid2, 'json')
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res))
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -246,13 +251,13 @@ class ActivityModerateTests(LmkpTestCase):
         # A1v2 can now be reviewed, will set SH1v2 active and SH1v1 inactive
         self.review('a', a_uid, version=2)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -301,19 +306,19 @@ class ActivityModerateTests(LmkpTestCase):
         # A2v2 can also be reviewed
         self.review('a', a_uid2, version=2)
 
-        res = self.read_one('a', a_uid1, 'json')
+        res = self.read_one_history('a', a_uid1, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
-        res = self.read_one('a', a_uid2, 'json')
+        res = self.read_one_history('a', a_uid2, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -363,17 +368,17 @@ class ActivityModerateTests(LmkpTestCase):
         # A2v1 can also be reviewed
         self.review('a', a_uid2, version=1)
 
-        res = self.read_one('a', a_uid1, 'json')
+        res = self.read_one_history('a', a_uid1, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
         self.assertEqual(len(get_involvements_from_item_json(res, 1)), 0)
-        res = self.read_one('a', a_uid2, 'json')
+        res = self.read_one_history('a', a_uid2, 'json')
         self.assertEqual(res['total'], 1)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(len(get_involvements_from_item_json(res, 0)), 1)
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -411,7 +416,7 @@ class ActivityModerateTests(LmkpTestCase):
         # On Activity side, there are 2 versions:
         # [0] v2: without involvement, active
         # [1] v1: with involvement, edited
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -422,7 +427,7 @@ class ActivityModerateTests(LmkpTestCase):
         # [0] v3: without involvement, [edited].
         # [1] v2: with involvement to v1 of Activity, edited.
         # [2] v1: blank Stakeholder, no involvements, pending.
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -437,7 +442,7 @@ class ActivityModerateTests(LmkpTestCase):
         self.create('a', get_edit_diff(110, a_uid))
         self.review('a', a_uid, version=2)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -447,7 +452,7 @@ class ActivityModerateTests(LmkpTestCase):
         self.create('a', get_edit_diff(110, a_uid))
         self.review('a', a_uid, version=2)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -472,12 +477,12 @@ class ActivityModerateTests(LmkpTestCase):
         self.create('a', get_edit_diff(110, a_uid, data=inv_data))
         self.review('a', a_uid, version=2)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         v3_inv = get_involvements_from_item_json(res, 0)
@@ -504,12 +509,12 @@ class ActivityModerateTests(LmkpTestCase):
         self.create('a', get_edit_diff(110, a_uid, data=inv_data))
         self.review('a', a_uid, version=2)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 0))
         v3_inv = get_involvements_from_item_json(res, 0)

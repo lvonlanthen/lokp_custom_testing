@@ -44,6 +44,17 @@ class LmkpTestCase(TestCase):
             return ret.json['data'][0]['id']
         return ret
 
+    def read_one_history(self, item_type, uid, format, params={}):
+        url = get_base_url_by_item_type(item_type)
+        url_params = [
+            '%s=%s' % (key, value) for key, value in params.iteritems()]
+        if format == 'json':
+            res = self.app.get('%s/history/%s/%s?%s' % (
+                url, format, uid, '&'.join(url_params)))
+            return res.json
+        else:
+            self.fail('Unknown format: %s' % format)
+
     def read_one(self, item_type, uid, format, params={}):
         url = get_base_url_by_item_type(item_type)
         url_params = [

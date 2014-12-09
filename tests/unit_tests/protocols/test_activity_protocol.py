@@ -448,6 +448,85 @@ class ProtocolsActivityProtocolReadOneGeojson(LmkpTestCase):
 
 @pytest.mark.unittest
 @pytest.mark.protocol
+class ProtocolsActivityProtocolReadOneHistory(LmkpTestCase):
+
+    def setUp(self):
+        self.request = testing.DummyRequest()
+        settings = get_settings()
+        self.config = testing.setUp(request=self.request, settings=settings)
+        self.activity_protocol = ActivityProtocol(self.request)
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @patch.object(ActivityProtocol, 'get_relevant_query_one')
+    @patch.object(ActivityProtocol, 'query_many')
+    @patch.object(ActivityProtocol, 'query_to_features')
+    def test_read_one_history_calls_get_relevant_query_one(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_get_relevant_query_one):
+        mock_protocol_query_many.return_value = None, 0
+        self.activity_protocol.read_one_history('uid')
+        mock_get_relevant_query_one.assert_called_once_with(
+            'uid', version=False, public_query=True)
+
+    @patch('lmkp.protocols.activity_protocol.get_current_involvement_details')
+    @patch.object(ActivityProtocol, 'query_many')
+    @patch.object(ActivityProtocol, 'query_to_features')
+    def test_read_one_history_calls_get_current_involvement_details(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_get_current_involvement_details):
+        mock_protocol_query_many.return_value = None, 0
+        self.activity_protocol.read_one_history('uid')
+        mock_get_current_involvement_details.assert_called_once_with(
+            self.request)
+
+    @patch('lmkp.protocols.activity_protocol.get_current_limit')
+    @patch.object(ActivityProtocol, 'query_many')
+    @patch.object(ActivityProtocol, 'query_to_features')
+    def test_read_one_history_calls_get_current_limit(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_get_current_limit):
+        mock_protocol_query_many.return_value = None, 0
+        self.activity_protocol.read_one_history('uid')
+        mock_get_current_limit.assert_called_once_with(
+            self.request)
+
+    @patch('lmkp.protocols.activity_protocol.get_current_offset')
+    @patch.object(ActivityProtocol, 'query_many')
+    @patch.object(ActivityProtocol, 'query_to_features')
+    def test_read_one_history_calls_get_current_offset(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_get_current_offset):
+        mock_protocol_query_many.return_value = None, 0
+        self.activity_protocol.read_one_history('uid')
+        mock_get_current_offset.assert_called_once_with(
+            self.request)
+
+    @patch.object(ActivityProtocol, 'get_relevant_query_one')
+    @patch.object(ActivityProtocol, 'query_many')
+    @patch.object(ActivityProtocol, 'query_to_features')
+    def test_read_one_history_calls_query_many(
+            self, mock_protocol_query_to_features, mock_protocol_query_many,
+            mock_get_relevant_query_one):
+        mock_protocol_query_many.return_value = None, 0
+        self.activity_protocol.read_one_history('uid')
+        mock_protocol_query_many.assert_called_once_with(
+            mock_get_relevant_query_one.return_value, limit=None, offset=0,
+            with_involvements=True, with_metadata=True)
+
+    @patch.object(ActivityProtocol, 'query_many')
+    @patch.object(ActivityProtocol, 'query_to_features')
+    def test_read_one_history_calls_query_to_features(
+            self, mock_protocol_query_to_features, mock_protocol_query_many):
+        mock_protocol_query_many.return_value = None, 0
+        self.activity_protocol.read_one_history('uid')
+        mock_protocol_query_to_features.assert_called_once_with(
+            None, involvements='full', public_query=True, translate=True)
+
+
+@pytest.mark.unittest
+@pytest.mark.protocol
 class ProtocolsActivityProtocolReadOne(LmkpTestCase):
 
     def setUp(self):

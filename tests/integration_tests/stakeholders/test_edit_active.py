@@ -37,7 +37,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
         self.create('sh', get_edit_diff(201, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -56,7 +56,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
         self.create('sh', get_edit_diff(202, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -74,7 +74,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         uid = self.create('sh', get_new_diff(204), return_uid=True)
         self.review('sh', uid)
         self.create('sh', get_edit_diff(203, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -101,7 +101,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         uid = self.create('sh', get_new_diff(204), return_uid=True)
         self.review('sh', uid)
         self.create('sh', get_edit_diff(204, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -122,7 +122,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         uid = self.create('sh', get_new_diff(201), return_uid=True)
         self.review('sh', uid)
         self.create('sh', get_edit_diff(205, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -149,7 +149,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         uid = self.create('sh', get_new_diff(204), return_uid=True)
         self.review('sh', uid)
         self.create('sh', get_edit_diff(206, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -170,7 +170,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         uid = self.create('sh', get_new_diff(205), return_uid=True)
         self.review('sh', uid)
         self.create('sh', get_edit_diff(207, uid, version=1))
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -211,7 +211,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         # On Stakeholder side, there are 2 versions:
         # [0] v2: with involvement to v2 of Activity, pending.
         # [1] v1: without involvements, pending.
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 1))
@@ -223,7 +223,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         # On Activity side, there are 2 versions:
         # [0] v2: with involvement to v2 of Stakeholder, pending.
         # [1] v1: with involvement to v2 of Stakeholder, edited.
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -244,7 +244,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
             'delete': 'true'
         })
 
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -279,7 +279,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
             'delete': 'true'
         })
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -303,7 +303,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v2_inv), 1)
         self.assertEqual(len(v3_inv), 0)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -317,7 +317,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.review('sh', uid)
         self.create('sh', get_edit_diff(208, uid))
 
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -353,7 +353,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         }]
         self.create('sh', get_edit_diff(208, sh_uid, version=2, data=inv_data))
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -377,7 +377,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v2_inv), 1)
         self.assertEqual(len(v3_inv), 0)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -406,7 +406,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.create('sh', get_edit_diff(208, sh_uid, version=2, data=inv_data))
         self.create('a', get_edit_diff(101, a_uid, version=2))
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -430,7 +430,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v2_inv), 1)
         self.assertEqual(len(v3_inv), 0)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_EDITED, get_status_from_item_json(res, 1))
@@ -472,7 +472,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.create('a', get_edit_diff(101, a_uid, version=2))
         self.review('sh', sh_uid, version=3)
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -496,7 +496,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v2_inv), 1)
         self.assertEqual(len(v3_inv), 0)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_PENDING, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
@@ -530,7 +530,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.review('sh', sh_uid, version=3)
         self.review('a', a_uid, version=3)
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -554,7 +554,7 @@ class StakeholderEditActiveTests(LmkpTestCase):
         self.assertEqual(len(v2_inv), 1)
         self.assertEqual(len(v3_inv), 0)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         # TODO: There might be a bug hidden here ...
         self.assertEqual(res['total'], 4)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))

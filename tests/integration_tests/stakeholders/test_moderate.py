@@ -13,6 +13,7 @@ from ...base import(
     STATUS_ACTIVE,
     STATUS_DELETED,
     STATUS_INACTIVE,
+    STATUS_REJECTED,
 )
 
 
@@ -32,13 +33,13 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         uid = self.create('sh', get_new_diff(201), return_uid=True)
 
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual('pending', status)
 
         self.review('sh', uid)
 
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual('active', status)
 
@@ -48,15 +49,17 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         uid = self.create('sh', get_new_diff(201), return_uid=True)
 
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual('pending', status)
 
         self.review('sh', uid, decision='reject')
 
-        # Rejected Stakeholders are currently not displayed anymore.
-        res = self.read_one('sh', uid, 'json')
-        self.assertEqual(res['total'], 0)
+        # Rejected Stakeholders are still displayed in history json.
+        res = self.read_one_history('sh', uid, 'json')
+        self.assertEqual(res['total'], 1)
+        status = get_status_from_item_json(res)
+        self.assertEqual(STATUS_REJECTED, status)
 
     def test_new_incomplete_stakeholders_can_be_rejected(self):
         """
@@ -64,15 +67,17 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         uid = self.create('sh', get_new_diff(202), return_uid=True)
 
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual('pending', status)
 
         self.review('sh', uid, decision='reject')
 
-        # Rejected Stakeholders are currently not displayed anymore.
-        res = self.read_one('sh', uid, 'json')
-        self.assertEqual(res['total'], 0)
+        # Rejected Stakeholders are still displayed in history json.
+        res = self.read_one_history('sh', uid, 'json')
+        self.assertEqual(res['total'], 1)
+        status = get_status_from_item_json(res)
+        self.assertEqual(STATUS_REJECTED, status)
 
     def test_new_incomplete_stakeholders_cannot_be_approved(self):
         """
@@ -80,7 +85,7 @@ class StakeholderModerateTests(LmkpTestCase):
         """
         uid = self.create('sh', get_new_diff(202), return_uid=True)
 
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         status = get_status_from_item_json(res)
         self.assertEqual('pending', status)
 
@@ -90,7 +95,7 @@ class StakeholderModerateTests(LmkpTestCase):
         self.assertIn('Not all mandatory keys are provided', res.body)
 
         # The Stakeholder is still there and pending
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 1)
         status = get_status_from_item_json(res)
         self.assertEqual('pending', status)
@@ -106,7 +111,7 @@ class StakeholderModerateTests(LmkpTestCase):
         self.review('sh', uid, version=2)
 
         # Version 1 is inactive, version 2 is active
-        res = self.read_one('sh', uid, 'json')
+        res = self.read_one_history('sh', uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(res['data'][1]['status_id'], 3)
         self.assertEqual(res['data'][0]['status_id'], 2)
@@ -131,7 +136,7 @@ class StakeholderModerateTests(LmkpTestCase):
         self.review('sh', shUid, version=3)
 
         # Version 1 is inactive, version 2 is inactive, version 3 is active
-        res = self.read_one('sh', shUid, 'json')
+        res = self.read_one_history('sh', shUid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(res['data'][2]['status_id'], 3)
         self.assertEqual(res['data'][1]['status_id'], 3)
@@ -164,12 +169,12 @@ class StakeholderModerateTests(LmkpTestCase):
         self.review_not_possible('sh', 2, res)
 
         self.review('a', a_uid, version=2)
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -200,7 +205,7 @@ class StakeholderModerateTests(LmkpTestCase):
             'review_decision': 'approve'
         })
 
-        res = self.read_one('sh', sh_uid, 'json')
+        res = self.read_one_history('sh', sh_uid, 'json')
         self.assertEqual(res['total'], 3)
         self.assertEqual(STATUS_DELETED, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -212,7 +217,7 @@ class StakeholderModerateTests(LmkpTestCase):
         self.assertEqual(len(v2_inv), 1)
         self.assertEqual(len(v3_inv), 0)
 
-        res = self.read_one('a', a_uid, 'json')
+        res = self.read_one_history('a', a_uid, 'json')
         self.assertEqual(res['total'], 2)
         self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
         self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
@@ -246,17 +251,19 @@ class StakeholderModerateTests(LmkpTestCase):
             'review_decision': 'reject'
         })
 
-        res = self.read_one('sh', sh_uid, 'json')
-        self.assertEqual(res['total'], 2)
-        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
-        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 1))
-        v1_inv = get_involvements_from_item_json(res, 1)
-        v2_inv = get_involvements_from_item_json(res, 0)
+        res = self.read_one_history('sh', sh_uid, 'json')
+        self.assertEqual(res['total'], 3)
+        self.assertEqual(STATUS_REJECTED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        self.assertEqual(STATUS_INACTIVE, get_status_from_item_json(res, 2))
+        v1_inv = get_involvements_from_item_json(res, 2)
+        v2_inv = get_involvements_from_item_json(res, 1)
         self.assertEqual(len(v1_inv), 0)
         self.assertEqual(len(v2_inv), 1)
 
-        res = self.read_one('a', a_uid, 'json')
-        self.assertEqual(res['total'], 1)
-        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 0))
-        v1_inv = get_involvements_from_item_json(res, 0)
+        res = self.read_one_history('a', a_uid, 'json')
+        self.assertEqual(res['total'], 2)
+        self.assertEqual(STATUS_REJECTED, get_status_from_item_json(res, 0))
+        self.assertEqual(STATUS_ACTIVE, get_status_from_item_json(res, 1))
+        v1_inv = get_involvements_from_item_json(res, 1)
         self.assertEqual(len(v1_inv), 1)
